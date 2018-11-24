@@ -36,3 +36,7 @@ Install the following apps to your SearchHead:
 - Make sure the threathunting index is present on your indexers
 - Edit the macro's to suit your environment > https://YOURSPLUNK/en-US/manager/ThreatHunting/admin/macros
 - The app is shipped without whitelist lookup files, you'll need to create them yourself. This is so you won't accidentally overwrite them on an upgrade of the app.
+
+## Usage
+
+A more detailed explanation of all functions can be found [here](https://github.com/olafhartong/ThreatHunting/wiki)
