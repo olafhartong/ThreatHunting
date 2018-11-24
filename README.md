@@ -4,7 +4,7 @@
 ![Maintenance](https://img.shields.io/maintenance/yes/2018.svg?style=flat-square)
 [![GitHub last commit](https://img.shields.io/github/last-commit/olafhartong/ThreatHunting.svg?style=flat-square)](https://github.com/olafhartong/ThreatHunting/commit/master)
 
-This is a Splunk application containing several dashboards and over 100 reports that will facilitate intital hunting indicators to investigate.
+This is a Splunk application containing several dashboards and over 100 reports that will facilitate initial hunting indicators to investigate.
 
 **Note:**
 This application is not a magic bullet, it will require tuning and real investigative work to be truly effective in your environment.
@@ -16,7 +16,9 @@ Pull requests / issue tickets and new additions will be greatly appreciated!
 
 ## Mitre ATT&CK
 
-A current ATT&CK navigator export of mapped searches will be added soon.
+I strive to map all searches to the ATT&CK framework whenever it's in there.
+A current ATT&CK navigator export of all linked configurations is found [here](attack_matrix/threathunting.json) and can be viewed [here](https://mitre.github.io/attack-navigator/enterprise/#layerURL=https%3A%2F%2Fraw.githubusercontent.com%2Folafhartong%2Fthreathunting%2Fmaster%2Fattack_matrix%2Fthreathunting.json&scoring=false&clear_annotations=false)
+![Mapping](attack_matrix/threathunting.png)
 
 ### Prerequisites
 
@@ -30,5 +32,5 @@ Install the following apps to your SearchHead:
 ## Required actions after deployment
 
 - Make sure the threathunting index is present on your indexers
-- Edit the macro's to suit your environment (leaving it to * is not recommended, it will take a lot more resources)  > https://YOURSPLUNK/en-US/manager/ThreatHunting/admin/macros
+- Edit the macro's to suit your environment > https://YOURSPLUNK/en-US/manager/ThreatHunting/admin/macros
 - The app is shipped without whitelist lookup files, you'll need to create them yourself. This is so you won't accidentally overwrite them on an upgrade of the app.
