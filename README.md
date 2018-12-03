@@ -1,3 +1,4 @@
+![Logo](files/ThreatHunting-logo.png)
 # ThreatHunting | A Splunk app mapped to MITRE ATT&CK to guide your threat hunts
 
 [![license](https://img.shields.io/github/license/olafhartong/ThreatHunting.svg?style=flat-square)](https://github.com/olafhartong/ThreatHunting/blob/master/license.md)
@@ -36,6 +37,7 @@ Install the following apps to your SearchHead:
 - Make sure the threathunting index is present on your indexers
 - Edit the macro's to suit your environment > https://YOURSPLUNK/en-US/manager/ThreatHunting/admin/macros
 - The app is shipped without whitelist lookup files, you'll need to create them yourself. This is so you won't accidentally overwrite them on an upgrade of the app.
+- Install the lookup csv's or create them yourself, empty csv's are [here](https://github.com/olafhartong/ThreatHunting/raw/master/files/ThreatHunting.tar.gz)
 
 ## Usage
 
