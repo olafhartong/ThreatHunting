@@ -1,0 +1,92 @@
+<form>
+  <label>Process Access whitelist editor</label>
+  <fieldset submitButton="true" autoRun="true">
+    <input type="dropdown" token="mitre_technique_id" id="mitre_technique_id">
+      <label>mitre_technique_id</label>
+      <search>
+        <query>| rest /servicesNS/-/ThreatHunting/saved/searches
+| search title="[T*]*"
+| makemv delim="," action.summary_index.mitre_technique_id
+| mvexpand action.summary_index.mitre_technique_id
+| stats dc(action.summary_index.mitre_technique) AS Searches by action.summary_index.mitre_technique_id
+| sort action.summary_index.mitre_technique_id
+| rename action.summary_index.mitre_technique_id AS "id" | table id</query>
+      </search>
+      <fieldForLabel>id</fieldForLabel>
+      <fieldForValue>id</fieldForValue>
+      <choice value="*">All (*)</choice>
+    </input>
+    <input type="text" token="host_fqdn">
+      <label>host_fqdn</label>
+      <default></default>
+    </input>
+    <input type="text" token="process_path">
+      <label>process_path</label>
+      <default></default>
+    </input>
+    <input type="text" token="target_process_path">
+      <label>target_process_path</label>
+      <default></default>
+    </input>
+    <input type="text" token="process_granted_access">
+      <label>process_granted_access</label>
+      <default></default>
+    </input>
+    <input type="text" token="input_reason">
+      <label>reason</label>
+      <default>CHANGEME</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>Today's Entries</title>
+        <search>
+          <query> | makeresults
+    | eval host_fqdn = COALESCE(if(trim("$host_fqdn$")="", "*", trim("$host_fqdn$")), "*")
+    | eval mitre_technique_id = COALESCE(if(trim("$mitre_technique_id$")="", "*", trim("$mitre_technique_id$")), "*")
+    | eval reason = trim("$input_reason$")
+    | eval process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*")
+    | eval process_granted_access = COALESCE(if(trim("$process_granted_access$")="", "*", trim("$process_granted_access$")), "*")
+    | eval target_process_path = COALESCE(if(trim("$target_process_path$")="", "*", trim("$target_process_path$")), "*")
+    | eval added_date = strftime(now(), "%Y-%m-%d")
+    | eval contact = ("$env:user$")
+    | table *
+
+    | fields - _raw _time 
+    | where reason!="CHANGEME"
+    | inputlookup append=t threathunting_process_access_whitelist.csv
+
+| sort -added_date
+| dedup mitre_technique_id host_fqdn process_path target_process_path process_granted_access
+| outputlookup threathunting_process_access_whitelist.csv
+| fields added_date contact mitre_technique_id reason host_fqdn process_path target_process_path process_granted_access
+          </query>
+          <earliest>0</earliest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">20</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Current Entries</title>
+        <search>
+          <query>| inputlookup threathunting_process_access_whitelist.csv | sort -added_datetime | fields added_date contact mitre_technique_id reason host_fqdn process_path target_process_path process_granted_access
+</query>
+          <earliest>0</earliest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">100</option>
+      </table>
+    </panel>
+  </row>
+</form>

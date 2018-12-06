@@ -1,0 +1,53 @@
+<dashboard>
+  <label>About this app</label>
+  <row>
+    <panel ref="Intro" app="ThreatHunting"></panel>
+    <panel ref="getting_started" app="ThreatHunting"></panel>
+    <panel ref="pre-requirements" app="ThreatHunting"></panel>
+  </row>
+  <row>
+    <panel>
+      <title>MITRE Category Searches</title>
+      <chart>
+        <search>
+          <query>| rest /servicesNS/-/ThreatHunting/saved/searches 
+| search title="[T*]*" 
+| makemv delim="," action.summary_index.mitre_category 
+| mvexpand action.summary_index.mitre_category 
+| stats dc(action.summary_index.mitre_technique) AS Searches by action.summary_index.mitre_category 
+| sort action.summary_index.mitre_category 
+| rename action.summary_index.mitre_category AS "MITRE Category"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.showDataLabels">all</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.legend.placement">none</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Currently active triggers</title>
+      <table>
+        <search>
+          <query>| rest /servicesNS/-/ThreatHunting/saved/searches  | search title="[T*]*"  
+| rename action.summary_index.mitre_category as "MITRE Category" action.summary_index.mitre_technique as "MITRE Technique" action.summary_index.hunting_trigger as "Hunting Trigger"
+| table title "MITRE Category" "MITRE Technique" "Hunting Trigger"</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="count">20</option>
+        <option name="drilldown">none</option>
+      </table>
+    </panel>
+  </row>
+</dashboard>

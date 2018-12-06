@@ -1,0 +1,103 @@
+<form>
+  <label>Network whitelist editor</label>
+  <fieldset submitButton="true" autoRun="true">
+    <input type="dropdown" token="mitre_technique_id" id="mitre_technique_id">
+      <label>mitre_technique_id</label>
+      <search>
+        <query>| rest /servicesNS/-/ThreatHunting/saved/searches 
+| search title="[T*]*" 
+| makemv delim="," action.summary_index.mitre_technique_id 
+| mvexpand action.summary_index.mitre_technique_id 
+| stats dc(action.summary_index.mitre_technique) AS Searches by action.summary_index.mitre_technique_id 
+| sort action.summary_index.mitre_technique_id 
+| rename action.summary_index.mitre_technique_id AS "id" | table id</query>
+      </search>
+      <fieldForLabel>id</fieldForLabel>
+      <fieldForValue>id</fieldForValue>
+      <choice value="*">All (*)</choice>
+    </input>
+    <input type="text" token="host_fqdn">
+      <label>host_fqdn</label>
+      <default></default>
+    </input>
+    <input type="text" token="user_name">
+      <label>user_name</label>
+      <default></default>
+    </input>
+    <input type="text" token="process_path">
+      <label>process_path</label>
+      <default></default>
+    </input>
+    <input type="text" token="src_ip">
+      <label>src_ip</label>
+      <default></default>
+    </input>
+    <input type="text" token="dst_ip">
+      <label>dst_ip</label>
+      <default></default>
+    </input>
+    <input type="text" token="dst_port">
+      <label>dst_port</label>
+      <default></default>
+    </input>
+    <input type="text" token="input_reason">
+      <label>reason</label>
+      <default>CHANGEME</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>Recent Entries</title>
+        <search>
+          <query>
+    | makeresults
+    | eval host_fqdn = COALESCE(if(trim("$host_fqdn$")="", "*", trim("$host_fqdn$")), "*")
+    | eval user_name = COALESCE(if(trim("$user_name$")="", "*", trim("$user_name$")), "*")
+    | eval mitre_technique_id = COALESCE(if(trim("$mitre_technique_id$")="", "*", trim("$mitre_technique_id$")), "*")
+    | eval reason = trim("$input_reason$")     
+    | eval process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*")
+    | eval src_ip = COALESCE(if(trim("$src_ip$")="", "*", trim("$src_ip$")), "*")
+    | eval dst_ip = COALESCE(if(trim("$dst_ip$")="", "*", trim("$dst_ip$")), "*") 
+    | eval dst_port = COALESCE(if(trim("$dst_port$")="", "*", trim("$dst_port$")), "*") 
+    | eval contact = ("$env:user$")
+    | eval added_date = strftime(now(), "%Y-%m-%d")     
+    | table *
+    | fields - _raw _time count
+    | where NOT (reason="CHANGEME")
+| inputlookup append=t threathunting_network_whitelist.csv
+
+| dedup host_fqdn, user_name, mitre_technique_id, process_path src_ip dst_ip dst_port
+| sort -added_date
+| outputlookup threathunting_network_whitelist.csv
+| fields added_date contact mitre_technique_id reason host_fqdn user_name process_path src_ip dst_ip dst_port 
+          
+          </query>
+          <earliest>0</earliest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">5</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Current Entries</title>
+        <search>
+          <query>| inputlookup threathunting_network_whitelist.csv | sort -added_date | fields added_date contact mitre_technique_id reason host_fqdn user_name process_path src_ip dst_ip dst_port 
+</query>
+          <earliest>0</earliest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">100</option>
+      </table>
+    </panel>
+  </row>
+</form>

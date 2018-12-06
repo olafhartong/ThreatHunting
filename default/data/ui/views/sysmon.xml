@@ -1,0 +1,92 @@
+<form>
+  <label>Sysmon Events</label>
+  <fieldset submitButton="false" autoRun="true">
+    <input type="time" token="time_picker">
+      <label>Time span</label>
+      <default>
+        <earliest>-7d@d</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Sysmon config changes</title>
+      <table>
+        <search>
+          <query>`sysmon` event_id=16 | table _time host_fqdn sysmon_configuration sysmon_schema_version hash_sha1</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Suspicious Sysmon config changes</title>
+      <table>
+        <search>
+          <query>`sysmon` event_id=16
+| search NOT
+    [| inputlookup trusted-sysmon-configurations.csv
+    | fields hash_sha1]
+| table _time host_fqdn sysmon_configuration sysmon_schema_version hash_sha1
+| sort - _time</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Sysmon Registry modifications by untrusted applications</title>
+      <table>
+        <search>
+          <query>`sysmon` (event_id=12 OR event_id=13 OR event_id=14) (registry_key_path="HKLM\\System\\CurrentControlSet\\Services\\SysmonDrv\\*" OR registry_key_path="HKLM\\System\\CurrentControlSet\\Services\\Sysmon\\*" OR registry_key_path="HKLM\\System\\CurrentControlSet\\Services\\Sysmon64\\*") "process_name"!="Sysmon64.exe" "process_name"!="Sysmon.exe"
+| table _time event_description host_fqdn process_path process_id process_guid registry_key_path registry_key_details</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Sysmon state changes</title>
+      <table>
+        <search>
+          <query>`sysmon` event_id=4 service_state!=Started | table _time host_fqdn service_state</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>

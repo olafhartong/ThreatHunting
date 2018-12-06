@@ -1,0 +1,102 @@
+<form>
+  <label>Process Create whitelist editor</label>
+  <fieldset submitButton="true" autoRun="false">
+    <input type="dropdown" token="mitre_technique_id" id="mitre_technique_id">
+      <label>mitre_technique_id</label>
+      <search>
+        <query>| rest /servicesNS/-/ThreatHunting/saved/searches
+| search title="[T*]*"
+| makemv delim="," action.summary_index.mitre_technique_id
+| mvexpand action.summary_index.mitre_technique_id
+| stats dc(action.summary_index.mitre_technique) AS Searches by action.summary_index.mitre_technique_id
+| sort action.summary_index.mitre_technique_id
+| rename action.summary_index.mitre_technique_id AS "id" | table id</query>
+      </search>
+      <fieldForLabel>id</fieldForLabel>
+      <fieldForValue>id</fieldForValue>
+      <choice value="*">All (*)</choice>
+    </input>
+    <input type="text" token="host_fqdn">
+      <label>host_fqdn</label>
+      <default></default>
+    </input>
+    <input type="text" token="user_name">
+      <label>user_name</label>
+      <default></default>
+    </input>
+    <input type="text" token="process_path">
+      <label>process_path</label>
+      <default></default>
+    </input>
+    <input type="text" token="process_parent_path">
+      <label>process_parent_path</label>
+      <default></default>
+    </input>
+    <input type="text" token="process_command_line">
+      <label>process_command_line</label>
+      <default></default>
+    </input>
+    <input type="text" token="hash_sha256">
+      <label>hash_sha256</label>
+      <default></default>
+    </input>
+    <input type="text" token="input_reason">
+      <label>Reason</label>
+      <default>CHANGEME</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>Recent Entries</title>
+        <search>
+          <query>| makeresults
+    | eval host_fqdn = COALESCE(if(trim("$host_fqdn$")="", "*", trim("$host_fqdn$")), "*")
+    | eval user_name = COALESCE(if(trim("$user_name$")="", "*", trim("$user_name$")), "*")
+    | eval mitre_technique_id = COALESCE(if(trim("$mitre_technique_id$")="", "*", trim("$mitre_technique_id$")), "*")
+    | eval reason = trim("$input_reason$")
+    | eval process_command_line = $process_command_line|s$
+    | eval process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*")
+    | eval process_parent_path = COALESCE(if(trim("$process_parent_path$")="", "*", trim("$process_parent_path$")), "*")
+    | eval hash_sha256 = COALESCE(if(trim("$hash_sha256$")="", "*", trim("$hash_sha256$")), "*")
+    | eval added_date = strftime(now(), "%Y-%m-%d")
+    | eval contact = ("$env:user$")
+    | table *
+
+    | fields - _raw _time 
+    | where reason!="CHANGEME"
+    | inputlookup append=t threathunting_process_create_whitelist.csv
+
+| sort -added_date
+| dedup host_fqdn, user_name, mitre_technique_id, process_path process_parent_path process_command_line hash_sha256
+| outputlookup threathunting_process_create_whitelist.csv
+| fields added_date contact mitre_technique_id reason host_fqdn user_name process_path process_parent_path process_command_line hash_sha256
+          </query>
+          <earliest>0</earliest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">5</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Current Entries</title>
+        <search>
+          <query>| inputlookup threathunting_process_create_whitelist.csv | sort -added_date | fields added_date contact mitre_technique_id reason host_fqdn user_name process_path process_parent_path process_command_line hash_sha256
+</query>
+          <earliest>0</earliest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">100</option>
+      </table>
+    </panel>
+  </row>
+</form>

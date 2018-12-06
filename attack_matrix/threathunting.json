@@ -819,6 +819,20 @@
 			"color": "#9ecae1",
 			"comment": "",
 			"enabled": true
+		},
+		{
+			"techniqueID": "T1093",
+			"tactic": "defense-evasion",
+			"color": "#9ecae1",
+			"comment": "",
+			"enabled": true
+		},
+		{
+			"techniqueID": "T1180",
+			"tactic": "persistence",
+			"color": "#9ecae1",
+			"comment": "",
+			"enabled": true
 		}
 	],
 	"gradient": {

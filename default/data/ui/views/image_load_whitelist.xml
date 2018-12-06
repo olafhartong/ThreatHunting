@@ -1,0 +1,102 @@
+<form>
+  <label>Image Load whitelist editor</label>
+  <fieldset submitButton="true" autoRun="true">
+    <input type="dropdown" token="mitre_technique_id" id="mitre_technique_id">
+      <label>mitre_technique_id</label>
+      <search>
+        <query>| rest /servicesNS/-/ThreatHunting/saved/searches
+| search title="[T*]*"
+| makemv delim="," action.summary_index.mitre_technique_id
+| mvexpand action.summary_index.mitre_technique_id
+| stats dc(action.summary_index.mitre_technique) AS Searches by action.summary_index.mitre_technique_id
+| sort action.summary_index.mitre_technique_id
+| rename action.summary_index.mitre_technique_id AS "id" | table id</query>
+      </search>
+      <fieldForLabel>id</fieldForLabel>
+      <fieldForValue>id</fieldForValue>
+      <choice value="*">All (*)</choice>
+    </input>
+    <input type="text" token="host_fqdn">
+      <label>host_fqdn</label>
+      <default></default>
+    </input>
+    <input type="text" token="process_path">
+      <label>process_path</label>
+      <default></default>
+    </input>
+    <input type="text" token="driver_loaded">
+      <label>driver_loaded</label>
+      <default></default>
+    </input>
+    <input type="text" token="driver_is_signed">
+      <label>driver_is_signed</label>
+      <default></default>
+    </input>
+    <input type="text" token="driver_signature">
+      <label>driver_signature</label>
+      <default></default>
+    </input>
+    <input type="text" token="driver_signature_status">
+      <label>driver_signature_status</label>
+      <default></default>
+    </input>
+    <input type="text" token="input_reason">
+      <label>reason</label>
+      <default>CHANGEME</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>Today's Entries</title>
+        <search>
+          <query>| makeresults
+    | eval host_fqdn = COALESCE(if(trim("$host_fqdn$")="", "*", trim("$host_fqdn$")), "*")
+    | eval driver_loaded = COALESCE(if(trim("$driver_loaded$")="", "*", trim("$driver_loaded$")), "*")
+    | eval mitre_technique_id = COALESCE(if(trim("$mitre_technique_id$")="", "*", trim("$mitre_technique_id$")), "*")
+    | eval reason = trim("$input_reason$")
+    | eval process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*")
+    | eval driver_is_signed = COALESCE(if(trim("$driver_is_signed$")="", "*", trim("$driver_is_signed$")), "*")
+    | eval driver_signature = COALESCE(if(trim("$driver_signature$")="", "*", trim("$driver_signature$")), "*")
+    | eval driver_signatureStatus = COALESCE(if(trim("$driver_signature_status$")="", "*", trim("$driver_signature_status$")), "*")
+    | eval added_date = strftime(now(), "%Y-%m-%d")
+    | eval contact = ("$env:user$")
+    | table *
+
+    | fields - _raw _time 
+    | where reason!="CHANGEME"
+    | inputlookup append=t threathunting_image_load_whitelist.csv
+
+| sort -added_date
+| dedup mitre_technique_id host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signatureStatus
+| outputlookup threathunting_image_load_whitelist.csv
+| fields added_date contact mitre_technique_id reason host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signatureStatus
+
+          </query>
+          <earliest>0</earliest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">20</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Current Entries</title>
+        <search>
+          <query>| inputlookup threathunting_image_load_whitelist.csv | sort -added_datetime | fields added_date contact mitre_technique_id reason host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signatureStatus</query>
+          <earliest>0</earliest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">100</option>
+      </table>
+    </panel>
+  </row>
+</form>

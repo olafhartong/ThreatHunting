@@ -1,0 +1,33 @@
+<dashboard>
+  <label>Newly observed hashes</label>
+  <description>in the last 24hours</description>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>index=* EventChannel="Microsoft-Windows-Sysmon/Operational" event_id=1 | dedup hash_sha256 process_name | stats earliest(_time) as earliest latest(_time) as latest by hash_sha256 process_name host_fqdn | inputlookup append=t threathunting_new_hashes.csv | stats min(earliest) as earliest, max(latest) as latest by hash_sha256 process_name host_fqdn | outputlookup threathunting_new_hashes.csv | eval new_hash=if(earliest&gt;=relative_time(now(), "-7d@d"), 1, 0) | where new_hash=1 | eval earliest = strftime(earliest, "%Y-%m-%d %H:%M") | eval latest = strftime(latest, "%Y-%m-%d %H:%M") | table hash_sha256 process_name host_fqdn latest</query>
+          <earliest>-60m@m</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">100</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+        <drilldown>
+          <condition>
+            <link target="_blank">https://www.virustotal.com/#/file/$row.hash_sha256$/detection</link>
+          </condition>
+          <condition field="host_fqdn">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>          
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+</dashboard>

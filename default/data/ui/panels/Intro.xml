@@ -1,0 +1,10 @@
+<panel>
+  <title>How to use this app</title>
+  <html>
+    <p>This app will help you cover a lot of the techniques mentioned in the MITRE ATTACK framework</p>
+    <ul>
+      <li><a class="external text" target="_blank" href="https://attack.mitre.org/wiki/Main_Page">MITRE website</a></li>
+      <li><a class="external text" target="_blank" href="https://github.com/olafhartong/ThreatHunting/wiki">This APPs WIKI page</a></li>
+    </ul>
+  </html>
+</panel>

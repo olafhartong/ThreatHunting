@@ -1,0 +1,59 @@
+<form>
+  <label>PowerShell Events</label>
+  <fieldset submitButton="false" autoRun="true">
+    <input type="time" token="time_picker">
+      <label>Time span</label>
+      <default>
+        <earliest>-7d@d</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Base64 block used</title>
+      <table>
+        <search>
+          <query>index=threathunting mitre_technique_id=T1086 hunting_trigger = "Base64 block used" 
+          | table _time, host_fqdn, base64_data, user_name, process_command_line, PS_Version, Engine_Version, process_path</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+             <drilldown>
+          <condition>
+            <link target="_blank">https://gchq.github.io/CyberChef/#recipe=From_Base64('A-Za-z0-9%2B/%3D',true)&amp;input="$row.base64_data$"</link>
+          </condition>
+        </drilldown>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Download or web connection</title>
+      <table>
+        <search>
+          <query>index=threathunting mitre_technique_id=T1086 hunting_trigger = "Download or web connection" 
+          | table _time, host, host_fqdnName, user_name, Account_Domain, process_path, process_command_line</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>  
+</form>
