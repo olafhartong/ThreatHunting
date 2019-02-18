@@ -2,7 +2,7 @@
 # ThreatHunting | A Splunk app mapped to MITRE ATT&CK to guide your threat hunts
 
 [![license](https://img.shields.io/github/license/olafhartong/ThreatHunting.svg?style=flat-square)](https://github.com/olafhartong/ThreatHunting/blob/master/license.md)
-![Maintenance](https://img.shields.io/maintenance/yes/2018.svg?style=flat-square)
+![Maintenance](https://img.shields.io/maintenance/yes/2019.svg?style=flat-square)
 [![GitHub last commit](https://img.shields.io/github/last-commit/olafhartong/ThreatHunting.svg?style=flat-square)](https://github.com/olafhartong/ThreatHunting/commit/master)
 
 This is a Splunk application containing several dashboards and over 120 reports that will facilitate initial hunting indicators to investigate.
