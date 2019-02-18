@@ -39,6 +39,9 @@ Install the following apps to your SearchHead:
 - The app is shipped without whitelist lookup files, you'll need to create them yourself. This is so you won't accidentally overwrite them on an upgrade of the app.
 - Install the lookup csv's or create them yourself, empty csv's are [here](https://github.com/olafhartong/ThreatHunting/raw/master/files/ThreatHunting.tar.gz)
 
+A step by step guide kindly written by Kirtar Oza can be found [here](https://www.linkedin.com/pulse/attckized-splunk-kirtar-oza-cissp-cisa-ms-/)
+
 ## Usage
 
 A more detailed explanation of all functions can be found [here](https://github.com/olafhartong/ThreatHunting/wiki)
+or in [this blog post](https://medium.com/@olafhartong/endpoint-detection-superpowers-on-the-cheap-threat-hunting-app-a92213f5e4b8)
