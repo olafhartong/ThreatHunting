@@ -27,6 +27,7 @@ A current ATT&CK navigator export of all linked configurations is found [here](a
 
 Install the following apps to your SearchHead:
 
+- [Add-on for Microsoft Sysmon](https://splunkbase.splunk.com/app/1914/)
 - [Punchcard Visualization](https://splunkbase.splunk.com/app/3129/)
 - [Force Directed Visualization](https://splunkbase.splunk.com/app/3767/)
 - [Sankey Diagram Visualization](https://splunkbase.splunk.com/app/3112/)
