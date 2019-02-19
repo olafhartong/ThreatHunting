@@ -2,9 +2,9 @@
   <label>Threat Hunting trigger overview</label>
   <fieldset submitButton="false" autoRun="true">
     <input type="time" token="time_picker">
-      <label>Trendline range</label>
+      <label>Time range</label>
       <default>
-        <earliest>-7d@h</earliest>
+        <earliest>-7d@d</earliest>
         <latest>now</latest>
       </default>
     </input>
@@ -15,7 +15,7 @@
         <title>Persistence</title>
         <search>
           <query>index=threathunting mitre_category="*Persistence*"
-| timechart span=24h count(mitre_category)</query>
+| timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -41,7 +41,7 @@
         <title>Privilege Escalation</title>
         <search>
           <query>index=threathunting mitre_category="*Privilege_Escalation*"
-| timechart span=24h count(mitre_category)</query>
+| timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -67,7 +67,7 @@
         <title>Defense Evasion</title>
         <search>
           <query>index=threathunting mitre_category="*Defense_Evasion*"
-| timechart span=24h count(mitre_category)</query>
+| timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -93,7 +93,7 @@
         <title>Credential Access</title>
         <search>
           <query>index=threathunting mitre_category="*Credential_Access*"
-| timechart span=24h count(mitre_category)</query>
+| timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -119,7 +119,7 @@
         <title>Discovery</title>
         <search>
           <query>index=threathunting mitre_category="*Discovery*"
-| timechart span=24h count(mitre_category)</query>
+| timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -145,7 +145,7 @@
         <title>Lateral Movement</title>
         <search>
           <query>index=threathunting mitre_category="*Lateral_Movement*"
-| timechart span=24h count(mitre_category)</query>
+| timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -172,7 +172,7 @@
         <title>Execution</title>
         <search>
           <query>index=threathunting mitre_category="*Execution*"
-| timechart span=24h count(mitre_category)</query>
+| timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -198,7 +198,7 @@
         <title>Collection</title>
         <search>
           <query>index=threathunting mitre_category="*Collection*"
-| timechart span=24h count(mitre_category)</query>
+| timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -224,7 +224,7 @@
         <title>Exfiltration</title>
         <search>
           <query>index=threathunting mitre_category="*Exfiltration*"
-| timechart span=24h count(mitre_category)</query>
+| timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -250,7 +250,7 @@
         <title>Command &amp; Control</title>
         <search>
           <query>index=threathunting mitre_category="*Command_and_Control*"
-| timechart span=24h count(mitre_category)</query>
+| timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -274,15 +274,15 @@
   </row>
   <row>
     <panel>
-      <title>Top triggered techniques in the last 24h</title>
+      <title>Top triggered techniques in the selected timeframe</title>
       <table>
         <search>
-          <query>index="threathunting" 
-| stats count by mitre_technique_id, mitre_technique, mitre_category 
-| sort -count 
+          <query>index="threathunting"
+| stats count by mitre_technique_id, mitre_technique, mitre_category
+| sort -count
 </query>
-          <earliest>-24h@h</earliest>
-          <latest>now</latest>
+<earliest>$time_picker.earliest$</earliest>
+<latest>$time_picker.latest$</latest>
         </search>
         <option name="count">10</option>
         <option name="dataOverlayMode">heatmap</option>
@@ -294,19 +294,19 @@
           <link target="_blank">
             <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*$row.mitre_category$*&earliest=$earliest$&latest=$latest$]]>
           </link>
-        </drilldown>        
+        </drilldown>
       </table>
     </panel>
     <panel>
-      <title>Top triggered host_fqdns in the last 24h</title>
+      <title>Top triggered host_fqdns in the selected timeframe</title>
       <table>
         <search>
-          <query>index="threathunting" 
+          <query>index="threathunting"
 | stats count by host_fqdn
-| sort -count 
+| sort -count
 </query>
-          <earliest>-24h@h</earliest>
-          <latest>now</latest>
+<earliest>$time_picker.earliest$</earliest>
+<latest>$time_picker.latest$</latest>
         </search>
         <option name="count">10</option>
         <option name="dataOverlayMode">heatmap</option>
@@ -318,8 +318,8 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-        </drilldown>        
+        </drilldown>
       </table>
-    </panel>    
+    </panel>
   </row>
 </form>
