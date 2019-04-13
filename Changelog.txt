@@ -5,9 +5,10 @@ New Features
 - Added Timeline graph to the overview page
 - Added Technique and Host filtering options to the mitre att&ck overview page
 - Initial mapping of Windows 4688 events in props.conf
+- Added 4688 events to 70 reports
 
 Bugfixes
 - Fixed the Tactics and Technique(ID) filters on the mitre att&ck overview page
 - Added the Initial Access tactic and properly sorted them on all pages
 - Re-added the computer investigator page
-- 
+- Changed sourcetype to source in macros
