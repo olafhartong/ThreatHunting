@@ -1,0 +1,13 @@
+### Updates 1.3
+
+New Features
+- Added Technique and Host filtering options to the threat hunting overview page
+- Added Timeline graph to the overview page
+- Added Technique and Host filtering options to the mitre att&ck overview page
+- Initial mapping of Windows 4688 events in props.conf
+
+Bugfixes
+- Fixed the Tactics and Technique(ID) filters on the mitre att&ck overview page
+- Added the Initial Access tactic and properly sorted them on all pages
+- Re-added the computer investigator page
+- 

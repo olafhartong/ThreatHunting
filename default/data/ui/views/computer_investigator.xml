@@ -1,0 +1,347 @@
+<form>
+  <label>Computer Investigator</label>
+  <description>Correlate user/system/process activity</description>
+  <fieldset submitButton="true">
+    <input type="text" token="host">
+      <label>Host</label>
+      <default>*</default>
+    </input>
+    <input type="time" token="time_picker">
+      <label></label>
+      <default>
+        <earliest>-7d@d</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Logging Data distribution</title>
+      <chart>
+        <search>
+          <query>| tstats count WHERE index=windows AND (host=$host$) by _time host sourcetype span=15m | timechart span=15m sum(count) by sourcetype</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.axisY.scale">log</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">0</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Activity by time per day</title>
+      <chart>
+        <search>
+          <query>index=threathunting host_fqdn="$host$*"
+          | stats count by _time, mitre_category| timechart span=15m sum(count) by mitre_category</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.axisY.scale">log</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">zero</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <single>
+        <title>Persistence</title>
+        <search>
+          <query>index=threathunting mitre_category="*Persistence*" host_fqdn="$host$*"
+| timechart span=24h count(mitre_category)</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="height">125</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <drilldown>
+          <link target="_blank">
+            <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*Persistence*&earliest=$earliest$&latest=$latest$]]>
+          </link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Privilege Escalation</title>
+        <search>
+          <query>index=threathunting mitre_category="*Privilege_Escalation*" host_fqdn="$host$*"
+| timechart span=24h count(mitre_category)</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="height">125</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <drilldown>
+          <link target="_blank">
+            <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*Privilege_Escalation*&earliest=$earliest$&latest=$latest$]]>
+          </link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Defense Evasion</title>
+        <search>
+          <query>index=threathunting mitre_category="*Defense_Evasion*" host_fqdn="$host$*"
+| timechart span=24h count(mitre_category)</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="height">125</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <drilldown>
+          <link target="_blank">
+            <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*Defense_Evasion*&earliest=$earliest$&latest=$latest$]]>
+          </link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Credential Access</title>
+        <search>
+          <query>index=threathunting mitre_category="*Credential_Access*" host_fqdn="$host$*"
+| timechart span=24h count(mitre_category)</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="height">125</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <drilldown>
+          <link target="_blank">
+            <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*Credential_Access*&earliest=$earliest$&latest=$latest$]]>
+          </link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Discovery</title>
+        <search>
+          <query>index=threathunting mitre_category="*Discovery*" host_fqdn="$host$*"
+| timechart span=24h count(mitre_category)</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="height">125</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <drilldown>
+          <link target="_blank">
+            <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*Discovery*&earliest=$earliest$&latest=$latest$]]>
+          </link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Lateral Movement</title>
+        <search>
+          <query>index=threathunting mitre_category="*Lateral_Movement*" host_fqdn="$host$*"
+| timechart span=24h count(mitre_category)</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="height">125</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trendInterval">-7d</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <drilldown>
+          <link target="_blank">
+            <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*Lateral_Movement*&earliest=$earliest$&latest=$latest$]]>
+          </link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Execution</title>
+        <search>
+          <query>index=threathunting mitre_category="*Execution*" host_fqdn="$host$*"
+| timechart span=24h count(mitre_category)</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="height">125</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <drilldown>
+          <link target="_blank">
+            <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*Execution*&earliest=$earliest$&latest=$latest$]]>
+          </link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Collection</title>
+        <search>
+          <query>index=threathunting mitre_category="*Collection*" host_fqdn="$host$*"
+| timechart span=24h count(mitre_category)</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="height">125</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <drilldown>
+          <link target="_blank">
+            <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*Collection*&earliest=$earliest$&latest=$latest$]]>
+          </link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Exfiltration</title>
+        <search>
+          <query>index=threathunting mitre_category="*Exfiltration*" host_fqdn="$host$*"
+| timechart span=24h count(mitre_category)</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="height">125</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <drilldown>
+          <link target="_blank">
+            <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*Exfiltration*&earliest=$earliest$&latest=$latest$]]>
+          </link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Command &amp; Control</title>
+        <search>
+          <query>index=threathunting mitre_category="*Command_and_Control*" host_fqdn="$host$*"
+| timechart span=24h count(mitre_category)</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="height">125</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <drilldown>
+          <link target="_blank">
+            <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*Command_and_Control*&earliest=$earliest$&latest=$latest$]]>
+          </link>
+        </drilldown>
+      </single>
+    </panel>
+  </row>
+</form>
