@@ -4,8 +4,16 @@ New Features
 - Added Technique and Host filtering options to the threat hunting overview page
 - Added Timeline graph to the overview page
 - Added Technique and Host filtering options to the mitre att&ck overview page
+- Added New Files created page, based on Sysmon event_id 11
+- Added File Create whitelist editor page
 - Initial mapping of Windows 4688 events in props.conf
 - Added 4688 events to 70 reports
+- Added indextime macro
+
+Changes
+- Automated search distribution
+- Index time searches instead of _time
+- Cleaned up the code a bit
 
 Bugfixes
 - Fixed the Tactics and Technique(ID) filters on the mitre att&ck overview page

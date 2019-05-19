@@ -82,7 +82,7 @@
 | eval hash_sha256=lower(hash_sha256)
 | `process_create_whitelist`
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-| table _time ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_parent_command_line process_command_line process_parent_guid hash_sha256 process_id process_parent_id</query>
+| table _time indextime ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_parent_command_line process_command_line process_parent_guid hash_sha256 process_id process_parent_id</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <progress>
@@ -145,7 +145,7 @@
         <search>
           <query>index=threathunting process_guid=$process_guid$ event_description="Process Access" | `process_access_whitelist`
           | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-          | table _time ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access target_process_guid process_id target_process_id</query>
+          | table _time indextime ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access target_process_guid process_id target_process_id</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <progress>
@@ -209,7 +209,7 @@
       <table>
         <search>
           <query>index=threathunting process_guid=$process_guid$ event_description="File *" | `file_access_whitelist` | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-          | table _time ID Technique Category Trigger host_fqdn process_path file_path process_guid process_id</query>
+          | table _time indextime ID Technique Category Trigger host_fqdn process_path file_path process_guid process_id</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <progress>
@@ -277,7 +277,7 @@
           </progress>
           <query>index=threathunting process_guid=$process_guid$ event_description="Image *" | `image_load_whitelist`
           | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-          | table _time ID Technique Category Trigger host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status process_id process_guid</query>
+          | table _time indextime ID Technique Category Trigger host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status process_id process_guid</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -326,7 +326,7 @@
           <query>index=threathunting process_guid=$process_guid$ event_description="Network *"
           | `network_whitelist`
           | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-          | table _time ID Technique Category Trigger host_fqdn user_name process_path process_id process_guid src_ip dst_ip dst_port src_host_name dst_host_name</query>
+          | table _time indextime ID Technique Category Trigger host_fqdn user_name process_path process_id process_guid src_ip dst_ip dst_port src_host_name dst_host_name</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <progress>
@@ -390,7 +390,7 @@
           <query>index=threathunting event_description="Create Remote Thread" 
 | `remote_thread_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| table _time ID Technique Category Trigger host_fqdn process_name target_process_path target_process_address thread_new_id process_guid process_parent_guid</query>
+| table _time indextime ID Technique Category Trigger host_fqdn process_name target_process_path target_process_address thread_new_id process_guid process_parent_guid</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -442,7 +442,7 @@
       <table>
         <search>
           <query>index=threathunting host_fqdn=$computer$ event_description="Registry*" | `registry_whitelist`| rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-          | table _time ID Technique Category Trigger event_type host_fqdn process_path  process_id process_guid registry_key_path registry_key_details</query>
+          | table _time indextime ID Technique Category Trigger event_type host_fqdn process_path  process_id process_guid registry_key_path registry_key_details</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <progress>
@@ -506,7 +506,7 @@
           </progress>
           <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="WMI*" | `wmi_whitelist`
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-| table _time ID Technique Category Trigger host_fqdn user_name wmi_consumer_name wmi_consumer_destination</query>
+| table _time indextime ID Technique Category Trigger host_fqdn user_name wmi_consumer_name wmi_consumer_destination</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -562,7 +562,7 @@
           </progress>
           <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="WMI*" | `wmi_whitelist`
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-| table _time ID Technique Category Trigger host_fqdn process_path process_id process_guid</query>
+| table _time indextime ID Technique Category Trigger host_fqdn process_path process_id process_guid</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>

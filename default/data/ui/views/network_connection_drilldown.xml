@@ -88,7 +88,7 @@
       <table>
         <search>
           <query>`sysmon` src_ip=$src_ip$ dst_ip=$dst_ip$ 
-| table _time event_description host_fqdn user_name process_path process_id process_guid src_ip dst_ip dst_port src_host_name dst_host_name</query>
+| table _time indextime event_description host_fqdn user_name process_path process_id process_guid src_ip dst_ip dst_port src_host_name dst_host_name</query>
           <earliest>$timepicker.earliest$</earliest>
           <latest>$timepicker.latest$</latest>
         </search>

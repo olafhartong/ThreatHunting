@@ -15,7 +15,7 @@
       <table>
         <search>
           <query>index=threathunting mitre_technique_id=T1086 hunting_trigger = "Base64 block used" 
-          | table _time, host_fqdn, base64_data, user_name, process_command_line, PS_Version, Engine_Version, process_path</query>
+          | table _time indextime, host_fqdn, base64_data, user_name, process_command_line, PS_Version, Engine_Version, process_path</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -41,7 +41,7 @@
       <table>
         <search>
           <query>index=threathunting mitre_technique_id=T1086 hunting_trigger = "Download or web connection" 
-          | table _time, host, host_fqdnName, user_name, Account_Domain, process_path, process_command_line</query>
+          | table _time indextime, host, host_fqdnName, user_name, Account_Domain, process_path, process_command_line</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>

@@ -53,7 +53,7 @@
 | eval hash_sha256=lower(hash_sha256)
 | `process_create_whitelist`
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-| table _time ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_parent_command_line process_command_line process_parent_guid process_guid hash_sha256 process_id process_parent_id</query>
+| table _time indextime ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_parent_command_line process_command_line process_parent_guid process_guid hash_sha256 process_id process_parent_id</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -61,7 +61,7 @@
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
         <drilldown>
-          <condition field="_time">
+          <condition field="_time indextime">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_create_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.process_parent_path=$row.process_parent_path$&form.process_command_line=$row.process_command_line$&form.process_parent_command_line=$row.process_parent_command_line$&form.hash_sha256=$row.hash_sha256$]]>
             </link>
@@ -109,7 +109,7 @@
         <search>
           <query>index=threathunting host_fqdn=$computer$ event_description="Process Access" | `process_access_whitelist`
           | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-          | table _time ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access target_process_guid process_id target_process_id</query>
+          | table _time indextime ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access target_process_guid process_id target_process_id</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <progress>
@@ -143,7 +143,7 @@
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.target_process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
-          <condition field="_time">
+          <condition field="_time indextime">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_access_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.target_process_path=$row.target_process_path$&form.process_path=$row.process_path$&form.process_granted_access=$row.process_granted_access$]]>
             </link>
@@ -173,7 +173,7 @@
       <table>
         <search>
           <query>index=threathunting host_fqdn=$computer$ event_description="File *" | `file_access_whitelist` | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-          | table _time ID Technique Category Trigger host_fqdn process_path file_path process_guid process_id</query>
+          | table _time indextime ID Technique Category Trigger host_fqdn process_path file_path process_guid process_id</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <progress>
@@ -202,7 +202,7 @@
               <![CDATA[/app/ThreatHunting/activity_drilldown?form.user=$row.user_name$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
-          <condition field="_time">
+          <condition field="_time indextime">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/file_create_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.file_path=$row.file_path$&form.process_path=$row.process_path$]]>
             </link>
@@ -241,7 +241,7 @@
           </progress>
           <query>index=threathunting host_fqdn=$computer$ event_description="Image *" | `image_load_whitelist`
           | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-          | table _time ID Technique Category Trigger host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status process_id process_guid</query>
+          | table _time indextime ID Technique Category Trigger host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status process_id process_guid</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -258,7 +258,7 @@
           <condition field="ID">
             <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
           </condition>
-          <condition field="_time">
+          <condition field="_time indextime">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/image_load_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.driver_loaded=$row.driver_loaded$&form.process_path=$row.process_path$&form.driver_is_signed=$row.driver_is_signed$&form.driver_signature=$row.driver_signature$&form.driver_signature_status=$row.driver_signature_status$]]>
             </link>
@@ -290,7 +290,7 @@
           <query>index=threathunting host_fqdn=$computer$ event_description="Network *"
           | `network_whitelist`
           | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-          | table _time ID Technique Category Trigger host_fqdn user_name process_path process_id process_guid src_ip dst_ip dst_port src_host_name dst_host_name</query>
+          | table _time indextime ID Technique Category Trigger host_fqdn user_name process_path process_id process_guid src_ip dst_ip dst_port src_host_name dst_host_name</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <progress>
@@ -305,7 +305,7 @@
         <option name="count">6</option>
         <option name="drilldown">cell</option>
         <drilldown>
-          <condition field="_time">
+          <condition field="_time indextime">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/network_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.src_ip=$row.src_ip$&form.dst_ip=$row.dst_ip$&form.dst_port=$row.dst_port$]]>
             </link>
@@ -354,7 +354,7 @@
           <query>index=threathunting event_description="Create Remote Thread" 
 | `remote_thread_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| table _time ID Technique Category Trigger host_fqdn process_name target_process_path target_process_address thread_new_id process_guid process_parent_guid</query>
+| table _time indextime ID Technique Category Trigger host_fqdn process_name target_process_path target_process_address thread_new_id process_guid process_parent_guid</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -371,7 +371,7 @@
           <condition field="ID">
             <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
           </condition>
-          <condition field="_time">
+          <condition field="_time indextime">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/remote_thread_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.event_type=$row.event_type$&form.process_path=$row.process_path$&form.target_process_path=$row.target_process_path$&form.target_process_address=$row.target_process_address$]]>
             </link>
@@ -406,7 +406,7 @@
       <table>
         <search>
           <query>index=threathunting host_fqdn=$computer$ event_description="Registry*" | `registry_whitelist` | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-          | table _time ID Technique Category Trigger event_type host_fqdn process_path  process_id process_guid registry_key_path registry_key_details</query>
+          | table _time indextime ID Technique Category Trigger event_type host_fqdn process_path  process_id process_guid registry_key_path registry_key_details</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <progress>
@@ -431,7 +431,7 @@
           <condition field="ID">
             <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
           </condition>
-          <condition field="_time">
+          <condition field="_time indextime">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/registry_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.event_type=$row.event_type$&form.process_path=$row.process_path$&form.registry_key_path=$row.registry_key_path$&form.registry_details=$row.registry_key_details$]]>
             </link>
@@ -470,7 +470,7 @@
           </progress>
           <query>index=threathunting host_fqdn=$computer$ event_description="*Pipe*" | `pipe_created_whitelist`
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-| table _time ID Technique Category Trigger host_fqdn process_path process_id process_guid pipe_name</query>
+| table _time indextime ID Technique Category Trigger host_fqdn process_path process_id process_guid pipe_name</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -487,7 +487,7 @@
           <condition field="ID">
             <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
           </condition>
-          <condition field="_time">
+          <condition field="_time indextime">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/pipe_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.target_process_path=$row.target_process_path$&form.process_path=$row.process_path$&form.pipe_name=$row.pipe_name$]]>
             </link>
@@ -527,7 +527,7 @@
           <query>index=threathunting host_fqdn=$computer$ event_description="WMI*" 
 | `wmi_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| table _time ID Technique Category Trigger host_fqdn user_name wmi_consumer_name wmi_consumer_destination</query>
+| table _time indextime ID Technique Category Trigger host_fqdn user_name wmi_consumer_name wmi_consumer_destination</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
