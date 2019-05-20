@@ -83,6 +83,11 @@
               <![CDATA[/app/ThreatHunting/activity_drilldown?form.user=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
             </link>
           </condition>
+          <condition field="_time">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_access_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.target_process_path=$row.target_process_path$&form.process_path=$row.process_path$&form.process_granted_access=$row.process_granted_access$]]>
+            </link>
+          </condition>          
           <condition field="host_fqdn">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -143,7 +148,7 @@
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.target_process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
-          <condition field="_time indextime">
+          <condition field="_time">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_access_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.target_process_path=$row.target_process_path$&form.process_path=$row.process_path$&form.process_granted_access=$row.process_granted_access$]]>
             </link>
@@ -202,7 +207,7 @@
               <![CDATA[/app/ThreatHunting/activity_drilldown?form.user=$row.user_name$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
-          <condition field="_time indextime">
+          <condition field="_time">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/file_create_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.file_path=$row.file_path$&form.process_path=$row.process_path$]]>
             </link>
@@ -258,7 +263,7 @@
           <condition field="ID">
             <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
           </condition>
-          <condition field="_time indextime">
+          <condition field="_time">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/image_load_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.driver_loaded=$row.driver_loaded$&form.process_path=$row.process_path$&form.driver_is_signed=$row.driver_is_signed$&form.driver_signature=$row.driver_signature$&form.driver_signature_status=$row.driver_signature_status$]]>
             </link>
@@ -305,7 +310,7 @@
         <option name="count">6</option>
         <option name="drilldown">cell</option>
         <drilldown>
-          <condition field="_time indextime">
+          <condition field="_time">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/network_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.src_ip=$row.src_ip$&form.dst_ip=$row.dst_ip$&form.dst_port=$row.dst_port$]]>
             </link>
@@ -371,7 +376,7 @@
           <condition field="ID">
             <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
           </condition>
-          <condition field="_time indextime">
+          <condition field="_time">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/remote_thread_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.event_type=$row.event_type$&form.process_path=$row.process_path$&form.target_process_path=$row.target_process_path$&form.target_process_address=$row.target_process_address$]]>
             </link>
@@ -431,7 +436,7 @@
           <condition field="ID">
             <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
           </condition>
-          <condition field="_time indextime">
+          <condition field="_time">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/registry_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.event_type=$row.event_type$&form.process_path=$row.process_path$&form.registry_key_path=$row.registry_key_path$&form.registry_details=$row.registry_key_details$]]>
             </link>
@@ -487,7 +492,7 @@
           <condition field="ID">
             <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
           </condition>
-          <condition field="_time indextime">
+          <condition field="_time">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/pipe_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.target_process_path=$row.target_process_path$&form.process_path=$row.process_path$&form.pipe_name=$row.pipe_name$]]>
             </link>
