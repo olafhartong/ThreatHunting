@@ -9,7 +9,7 @@ def lookup(md5):
     proxy = urllib2.ProxyHandler({'http': 'proxy:port'})
     opener = urllib2.build_opener(proxy)
     urllib2.install_opener(opener)
-    response = urllib2.urlopen('http://www.virustotal.com/vtapi/v2/file/report','apikey=<VTKEY>&resource=' + md5)
+    response = urllib2.urlopen('https://www.virustotal.com/vtapi/v2/file/report','apikey=<VTKEY>&resource=' + md5)
     lines = response.read()
     return lines
   except:
