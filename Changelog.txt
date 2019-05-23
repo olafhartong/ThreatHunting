@@ -1,4 +1,4 @@
-### Updates 1.3
+### Updates 1.3.4
 
 New Features
 - Added Technique and Host filtering options to the threat hunting overview page
@@ -14,6 +14,7 @@ Changes
 - Automated search distribution
 - Index time searches instead of _time
 - Cleaned up the code a bit
+- AppInspect passing
 
 Bugfixes
 - Fixed the Tactics and Technique(ID) filters on the mitre att&ck overview page
