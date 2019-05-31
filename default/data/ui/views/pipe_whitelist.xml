@@ -50,11 +50,11 @@
 
     | fields - _raw _time 
     | where reason!="CHANGEME"
-    | inputlookup append=t threathunting_pipe_created_whitelist.csv
+    | inputlookup append=t threathunting_pipe_whitelist.csv
 
 | sort -added_date
 | dedup mitre_technique_id host_fqdn process_path pipe_name
-| outputlookup threathunting_pipe_created_whitelist.csv
+| outputlookup threathunting_pipe_whitelist.csv
 | fields added_date contact mitre_technique_id reason host_fqdn process_path pipe_name
 
           </query>
@@ -73,7 +73,7 @@
       <table>
         <title>Current Entries</title>
         <search>
-          <query>| inputlookup threathunting_pipe_created_whitelist.csv | sort -added_datetime | fields added_date contact mitre_technique_id reason host_fqdn process_path pipe_name
+          <query>| inputlookup threathunting_pipe_whitelist.csv | sort -added_datetime | fields added_date contact mitre_technique_id reason host_fqdn process_path pipe_name
 </query>
           <earliest>0</earliest>
         </search>
