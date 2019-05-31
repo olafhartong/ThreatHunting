@@ -461,62 +461,6 @@
     </panel>
   </row>
   <row>
-    <panel depends="$panel_pipe_show$">
-      <title>Pipe Connected</title>
-      <table>
-        <search>
-          <progress>
-            <condition match="'job.resultCount' &gt; 0">
-              <set token="panel_pipe_show">true</set>
-            </condition>
-            <condition>
-              <unset token="panel_pipe_show"></unset>
-            </condition>
-          </progress>
-          <query>index=threathunting host_fqdn=$computer$ event_description="*Pipe*" | `pipe_created_whitelist`
-| rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-| table _time indextime ID Technique Category Trigger host_fqdn process_path process_id process_guid pipe_name</query>
-          <earliest>$time_picker.earliest$</earliest>
-          <latest>$time_picker.latest$</latest>
-        </search>
-        <option name="count">6</option>
-        <option name="drilldown">cell</option>
-        <option name="refresh.display">progressbar</option>
-        <drilldown>
-          <condition field="Category">
-            <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
-          </condition>
-          <condition field="Technique">
-            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
-          </condition>
-          <condition field="ID">
-            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
-          </condition>
-          <condition field="_time">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/pipe_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.target_process_path=$row.target_process_path$&form.process_path=$row.process_path$&form.pipe_name=$row.pipe_name$]]>
-            </link>
-          </condition>
-          <condition field="host_fqdn">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
-          </condition>
-          <condition field="process_guid">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
-          </condition>
-          <condition>
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
-          </condition>
-        </drilldown>
-      </table>
-    </panel>
-  </row>
-  <row>
     <panel depends="$panel_wmi_show$">
       <title>WMI</title>
       <table>
@@ -529,10 +473,10 @@
               <unset token="panel_wmi_show"></unset>
             </condition>
           </progress>
-          <query>index=threathunting host_fqdn=$computer$ event_description="WMI*" 
+          <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="WMI*"  ($exclude_technique$) AND ($exclude_host_fqdn$)
 | `wmi_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| table _time indextime ID Technique Category Trigger host_fqdn user_name wmi_consumer_name wmi_consumer_destination</query>
+| table _time ID Technique Category Trigger host_fqdn user_name wmi_consumer_name wmi_consumer_destination</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -549,6 +493,16 @@
           <condition field="ID">
             <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
           </condition>
+          <condition field="host_fqdn">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>          
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -558,6 +512,63 @@
       </table>
     </panel>
   </row>
+  <row>
+    <panel depends="$panel_pipe_show$">
+      <title>Pipes</title>
+      <table>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_pipe_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_pipe_show"></unset>
+            </condition>
+          </progress>
+          <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="Pipe*"  ($exclude_technique$) AND ($exclude_host_fqdn$)
+| `pipe_whitelist` 
+| rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
+| table _time ID Technique Category Trigger host_fqdn pipe_name process_path process_guid process_id</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="count">6</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <condition field="Category">
+            <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
+          </condition>
+          <condition field="Technique">
+            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
+          </condition>
+          <condition field="ID">
+            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
+          </condition>
+          <condition field="host_fqdn">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+          <condition field="pipe_name">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/pipe_drilldown?form.host_fqdn=$row.host_fqdn$&form.pipe_name=$row.pipe_name$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition>
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+        </drilldown>
+      </table>
+    </panel>
+  </row>  
   <row>
     <panel>
       <title>Related raw logs</title>

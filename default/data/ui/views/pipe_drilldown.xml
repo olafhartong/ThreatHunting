@@ -1,0 +1,206 @@
+<form>
+  <label>Pipe Name Drilldown</label>
+  <fieldset submitButton="true">
+    <input type="text" token="pipe_name">
+      <label>Pipe Name</label>
+      <default>*</default>
+      <prefix>"</prefix>
+      <suffix>"</suffix>
+    </input>
+    <input type="text" token="host_fqdn">
+      <label>Host FQDN</label>
+      <default>*</default>
+      <prefix>"</prefix>
+      <suffix>"</suffix>
+    </input>
+    <input type="time" token="timepicker">
+      <label>Time span</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Pipe Create events</title>
+      <table>
+        <search>
+          <query>`sysmon` event_id=17 pipe_name=$pipe_name$ host_fqdn=$host_fqdn$ 
+| `pipe_whitelist` 
+| table _time host_fqdn pipe_name process_path process_guid</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <condition field="_time">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/pipe_whitelist?form.mitre_technique_id=T0000&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.pipe_name=$row.pipe_name$]]>
+            </link>
+          </condition>
+          <condition field="pipe_name">
+            <link target="_blank">https://www.google.com/search?q=$row.pipe_name$</link>
+          </condition>
+          <condition field="host_fqdn">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+          <condition>
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+        </drilldown>
+      </table>
+    </panel>
+    <panel>
+      <title>Pipe Create and Connect events</title>
+      <viz type="sankey_diagram_app.sankey_diagram">
+        <search>
+          <query>`sysmon` (event_id=17 OR event_id=18) pipe_name=$pipe_name$ host_fqdn=$host_fqdn$
+| `pipe_whitelist` | stats count by process_path pipe_name</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">400</option>
+        <option name="refresh.display">preview</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Activity by Pipe Connects</title>
+      <viz type="punchcard_app.punchcard">
+        <search>
+          <query>`sysmon` event_id=18 pipe_name=$pipe_name$ host_fqdn=$host_fqdn$ 
+| `pipe_whitelist` 
+| stats count by date_hour pipe_name</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="drilldown">all</option>
+        <option name="punchcard_app.punchcard.minColor">#d93f3c</option>
+        <option name="punchcard_app.punchcard.numOfBins">9</option>
+        <option name="punchcard_app.punchcard.radiusScale">global</option>
+        <option name="punchcard_app.punchcard.useColors">false</option>
+        <option name="refresh.display">preview</option>
+        <drilldown>
+          <condition field="_time">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/pipe_whitelist?form.mitre_technique_id=T0000&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.pipe_name=$row.pipe_name$]]>
+            </link>
+          </condition>
+          <condition field="pipe_name">
+            <link target="_blank">https://www.google.com/search?q=$row.pipe_name$</link>
+          </condition>
+          <condition field="host_fqdn">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+          <condition>
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+        </drilldown>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Pipe Connects</title>
+      <table>
+        <search>
+          <query>`sysmon` event_id=18 pipe_name=$pipe_name$ host_fqdn=$host_fqdn$ 
+| `pipe_whitelist` 
+| table _time host_fqdn pipe_name process_path process_guid process_id</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">preview</option>
+        <drilldown>
+          <condition field="_time">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/pipe_whitelist?form.mitre_technique_id=T0000&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.pipe_name=$row.pipe_name$]]>
+            </link>
+          </condition>
+          <condition field="pipe_name">
+            <link target="_blank">https://www.google.com/search?q=$row.pipe_name$</link>
+          </condition>
+          <condition field="host_fqdn">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+          <condition>
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Raw events (not-whitelisted)</title>
+      <event>
+        <search>
+          <query>`sysmon` (event_id=17 OR event_id=18) pipe_name=$pipe_name$ host_fqdn=$host_fqdn$</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="refresh.display">preview</option>
+        <drilldown>
+          <condition field="_time">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/pipe_whitelist?form.mitre_technique_id=T0000&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.pipe_name=$row.pipe_name$]]>
+            </link>
+          </condition>
+          <condition field="pipe_name">
+            <link target="_blank">https://www.google.com/search?q=$row.pipe_name$</link>
+          </condition>
+          <condition field="host_fqdn">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+          <condition>
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+        </drilldown>
+      </event>
+    </panel>
+  </row>
+</form>
