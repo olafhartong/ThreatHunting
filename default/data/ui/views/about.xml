@@ -1,9 +1,9 @@
 <dashboard>
   <label>About this app</label>
   <row>
-    <panel ref="Intro" app="ThreatHunting"></panel>
     <panel ref="getting_started" app="ThreatHunting"></panel>
     <panel ref="pre-requirements" app="ThreatHunting"></panel>
+    <panel ref="Intro" app="ThreatHunting"></panel>    
   </row>
   <row>
     <panel>

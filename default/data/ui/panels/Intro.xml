@@ -1,10 +1,14 @@
 <panel>
-  <title>How to use this app</title>
+  <title>Credits</title>
   <html>
-    <p>This app will help you cover a lot of the techniques mentioned in the MITRE ATTACK framework</p>
+    <p>This app incorporates the work of many fabuloous researches and developers, some honorary mentions;</p>
     <ul>
-      <li><a class="external text" target="_blank" href="https://attack.mitre.org/wiki/Main_Page">MITRE website</a></li>
-      <li><a class="external text" target="_blank" href="https://github.com/olafhartong/ThreatHunting/wiki">This APPs WIKI page</a></li>
+      <li><a class="external text" target="_blank" href="https://github.com/Cyb3rWard0g/OSSEM">OSSEM</a> by Roberto Rodriguez</li>
+      <li><a class="external text" target="_blank" href="https://github.com/secops4thewin">secops4thewin</a> for his great visualizations</li>
+      <li><a class="external text" target="_blank" href="https://www.swisscom.ch">Swisscom</a> for their Virustotal checker for new binaries</li>
+      <li><a class="external text" target="_blank" href="https://github.com/Neo23x0/sigma">Sigma</a> for the inspiration for several searches</li>
+      <li><a class="external text" target="_blank" href="http://www.hexacorn.com/blog/">Adam/Hexacorn</a></li>
+      <li><a class="external text" target="_blank" href="https://twitter.com/olafhartong/likes">All the great tweets by people</a></li>
     </ul>
-  </html>
+  </html>  
 </panel>
