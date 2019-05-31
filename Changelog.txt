@@ -1,13 +1,20 @@
 ### Updates 1.4.0
 
 New Features
+- NEW REQUIREMENT : Link Analysis app >> LINK
 - Initial mapping of Windows 4768/9 events in props.conf
 - Pipe Drilldown dashboard
+- File create whitelist macro
+- File create Drilldown dashboard
+- Added 9 new searches
+- 
 
 Changes
-- renamed pipe_created_whitelist macro to pipe_whitelist
-- renamed pipe_created_whitelist csv to pipe_whitelist throughout the app
--
+- Renamed pipe_created_whitelist macro to pipe_whitelist
+- Renamed pipe_created_whitelist csv to pipe_whitelist throughout the app
+- Replaced the force directed visual by link analysis for network connection drilldown
+- Extended T1218,T1216,T1081 searches
+- Credits pane
 
 Bugfixes
 - 
