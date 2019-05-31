@@ -3,10 +3,11 @@
      <collection label="Drilldowns">
 		  <view name="mitre_attack_overview"/>        
 		  <view name="activity_drilldown"/>  
-      <view name="computer_drilldown"/>
-		  <view name="network_connection_drilldown"/>        
-      <view name="pipe_drilldown"/>   	      
-      <view name="parentprocess_guid_drilldown"/>   	
+        <view name="computer_drilldown"/>
+        <view name="file_create_drilldown"/>        
+	     <view name="network_connection_drilldown"/>        
+        <view name="pipe_drilldown"/>   	      
+        <view name="parentprocess_guid_drilldown"/>   	
 		  <view name="process_guid_drilldown"/>      
     </collection>
     <collection label="Hunting Indicators">
@@ -20,6 +21,7 @@
         <view name="process_create_whitelist"/>
         <view name="network_whitelist"/>      
         <view name="file_access_whitelist"/>
+        <view name="file_create_whitelist"/>        
         <view name="process_access_whitelist"/>
         <view name="remote_thread_whitelist"/>            
         <view name="registry_whitelist"/>      

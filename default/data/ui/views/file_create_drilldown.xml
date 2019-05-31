@@ -1,0 +1,218 @@
+<form>
+  <label>File Create Drilldown</label>
+  <fieldset submitButton="true">
+    <input type="text" token="file_name">
+      <label>File Name</label>
+      <default>*</default>
+      <prefix>"</prefix>
+      <suffix>"</suffix>
+    </input>
+    <input type="text" token="file_path">
+      <label>File Path</label>
+      <default>*</default>
+      <prefix>"</prefix>
+      <suffix>"</suffix>
+    </input>
+    <input type="text" token="process_path">
+      <label>Process Path</label>
+      <default>*</default>
+      <prefix>"</prefix>
+      <suffix>"</suffix>
+    </input>
+    <input type="text" token="host_fqdn">
+      <label>Host FQDN</label>
+      <default>*</default>
+      <prefix>"</prefix>
+      <suffix>"</suffix>
+    </input>
+    <input type="time" token="timepicker">
+      <label>Time span</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Recorded file create events</title>
+      <table>
+        <search>
+          <query>index=threathunting file_name=$file_name$ host_fqdn=$host_fqdn$ file_path=$file_path$ process_path=$process_path$
+| `file_create_whitelist` 
+| table _time host_fqdn file_name file_path process_path process_guid</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <condition field="_time">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/file_create_whitelist?form.mitre_technique_id=T0000&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.file_name=$row.file_name$]]>
+            </link>
+          </condition>
+          <condition field="file_name">
+            <link target="_blank">https://www.google.com/search?q=$row.file_name$</link>
+          </condition>
+          <condition field="host_fqdn">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+          <condition>
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+        </drilldown>
+      </table>
+    </panel>
+    <panel>
+      <title>File creates by process</title>
+      <viz type="sankey_diagram_app.sankey_diagram">
+        <search>
+          <query>`sysmon` (event_id=11) file_name=$file_name$ host_fqdn=$host_fqdn$ file_path=$file_path$ process_path=$process_path$
+| `file_create_whitelist` | stats count by process_path file_name</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">400</option>
+        <option name="refresh.display">preview</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>File create activity by process</title>
+      <viz type="punchcard_app.punchcard">
+        <search>
+          <query>`sysmon` event_id=11 file_name=$file_name$ host_fqdn=$host_fqdn$ file_path=$file_path$ process_path=$process_path$
+| `file_create_whitelist` 
+| stats count by date_hour process_path</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="drilldown">all</option>
+        <option name="punchcard_app.punchcard.minColor">#d93f3c</option>
+        <option name="punchcard_app.punchcard.numOfBins">9</option>
+        <option name="punchcard_app.punchcard.radiusScale">global</option>
+        <option name="punchcard_app.punchcard.useColors">false</option>
+        <option name="refresh.display">preview</option>
+        <drilldown>
+          <condition field="_time">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/file_create_whitelist?form.mitre_technique_id=T0000&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.file_name=$row.file_name$]]>
+            </link>
+          </condition>
+          <condition field="file_name">
+            <link target="_blank">https://www.google.com/search?q=$row.file_name$</link>
+          </condition>
+          <condition field="host_fqdn">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+          <condition>
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+        </drilldown>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>file creates</title>
+      <table>
+        <search>
+          <query>`sysmon` event_id=11 file_name=$file_name$ host_fqdn=$host_fqdn$ file_path=$file_path$ process_path=$process_path$
+| `file_create_whitelist` 
+| table _time host_fqdn file_name file_path process_path process_guid process_id</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">preview</option>
+        <drilldown>
+          <condition field="_time">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/file_create_whitelist?form.mitre_technique_id=T0000&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.file_name=$row.file_name$]]>
+            </link>
+          </condition>
+          <condition field="file_name">
+            <link target="_blank">https://www.google.com/search?q=$row.file_name$</link>
+          </condition>
+          <condition field="host_fqdn">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+          <condition>
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Raw events (not-whitelisted)</title>
+      <event>
+        <search>
+          <query>`sysmon` (event_id=11) file_name=$file_name$ host_fqdn=$host_fqdn$ file_path=$file_path$ process_path=$process_path$</query>
+          <earliest>$timepicker.earliest$</earliest>
+          <latest>$timepicker.latest$</latest>
+        </search>
+        <option name="refresh.display">preview</option>
+        <drilldown>
+          <condition field="_time">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/file_create_whitelist?form.mitre_technique_id=T0000&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.file_name=$row.file_name$]]>
+            </link>
+          </condition>
+          <condition field="file_name">
+            <link target="_blank">https://www.google.com/search?q=$row.file_name$</link>
+          </condition>
+          <condition field="host_fqdn">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+          <condition>
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+        </drilldown>
+      </event>
+    </panel>
+  </row>
+</form>

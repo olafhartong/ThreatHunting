@@ -204,25 +204,28 @@
     </panel>
   </row>
   <row>
-    <panel depends="$panel_file_show$">
+    <panel depends="$panel_filec_show$">
       <title>File Create</title>
       <table>
         <search>
-          <query>index=threathunting process_guid=$process_guid$ event_description="File *" | `file_access_whitelist` | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-          | table _time indextime ID Technique Category Trigger host_fqdn process_path file_path process_guid process_id</query>
-          <earliest>$time_picker.earliest$</earliest>
-          <latest>$time_picker.latest$</latest>
           <progress>
             <condition match="'job.resultCount' &gt; 0">
-              <set token="panel_file_show">true</set>
+              <set token="panel_filec_show">true</set>
             </condition>
             <condition>
-              <unset token="panel_file_show"></unset>
+              <unset token="panel_filec_show"></unset>
             </condition>
           </progress>
+          <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="File Create"  ($exclude_technique$) AND ($exclude_host_fqdn$)
+| `file_create_whitelist` 
+| rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
+| table _time ID Technique Category Trigger host_fqdn process_path file_name file_path process_guid process_id</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
         </search>
         <option name="count">6</option>
         <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
         <drilldown>
           <condition field="Category">
             <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
@@ -240,7 +243,7 @@
           </condition>
           <condition field="_time">
             <link target="_blank">
-              <![CDATA[/app/ThreatHunting/file_create_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.file_path=$row.file_path$&form.process_path=$row.process_path$]]>
+              <![CDATA[/app/ThreatHunting/file_create_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.file_path=$row.file_path$&form.file_name=$row.file_name$&form.process_path=$row.process_path$]]>
             </link>
           </condition>
           <condition field="host_fqdn">
@@ -253,6 +256,21 @@
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
+          <condition field="file_name">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/file_create_drilldown?form.file_name=$row.file_name$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="file_path">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/file_create_drilldown?form.file_path=$row.file_path$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_path">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/file_create_drilldown?form.process_path=$row.process_path$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>          
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
