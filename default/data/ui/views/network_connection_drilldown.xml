@@ -23,7 +23,7 @@
   </fieldset>
   <row>
     <panel>
-      <viz type="force_directed_viz.force_directed">
+      <viz type="link_analysis_app.link_analysis">
         <search>
           <query>`sysmon` src_ip=$src_ip$ dst_ip=$dst_ip$ |  stats count by src_ip,dst_ip
 | table src_ip, dst_ip, count</query>
