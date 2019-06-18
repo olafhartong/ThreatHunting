@@ -1,0 +1,284 @@
+<form>
+  <label>DNS Stacking</label>
+  <fieldset submitButton="true" autoRun="false">
+    <input type="time" token="time_picker" searchWhenChanged="false">
+      <label>Timespan</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="text" token="host_fqdn" searchWhenChanged="false">
+      <label>Host FQDN</label>
+      <default>*</default>
+      <initialValue>*</initialValue>
+    </input>
+    <input type="text" token="process_path" searchWhenChanged="false">
+      <label>Process Path</label>
+      <default>*</default>
+      <initialValue>*</initialValue>
+    </input>
+    <input type="text" token="query_name" searchWhenChanged="false">
+      <label>Query name</label>
+      <default>*</default>
+      <initialValue>*</initialValue>
+    </input>
+    <input type="text" token="query_status" searchWhenChanged="false">
+      <label>Query status</label>
+      <default>*</default>
+      <initialValue>*</initialValue>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>DNS Request by host, process</title>
+      <table>
+        <search>
+          <progress>
+            <condition>
+              <unset token="panel_proc_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` event_id=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$
+| stats count by host_fqdn process_path query_name query_status 
+| sort -count 
+| table count host_fqdn process_path query_name query_status</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <condition field="count">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_create_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.process_parent_path=$row.process_parent_path$&form.process_command_line=$row.process_command_line$&form.process_parent_command_line=$row.process_parent_command_line$&form.hash_sha256=$row.hash_sha256$]]>
+            </link>
+          </condition>
+          <condition field="Category">
+            <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
+          </condition>
+          <condition field="Technique">
+            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
+          </condition>
+          <condition field="ID">
+            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
+          </condition>
+          <condition field="hash_sha256">
+            <link target="_blank">https://www.virustotal.com/#/file/$row.hash_sha256$/detection</link>
+          </condition>
+          <condition field="user_name">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/activity_drilldown?form.user=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+          <condition field="host_fqdn">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition>
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+        </drilldown>
+      </table>
+    </panel>
+    <panel>
+      <title>DNS Requests by process, query</title>
+      <table>
+        <search>
+          <progress>
+            <condition>
+              <unset token="panel_proca_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` event_id=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$ 
+| stats count by process_path query_name query_status host_fqdn 
+| sort -count 
+| table count process_path query_name query_status host_fqdn</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <condition field="Category">
+            <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
+          </condition>
+          <condition field="Technique">
+            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
+          </condition>
+          <condition field="ID">
+            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
+          </condition>
+          <condition field="user_name">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/activity_drilldown?form.user=$row.user_name$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="target_process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.target_process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="count">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_access_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.target_process_path=$row.target_process_path$&form.process_path=$row.process_path$&form.process_granted_access=$row.process_granted_access$]]>
+            </link>
+          </condition>
+          <condition field="host_fqdn">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition>
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>DNS Request by query_name &gt; desc</title>
+      <table>
+        <search>
+          <progress>
+            <condition>
+              <unset token="panel_proc_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` event_id=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$
+| stats count by query_name query_status process_path host_fqdn 
+| sort -count 
+| table count query_name query_status process_path host_fqdn</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <condition field="count">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_create_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.process_parent_path=$row.process_parent_path$&form.process_command_line=$row.process_command_line$&form.process_parent_command_line=$row.process_parent_command_line$&form.hash_sha256=$row.hash_sha256$]]>
+            </link>
+          </condition>
+          <condition field="Category">
+            <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
+          </condition>
+          <condition field="Technique">
+            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
+          </condition>
+          <condition field="ID">
+            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
+          </condition>
+          <condition field="hash_sha256">
+            <link target="_blank">https://www.virustotal.com/#/file/$row.hash_sha256$/detection</link>
+          </condition>
+          <condition field="user_name">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/activity_drilldown?form.user=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+          <condition field="host_fqdn">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition>
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+        </drilldown>
+      </table>
+    </panel>
+    <panel>
+      <title>DNS Request by query_name &gt; asc</title>
+      <table>
+        <search>
+          <progress>
+            <condition>
+              <unset token="panel_proca_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` event_id=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$
+| stats count by query_name query_status process_path host_fqdn 
+| sort count 
+| table count query_name query_status process_path host_fqdn</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <condition field="Category">
+            <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
+          </condition>
+          <condition field="Technique">
+            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
+          </condition>
+          <condition field="ID">
+            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
+          </condition>
+          <condition field="user_name">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/activity_drilldown?form.user=$row.user_name$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="target_process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.target_process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="count">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_access_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.target_process_path=$row.target_process_path$&form.process_path=$row.process_path$&form.process_granted_access=$row.process_granted_access$]]>
+            </link>
+          </condition>
+          <condition field="host_fqdn">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition>
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+</form>
