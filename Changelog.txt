@@ -6,21 +6,26 @@ New Features
 - Pipe Drilldown dashboard
 - File create whitelist macro
 - File create Drilldown dashboard
-- Added 9 new searches
-- 
+- Added Stacking tools section
+- Added Mitre ATT&CK stacking page
+- Added 11 new searches
 
 Changes
 - Renamed pipe_created_whitelist macro to pipe_whitelist
 - Renamed pipe_created_whitelist csv to pipe_whitelist throughout the app
 - Replaced the force directed visual by link analysis for network connection drilldown
+- added a few fields to props.conf, including Sysmon DNS events
 - Extended T1218,T1216,T1081 searches
 - Credits pane
+- Rebuilt the whitelisting, searches are a lot quicker now and take less resources
 
 Bugfixes
-- 
+- T1197 had a typo
+- props fix for host_fqdn in non-xml ingest
+- whitelisting with long csv files caused bad behavior
 
 Todo
-- Added whitelisting to all _time fields throughout the app
+- Add whitelisting to all _time fields throughout the app
 
 ### Updates 1.3.4
 
