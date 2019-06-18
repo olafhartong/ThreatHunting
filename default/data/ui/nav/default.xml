@@ -10,6 +10,10 @@
         <view name="parentprocess_guid_drilldown"/>   	
 		  <view name="process_guid_drilldown"/>      
     </collection>
+     <collection label="Stacking Tools">
+		  <view name="mitre_attack_stacking"/>
+        <view name="dns_attack_stacking"/>
+    </collection>    
     <collection label="Hunting Indicators">
         <view name="sysmon"/>
     	<view name="lateral_movement_indicators"/>
