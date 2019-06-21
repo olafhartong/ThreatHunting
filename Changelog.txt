@@ -1,3 +1,8 @@
+### Updates 1.4.1
+Changes
+- Changed the schedule for the savedsearches so that not all the 134 searches run at the same time
+- Changed "Windows Management Instrumentation" to WMI in the name of the [T1047] searches to get below the 100 character max name length limit
+
 ### Updates 1.4.0
 
 New Features
