@@ -13,7 +13,7 @@
     </collection>
      <collection label="Stacking Tools">
 		  <view name="mitre_attack_stacking"/>
-        <view name="dns_attack_stacking"/>
+        <view name="dns_stacking"/>
     </collection>    
     <collection label="Hunting Indicators">
         <view name="sysmon"/>
