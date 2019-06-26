@@ -40,9 +40,10 @@
             </condition>
           </progress>
           <query>`sysmon` event_id=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$
-| stats count by host_fqdn process_path query_name query_status 
+| eventstats count, sparkline by host_fqdn process_path query_name query_status
+| dedup host_fqdn process_path query_name query_status 
 | sort -count 
-| table count host_fqdn process_path query_name query_status</query>
+| table count sparkline host_fqdn process_path query_name query_status</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -101,9 +102,10 @@
             </condition>
           </progress>
           <query>`sysmon` event_id=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$ 
-| stats count by process_path query_name query_status host_fqdn 
+| eventstats count, sparkline by process_path query_name query_status host_fqdn 
+| dedup process_path query_name query_status host_fqdn 
 | sort -count 
-| table count process_path query_name query_status host_fqdn</query>
+| table count sparkline process_path query_name query_status host_fqdn</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -157,128 +159,78 @@
   </row>
   <row>
     <panel>
-      <title>DNS Request by query_name &gt; desc</title>
-      <table>
+      <title>[Beaconing] Queries by connection count and deviation</title>
+      <chart>
         <search>
-          <progress>
-            <condition>
-              <unset token="panel_proc_show"></unset>
-            </condition>
-          </progress>
           <query>`sysmon` event_id=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$
-| stats count by query_name query_status process_path host_fqdn 
-| sort -count 
-| table count query_name query_status process_path host_fqdn</query>
+| search NOT 
+    [| inputlookup threathunting_dns_whitelist.csv 
+    | fields query_name ]
+| eval current_time=_time
+| sort 0 + current_time
+| streamstats global=f window=2 current=f last(current_time) AS previous_time by host_fqdn, query_name
+| eval diff_time=current_time-previous_time
+| eventstats count, stdev(diff_time) AS std by host_fqdn, query_name
+| where std&lt;5 AND count&gt;50
+| stats count AS conn_count, dc(host_fqdn) AS unique_sources, values(std) AS diff_deviation, values(category) AS category BY query_name</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
         </search>
-        <option name="count">10</option>
-        <option name="dataOverlayMode">none</option>
-        <option name="drilldown">cell</option>
-        <option name="refresh.display">progressbar</option>
-        <drilldown>
-          <condition field="count">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_create_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.process_parent_path=$row.process_parent_path$&form.process_command_line=$row.process_command_line$&form.process_parent_command_line=$row.process_parent_command_line$&form.hash_sha256=$row.hash_sha256$]]>
-            </link>
-          </condition>
-          <condition field="Category">
-            <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
-          </condition>
-          <condition field="Technique">
-            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
-          </condition>
-          <condition field="ID">
-            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
-          </condition>
-          <condition field="hash_sha256">
-            <link target="_blank">https://www.virustotal.com/#/file/$row.hash_sha256$/detection</link>
-          </condition>
-          <condition field="user_name">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/activity_drilldown?form.user=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
-            </link>
-          </condition>
-          <condition field="host_fqdn">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
-          </condition>
-          <condition field="process_guid">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
-          </condition>
-          <condition>
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
-          </condition>
-        </drilldown>
-      </table>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">log</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">0</option>
+        <option name="trellis.size">small</option>
+      </chart>
     </panel>
+  </row>
+  <row>
     <panel>
-      <title>DNS Request by query_name &gt; asc</title>
-      <table>
+      <title>[Beaconing] Queries by time delta</title>
+      <chart>
         <search>
-          <progress>
-            <condition>
-              <unset token="panel_proca_show"></unset>
-            </condition>
-          </progress>
           <query>`sysmon` event_id=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$
-| stats count by query_name query_status process_path host_fqdn 
-| sort count 
-| table count query_name query_status process_path host_fqdn</query>
+| search NOT 
+    [| inputlookup threathunting_dns_whitelist.csv 
+    | fields query_name ]| fields host_fqdn, query_name, _time | fields - _raw 
+| sort 0 query_name,host_fqdn,-_time
+| streamstats current=f window=1 first(_time) as next_query by query_name, host_fqdn
+| eval delta=round(abs(next_query-_time),0)
+| search delta&gt;0 
+| search  query_name!="None"
+| stats count as query_count dc(delta) as delta_dc by query_name
+| eval num_requests_per_time_delta=query_count/delta_dc
+| where num_requests_per_time_delta &gt;= 5
+| sort 500 - query_count
+| table query_name num_requests_per_time_delta query_count</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
-        <option name="count">10</option>
-        <option name="dataOverlayMode">none</option>
-        <option name="drilldown">cell</option>
-        <option name="refresh.display">progressbar</option>
-        <drilldown>
-          <condition field="Category">
-            <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
-          </condition>
-          <condition field="Technique">
-            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
-          </condition>
-          <condition field="ID">
-            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
-          </condition>
-          <condition field="user_name">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/activity_drilldown?form.user=$row.user_name$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
-          </condition>
-          <condition field="target_process_guid">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.target_process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
-          </condition>
-          <condition field="count">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_access_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.target_process_path=$row.target_process_path$&form.process_path=$row.process_path$&form.process_granted_access=$row.process_granted_access$]]>
-            </link>
-          </condition>
-          <condition field="host_fqdn">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
-          </condition>
-          <condition field="process_guid">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
-          </condition>
-          <condition>
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
-          </condition>
-        </drilldown>
-      </table>
+        <option name="charting.chart">bar</option>
+        <option name="charting.drilldown">none</option>
+      </chart>
     </panel>
   </row>
 </form>
