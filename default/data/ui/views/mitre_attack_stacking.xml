@@ -108,9 +108,10 @@
 | eval hash_sha256=lower(hash_sha256)
 | `process_create_whitelist`
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category | fillnull value=* Trigger
-| stats count by ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_command_line hash_sha256 
+| eventstats count, sparkline by ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_command_line hash_sha256
+| dedup ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_command_line hash_sha256 
 | sort - count 
-| table count ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_command_line hash_sha256</query>
+| table count sparkline ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_command_line hash_sha256</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -175,9 +176,10 @@
           <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="Process Access" ($exclude_technique$) AND ($exclude_host_fqdn$) 
 | `process_access_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| stats count by ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access 
+| eventstats count, sparkline by ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access
+| dedup ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access 
 | sort -count 
-| table count ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access</query>
+| table count sparkline ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -246,9 +248,10 @@
 | `file_access_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
 | fillnull value=* Trigger 
-| stats count by ID Technique Category Trigger host_fqdn process_path file_name file_path 
+| eventstats count, sparkline by ID Technique Category Trigger host_fqdn process_path file_name file_path 
+| dedup ID Technique Category Trigger host_fqdn process_path file_name file_path 
 | sort -count 
-| table count ID Technique Category Trigger host_fqdn process_path file_name file_path</query>
+| table count sparkline ID Technique Category Trigger host_fqdn process_path file_name file_path</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -326,9 +329,10 @@
           <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="Image *" ($exclude_technique$) AND ($exclude_host_fqdn$) 
 | `image_load_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| stats count by ID Technique Category Trigger host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status 
+| eventstats count, sparkline by ID Technique Category Trigger host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status
+| dedup ID Technique Category Trigger host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status 
 | sort -count 
-| table count ID Technique Category Trigger host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status</query>
+| table count sparkline ID Technique Category Trigger host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -389,9 +393,10 @@
 | `network_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
 | fillnull value=* src_host_name dst_host_name Trigger
-| stats count by ID Technique Category Trigger host_fqdn user_name process_path src_ip dst_ip dst_port src_host_name dst_host_name 
+| eventstats count, sparkline by ID Technique Category Trigger host_fqdn user_name process_path src_ip dst_ip dst_port src_host_name dst_host_name 
+| dedup ID Technique Category Trigger host_fqdn user_name process_path src_ip dst_ip dst_port src_host_name dst_host_name 
 | sort - count 
-| table count ID Technique Category Trigger host_fqdn user_name process_path src_ip dst_ip dst_port src_host_name dst_host_name</query>
+| table count sparkline ID Technique Category Trigger host_fqdn user_name process_path src_ip dst_ip dst_port src_host_name dst_host_name</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -448,9 +453,10 @@
           <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="Create Remote Thread" ($exclude_technique$) AND ($exclude_host_fqdn$) 
 | `remote_thread_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| stats count by ID Technique Category Trigger host_fqdn process_name target_process_path target_process_address 
+| eventstats count, sparkline by ID Technique Category Trigger host_fqdn process_name target_process_path target_process_address
+| dedup ID Technique Category Trigger host_fqdn process_name target_process_path target_process_address 
 | sort -count 
-| table count ID Technique Category Trigger host_fqdn process_name target_process_path target_process_address</query>
+| table count sparkline ID Technique Category Trigger host_fqdn process_name target_process_path target_process_address</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -513,9 +519,10 @@
 | `registry_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
 | fillnull value=* registry_key_details Trigger 
-| stats count by ID Technique Category Trigger event_type host_fqdn process_path registry_key_path registry_key_details 
+| eventstats count, sparkline by ID Technique Category Trigger event_type host_fqdn process_path registry_key_path registry_key_details
+| dedup ID Technique Category Trigger event_type host_fqdn process_path registry_key_path registry_key_details 
 | sort -count 
-| table count ID Technique Category Trigger event_type host_fqdn process_path registry_key_path registry_key_details</query>
+| table count sparkline ID Technique Category Trigger event_type host_fqdn process_path registry_key_path registry_key_details</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -572,9 +579,10 @@
           <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="WMI*" ($exclude_technique$) AND ($exclude_host_fqdn$) 
 | `wmi_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| stats count by ID Technique Category Trigger host_fqdn user_name wmi_consumer_name wmi_consumer_destination 
+| eventstats count, sparkline by ID Technique Category Trigger host_fqdn user_name wmi_consumer_name wmi_consumer_destination
+| dedup ID Technique Category Trigger host_fqdn user_name wmi_consumer_name wmi_consumer_destination 
 | sort -count 
-| table count ID Technique Category Trigger host_fqdn user_name wmi_consumer_name wmi_consumer_destination</query>
+| table count sparkline ID Technique Category Trigger host_fqdn user_name wmi_consumer_name wmi_consumer_destination</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -626,9 +634,10 @@
           <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="Pipe*" ($exclude_technique$) AND ($exclude_host_fqdn$) 
 | `pipe_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| stats count by ID Technique Category Trigger host_fqdn pipe_name process_path 
+| eventstats count, sparkline by ID Technique Category Trigger host_fqdn pipe_name process_path
+| dedup ID Technique Category Trigger host_fqdn pipe_name process_path 
 | sort -count 
-| table count ID Technique Category Trigger host_fqdn pipe_name process_path</query>
+| table count sparkline ID Technique Category Trigger host_fqdn pipe_name process_path</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
