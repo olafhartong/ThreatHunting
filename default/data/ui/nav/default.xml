@@ -4,6 +4,7 @@
 		  <view name="mitre_attack_overview"/>        
 		  <view name="activity_drilldown"/>  
         <view name="computer_drilldown"/>
+        <view name="user_drilldown"/>
         <view name="file_create_drilldown"/>        
 	     <view name="network_connection_drilldown"/>        
         <view name="pipe_drilldown"/>   	      
