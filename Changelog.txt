@@ -8,6 +8,9 @@ New Features
 - File create Drilldown dashboard
 - Added Stacking tools section
 - Added Mitre ATT&CK stacking page
+- Added DNS stacking page with beaconing detection
+- Added User drilldown page
+- Added AD User activity overview page
 - Added 11 new searches
 
 Changes
@@ -17,7 +20,7 @@ Changes
 - added a few fields to props.conf, including Sysmon DNS events
 - Extended T1218,T1216,T1081 searches
 - Credits pane
-- Rebuilt the whitelisting, searches are a lot quicker now and take less resources
+- Rebuilt the whitelisting, searches are a LOT quicker now and take less resources
 
 Bugfixes
 - T1197 had a typo
