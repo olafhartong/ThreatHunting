@@ -1,6 +1,6 @@
 <form>
-  <label>User Drilldown</label>
-  <fieldset submitButton="false">
+  <label>User drilldown</label>
+  <fieldset submitButton="false" autoRun="true">
     <input type="time" token="time_picker" searchWhenChanged="true">
       <label>Timespan</label>
       <default>
@@ -17,23 +17,7 @@
   </fieldset>
   <row>
     <panel>
-      <title>Activity by host</title>
-      <table>
-        <search>
-          <query>index=threathunting user_name=$user_name$
-| eventstats count, sparkline by host_fqdn | dedup host_fqdn | table count sparkline host_fqdn user_name</query>
-          <earliest>$time_picker.earliest$</earliest>
-          <latest>$time_picker.latest$</latest>
-        </search>
-        <option name="count">10</option>
-        <option name="drilldown">none</option>
-        <option name="refresh.display">preview</option>
-      </table>
-    </panel>
-  </row>
-  <row>
-    <panel>
-      <title>Activity by technique</title>
+      <title>User activity by technique</title>
       <viz type="punchcard_app.punchcard">
         <search>
           <query>index=threathunting user_name=$user_name$
@@ -51,6 +35,379 @@
         <option name="punchcard_app.punchcard.useColors">false</option>
         <option name="refresh.display">preview</option>
       </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>User activity by host</title>
+      <table>
+        <search>
+          <query>index=threathunting user_name=$user_name$
+| eventstats count, sparkline by host_fqdn | dedup host_fqdn | table count sparkline host_fqdn user_name</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">preview</option>
+      </table>
+    </panel>
+    <panel depends="$panel_afail$">
+      <title>Authentication Failures over time</title>
+      <chart>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_afail">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_afail"></unset>
+            </condition>
+          </progress>
+          <query>`windows-security` (EventCode=4771 AND "Audit Failure" NOT Failure_Code=0x19) OR EventCode=4625 (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| timechart count</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel depends="$panel_afail$">
+      <title>Authentication Failures by user and host</title>
+      <viz type="sankey_diagram_app.sankey_diagram">
+        <search>
+          <query>`windows-security` (EventCode=4771 AND "Audit Failure" NOT Failure_Code=0x19) OR EventCode=4625 Account_Name!="*$$"  (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| eval user_name=mvindex(Account_Name,1) 
+| stats count by user_name, ComputerName
+| sort -count 
+| head 10</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_accreate$">
+      <title>Accounts Created</title>
+      <table>
+        <title>EventID 4720 - SA Accounts are excluded</title>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_accreate">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_accreate"></unset>
+            </condition>
+          </progress>
+          <query>`windows-security` EventCode="4720" (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| eval "admin_name"=mvindex(Account_Name,0)
+| eval "user_name"=mvindex(Account_Name,1)
+| search admin_name!=SA_*
+| table _time user_name Display_Name admin_name 
+| rename user_name AS "Added User" Display_Name AS "Full User Name" admin_name AS "Added by"</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">preview</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+    <panel depends="$panel_accenabled$">
+      <title>Accounts Enabled</title>
+      <table>
+        <title>EventID 4722 - SA and Computer Accounts are excluded</title>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_accenabled">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_accenabled"></unset>
+            </condition>
+          </progress>
+          <query>`windows-security` EventCode="4722" (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| eval "user_name"=mvindex(Account_Name,1)
+| eval "admin_name"=mvindex(Account_Name,0)
+| table _time user_name admin_name
+| search admin_name!= SA_* user_name!=*$
+| rename user_name as "User Account" admin_name AS "Enabled By"</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">row</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+    <panel depends="$panel_accdelete$">
+      <title>Accounts Deleted</title>
+      <table>
+        <title>EventID 4726 - SA and Computer Accounts are excluded</title>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_accdelete">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_accdelete"></unset>
+            </condition>
+          </progress>
+          <query>`windows-security` EventCode="4726" (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| eval "admin_name"=mvindex(Account_Name,0)
+| eval "user_name"=mvindex(Account_Name,1)
+| search admin_name!=SA_* admin_name!=*$ 
+| table _time user_name admin_name 
+| rename user_name AS "Removed User" admin_name AS "Removed by"</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_acclocked$">
+      <title>Accounts Locked Out</title>
+      <table>
+        <title>EventID 4740- No exclusions are made</title>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_acclocked">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_acclocked"></unset>
+            </condition>
+          </progress>
+          <query>`windows-security` EventCode="4740" (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| eval "Account_Name"=mvindex(Account_Name,1)
+| table _time Account_Name, Caller_Computer_Name
+| rename Account_Name as "User Account" Caller_Computer_Name AS "Used Computer"</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+    <panel depends="$panel_accunlocked$">
+      <title>Accounts Unlocked</title>
+      <table>
+        <title>EventID 4767- No exclusions are made</title>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_accunlocked">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_accunlocked"></unset>
+            </condition>
+          </progress>
+          <query>`windows-security` EventCode="4767" (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| eval "user_name"=mvindex(Account_Name,1)
+| eval "admin_name"=mvindex(Account_Name,0)
+| table _time user_name admin_name
+| rename user_name as "User Account" admin_name AS "Unlocked By"</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+    <panel depends="$panel_accdisabled$">
+      <title>Accounts Disabled</title>
+      <table>
+        <title>EventID 4725 - SA and Computer Accounts are excluded</title>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_accdisabled">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_accdisabled"></unset>
+            </condition>
+          </progress>
+          <query>`windows-security` EventCode="4725" (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| eval "admin_name"=mvindex(Account_Name,0)
+| eval "user_name"=mvindex(Account_Name,1)
+| search admin_name!="SA_*" admin_name!="*$"
+| search user_name!="*$"
+| table _time user_name admin_name
+| rename user_name AS "Disabled User" admin_name AS "Disabled by"</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="rowNumbers">false</option>
+      </table>
+    </panel>
+    <panel depends="$panel_accrenamed$">
+      <title>Accounts Renamed</title>
+      <table>
+        <title>EventID 4781- No exclusions are made</title>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_accrenamed">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_accrenamed"></unset>
+            </condition>
+          </progress>
+          <query>`windows-security` EventCode="4781" (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| table  _time Old_Account_Name, New_Account_Name, Account_Name,
+| rename Old_Account_Name as "Old Account Name", New_Account_Name as "New Account Name", Account_Name as "Renamed by", _time as Day
+| convert timeformat="%d/%m/%Y - %H:%M:%S" ctime(Day)</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_accpassuser$">
+      <title>Accounts Password Changed by user</title>
+      <table>
+        <title>EventID 4723 - No exclusions are made</title>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_accpassuser">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_accpassuser"></unset>
+            </condition>
+          </progress>
+          <query>`windows-security` EventCode="4723"  Type!="Audit Failure" (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| eval "user_name"=mvindex(Account_Name,1)
+| search user_name!="*$"
+| table _time user_name 
+| rename user_name as "User Account"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+    <panel depends="$panel_accpassadmin$">
+      <title>Account Password Change by administrator</title>
+      <table>
+        <title>EventID 4724 - SA and Computer Accounts are excluded</title>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_accpassadmin">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_accpassadmin"></unset>
+            </condition>
+          </progress>
+          <query>`windows-security` EventCode="4724" (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| eval "user_name"=mvindex(Account_Name,1)
+| eval "admin_name"=mvindex(Account_Name,0)
+| search admin_name!="SA_*" user_name!=*$
+| table _time user_name admin_name
+| rename user_name AS "User Account" admin_name AS "Changed By"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_pth$">
+      <title>Pass the Hash</title>
+      <table>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_pth">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_pth"></unset>
+            </condition>
+          </progress>
+          <query>index=threathunting (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| table _time indextime,host_fqdn, user_sid, user_name src_host_name src_ip target_user_name target_user_domain</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">true</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
     </panel>
   </row>
   <row>
@@ -202,7 +559,7 @@
               <unset token="panel_filec_show"></unset>
             </condition>
           </progress>
-          <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="File Create"  ($exclude_technique$) AND ($exclude_host_fqdn$)
+          <query>index=threathunting event_description="File Create" user_name=$user_name$
 | `file_create_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
 | table _time ID Technique Category Trigger host_fqdn process_path file_name file_path process_guid process_id</query>
@@ -508,7 +865,7 @@
               <unset token="panel_wmi_show"></unset>
             </condition>
           </progress>
-          <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="WMI*"  ($exclude_technique$) AND ($exclude_host_fqdn$)
+          <query>index=threathunting event_description="WMI*" user_name=$user_name$
 | `wmi_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
 | table _time ID Technique Category Trigger host_fqdn user_name wmi_consumer_name wmi_consumer_destination</query>
@@ -560,7 +917,7 @@
               <unset token="panel_pipe_show"></unset>
             </condition>
           </progress>
-          <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="Pipe*"  ($exclude_technique$) AND ($exclude_host_fqdn$)
+          <query>index=threathunting event_description="Pipe*" user_name=$user_name$
 | `pipe_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
 | table _time ID Technique Category Trigger host_fqdn pipe_name process_path process_guid process_id</query>
@@ -609,7 +966,7 @@
       <title>Related raw logs</title>
       <event>
         <search>
-          <query>`sysmon` host_fqdn=$computer$</query>
+          <query>`sysmon` user_name=$user_name$</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -617,6 +974,7 @@
         <option name="list.wrap">1</option>
         <option name="maxLines">0</option>
         <option name="raw.drilldown">inner</option>
+        <option name="refresh.display">progressbar</option>
         <option name="table.wrap">1</option>
         <option name="type">list</option>
       </event>
