@@ -10,7 +10,6 @@ New Features
 - Added Mitre ATT&CK stacking page
 - Added DNS stacking page with beaconing detection
 - Added User drilldown page
-- Added AD User activity overview page
 - Added 11 new searches
 
 Changes
@@ -18,7 +17,7 @@ Changes
 - Renamed pipe_created_whitelist csv to pipe_whitelist throughout the app
 - Replaced the force directed visual by link analysis for network connection drilldown
 - added a few fields to props.conf, including Sysmon DNS events
-- Extended T1218,T1216,T1081 searches
+- Extended T1218,T1216,T1081,T1075 searches
 - Credits pane
 - Rebuilt the whitelisting, searches are a LOT quicker now and take less resources
 
