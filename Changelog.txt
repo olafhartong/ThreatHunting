@@ -16,10 +16,11 @@ Changes
 - Renamed pipe_created_whitelist macro to pipe_whitelist
 - Renamed pipe_created_whitelist csv to pipe_whitelist throughout the app
 - Replaced the force directed visual by link analysis for network connection drilldown
-- added a few fields to props.conf, including Sysmon DNS events
+- Added a few fields to props.conf, including Sysmon DNS events
 - Extended T1218,T1216,T1081,T1075 searches
 - Credits pane
 - Rebuilt the whitelisting, searches are a LOT quicker now and take less resources
+- Added whitelisting to all panels in the overview
 
 Bugfixes
 - T1197 had a typo
