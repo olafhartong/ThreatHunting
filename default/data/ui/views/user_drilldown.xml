@@ -69,15 +69,18 @@
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
-        <option name="charting.axisTitleX.visibility">collapsed</option>
-        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
         <option name="charting.axisY2.enabled">0</option>
         <option name="charting.chart">column</option>
         <option name="charting.drilldown">none</option>
-        <option name="charting.legend.placement">none</option>
+        <option name="charting.legend.placement">right</option>
         <option name="refresh.display">progressbar</option>
       </chart>
     </panel>
+  </row>
+  <row>
     <panel depends="$panel_afail$">
       <title>Authentication Failures by user and host</title>
       <viz type="sankey_diagram_app.sankey_diagram">
@@ -92,6 +95,22 @@
         </search>
         <option name="drilldown">none</option>
         <option name="refresh.display">progressbar</option>
+      </viz>
+    </panel>
+    <panel>
+      <title>Authentication Success by user and host</title>
+      <viz type="sankey_diagram_app.sankey_diagram">
+        <search>
+          <query>`windows-security` EventCode=4624 Account_Name!="*$$" (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| eval user_name=mvindex(Account_Name,1)
+| stats count by user_name, ComputerName Logon_Type
+| sort -count 
+| head 25</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">preview</option>
       </viz>
     </panel>
   </row>
@@ -189,6 +208,87 @@
         <option name="dataOverlayMode">none</option>
         <option name="drilldown">cell</option>
         <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_acccreatech$">
+      <title>Accounts Created or Changed and Added to Group(s)</title>
+      <table>
+        <title>EventID 4738 OR 4720 + 4728,4732,4746,4751,4755,4761 - SA Accounts are excluded</title>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_acccreatech">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_acccreatech"></unset>
+            </condition>
+          </progress>
+          <query>`windows-security` (EventCode=4720 OR EventCode=4738 OR EventCode=4728 OR EventCode=4732 OR EventCode=4746 OR EventCode=4751 OR EventCode=4756 OR EventCode=4761) (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| eval user_sid=mvindex(Security_ID,0) 
+| eval target_account_sid=mvindex(Security_ID,1) 
+| eval target_user_name=mvindex(Account_Name,1) 
+| eval user_name=mvindex(Account_Name,0) 
+| rex field=Message "(?&lt;short_message&gt;.*\r)" 
+| fields _time host EventCode user_sid target_account_sid user_name target_user_name Group_Name short_message 
+| transaction maxspan=30m maxpause=5m fields=target_account_sid 
+| sort _time | eval eventcodes=mvcount(EventCode) 
+| where eventcodes &gt;1 
+| table _time host EventCode user_name target_user_name Group_Name short_message</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_accchrem$">
+      <title>Accounts Changed and Removed from Group(s)</title>
+      <table>
+        <title>EventID 4738 + 4729,4733,4747,4752,4756,4762 - SA Accounts are excluded</title>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_accchrem">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_accchrem"></unset>
+            </condition>
+          </progress>
+          <query>`windows-security` (EventCode=4738 OR EventCode=4729 OR EventCode=4733 OR EventCode=4747 OR EventCode=4752 OR EventCode=4756 OR EventCode=4762) (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| eval user_sid=mvindex(Security_ID,0) 
+| eval target_account_sid=mvindex(Security_ID,1) 
+| eval target_user_name=mvindex(Account_Name,1) 
+| eval user_name=mvindex(Account_Name,0) 
+| rex field=Message "(?&lt;short_message&gt;.*\r)" 
+| fields _time host EventCode user_sid target_account_sid user_name target_user_name Group_Name short_message 
+| transaction maxspan=30m maxpause=5m fields=target_account_sid 
+| sort _time 
+| eval eventcodes=mvcount(EventCode) 
+| where eventcodes &gt;1 
+| table _time host EventCode user_name target_user_name Group_Name short_message</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
         <option name="rowNumbers">false</option>
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
@@ -350,7 +450,7 @@
     <panel depends="$panel_accpassadmin$">
       <title>Account Password Change by administrator</title>
       <table>
-        <title>EventID 4724 - SA and Computer Accounts are excluded</title>
+        <title>EventID 4724 - SA Accounts are excluded</title>
         <search>
           <progress>
             <condition match="'job.resultCount' &gt; 0">
@@ -363,7 +463,7 @@
           <query>`windows-security` EventCode="4724" (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
 | eval "user_name"=mvindex(Account_Name,1)
 | eval "admin_name"=mvindex(Account_Name,0)
-| search admin_name!="SA_*" user_name!=*$
+| search admin_name!="SA_*"
 | table _time user_name admin_name
 | rename user_name AS "User Account" admin_name AS "Changed By"</query>
           <earliest>-24h@h</earliest>
@@ -374,6 +474,7 @@
         <option name="dataOverlayMode">none</option>
         <option name="drilldown">cell</option>
         <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
         <option name="rowNumbers">false</option>
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
