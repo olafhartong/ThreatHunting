@@ -1,6 +1,5 @@
 <form>
   <label>WMI whitelist editor</label>
-  <description>--wip</description>
   <fieldset submitButton="true" autoRun="true">
     <input type="dropdown" token="mitre_technique_id" id="mitre_technique_id">
       <label>mitre_technique_id</label>
@@ -21,14 +20,18 @@
       <label>host_fqdn</label>
       <default></default>
     </input>
-    <input type="text" token="process_path">
-      <label>process_path</label>
+    <input type="text" token="user_name">
+      <label>user_name</label>
       <default></default>
     </input>
-    <input type="text" token="pipe_name">
-      <label>pipe_name</label>
+    <input type="text" token="wmi_consumer_name">
+      <label>wmi_consumer_name</label>
       <default></default>
     </input>
+    <input type="text" token="wmi_consumer_destination">
+      <label>wmi_consumer_destination</label>
+      <default></default>
+    </input>    
     <input type="text" token="input_reason">
       <label>reason</label>
       <default>CHANGEME</default>
@@ -43,8 +46,9 @@
     | eval host_fqdn = COALESCE(if(trim("$host_fqdn$")="", "*", trim("$host_fqdn$")), "*")
     | eval mitre_technique_id = COALESCE(if(trim("$mitre_technique_id$")="", "*", trim("$mitre_technique_id$")), "*")
     | eval reason = trim("$input_reason$")
-    | eval process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*")
-    | eval pipe_name = COALESCE(if(trim("$pipe_name$")="", "*", trim("$pipe_name$")), "*")
+    | eval wmi_consumer_name = COALESCE(if(trim("$wmi_consumer_name$")="", "*", trim("$wmi_consumer_name$")), "*")
+    | eval wmi_consumer_destination = COALESCE(if(trim("$wmi_consumer_destination$")="", "*", trim("$wmi_consumer_destination$")), "*")    
+    | eval user_name = COALESCE(if(trim("$user_name$")="", "*", trim("$user_name$")), "*")
     | eval added_date = strftime(now(), "%Y-%m-%d")
     | eval contact = ("$env:user$")
     | table *
@@ -54,9 +58,9 @@
     | inputlookup append=t threathunting_wmi_whitelist.csv    
 
 | sort -added_date
-| dedup mitre_technique_id host_fqdn process_path pipe_name
+| dedup mitre_technique_id host_fqdn user_name wmi_consumer_name wmi_consumer_destination
 | outputlookup threathunting_wmi_whitelist.csv
-| fields added_date contact mitre_technique_id reason host_fqdn process_path pipe_name
+| fields added_date contact mitre_technique_id reason host_fqdn user_name wmi_consumer_name wmi_consumer_destination
 
           </query>
           <earliest>0</earliest>
@@ -74,7 +78,7 @@
       <table>
         <title>Current Entries</title>
         <search>
-          <query>| inputlookup threathunting_wmi_whitelist.csv | sort -added_datetime | fields added_date contact mitre_technique_id reason host_fqdn process_path pipe_name
+          <query>| inputlookup threathunting_wmi_whitelist.csv | sort -added_datetime | fields added_date contact mitre_technique_id reason host_fqdn user_name wmi_consumer_name wmi_consumer_destination
 </query>
           <earliest>0</earliest>
         </search>
