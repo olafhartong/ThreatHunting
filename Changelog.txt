@@ -11,7 +11,7 @@ New Features
 - Added DNS stacking page with beaconing detection
 - Added User drilldown page
 - Added Macro drilldown dashboard
-- Added 22 new searches
+- Added 24 new searches
 
 Changes
 - Renamed pipe_created_whitelist macro to pipe_whitelist
@@ -21,6 +21,7 @@ Changes
 - Extended T1218,T1216,T1081,T1075 searches
 - Added Credits pane
 - Rebuilt the whitelisting, searches are a LOT quicker now and take less resources
+- Added original_file_name to event_id 1 and 7 
 
 Bugfixes
 - T1197 had a typo
