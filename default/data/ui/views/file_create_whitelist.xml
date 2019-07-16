@@ -1,5 +1,5 @@
 <form>
-  <label>File Create whitelist editor</label>
+  <label>File Created whitelist editor</label>
   <fieldset submitButton="true" autoRun="true">
     <input type="dropdown" token="mitre_technique_id" id="mitre_technique_id">
       <label>mitre_technique_id</label>

@@ -207,7 +207,7 @@
   </row>
   <row>
     <panel depends="$panel_filec_show$">
-      <title>File Create</title>
+      <title>File Created</title>
       <table>
         <search>
           <progress>
@@ -218,7 +218,7 @@
               <unset token="panel_filec_show"></unset>
             </condition>
           </progress>
-          <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="File Create"  ($exclude_technique$) AND ($exclude_host_fqdn$)
+          <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="File Created"  ($exclude_technique$) AND ($exclude_host_fqdn$)
 | `file_create_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
 | table _time ID Technique Category Trigger host_fqdn process_path file_name file_path process_guid process_id</query>
