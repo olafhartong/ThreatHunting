@@ -10,8 +10,8 @@ New Features
 - Added Mitre ATT&CK stacking page
 - Added DNS stacking page with beaconing detection
 - Added User drilldown page
-- Added Macro hunting dashboard
-- Added 21 new searches
+- Added Macro drilldown dashboard
+- Added 22 new searches
 
 Changes
 - Renamed pipe_created_whitelist macro to pipe_whitelist
@@ -19,9 +19,8 @@ Changes
 - Replaced the force directed visual by link analysis for network connection drilldown
 - Added a few fields to props.conf, including Sysmon DNS events
 - Extended T1218,T1216,T1081,T1075 searches
-- Credits pane
+- Added Credits pane
 - Rebuilt the whitelisting, searches are a LOT quicker now and take less resources
-- Added whitelisting to all panels in the overview
 
 Bugfixes
 - T1197 had a typo
