@@ -18,7 +18,8 @@
     <collection label="Hunting Indicators">
         <view name="sysmon"/>
     	<view name="lateral_movement_indicators"/>
-      	<view name="powershell_events"/>
+      	<view name="macro_drilldown"/>
+         <view name="powershell_events"/>
         <view name="newly_observed_hashes"/>
      </collection>
   <view name="computer_investigator"/>
