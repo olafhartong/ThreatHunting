@@ -111,7 +111,7 @@
 | eventstats count, sparkline by ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_command_line hash_sha256
 | dedup ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_command_line hash_sha256 
 | sort - count 
-| table count sparkline ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_command_line hash_sha256</query>
+| table count sparkline ID Technique Category Trigger host_fqdn user_name process_parent_path process_path original_file_name process_command_line hash_sha256</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>

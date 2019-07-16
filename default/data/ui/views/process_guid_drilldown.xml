@@ -82,7 +82,7 @@
 | eval hash_sha256=lower(hash_sha256)
 | `process_create_whitelist`
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-| table _time indextime ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_parent_command_line process_command_line process_parent_guid hash_sha256 process_id process_parent_id</query>
+| table _time indextime ID Technique Category Trigger host_fqdn user_name process_parent_path process_path original_file_name process_parent_command_line process_command_line process_parent_guid hash_sha256 process_id process_parent_id</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <progress>
