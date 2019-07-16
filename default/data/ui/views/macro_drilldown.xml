@@ -1,28 +1,33 @@
 <form theme="light">
   <label>Macro Drilldown</label>
   <fieldset submitButton="true" autoRun="true">
-    <input type="time" token="time_picker">
-      <label>Time range</label>
+    <input type="time" token="time_picker" searchWhenChanged="true">
+      <label>Timespan</label>
       <default>
-        <earliest>-1d@d</earliest>
+        <earliest>-24h@h</earliest>
         <latest>now</latest>
       </default>
     </input>
-    <input type="text" token="username1">
-      <label>User Name</label>
+    <input type="text" token="host_fqdn" searchWhenChanged="true">
+      <label>host_fqdn</label>
       <default>*</default>
-    </input>
-    <input type="text" token="computer1" searchWhenChanged="false">
-      <label>Computer Name</label>
-      <default>*</default>
+      <initialValue>*</initialValue>
     </input>
   </fieldset>
   <row>
-    <panel>
+    <panel depends="$panel_outlook$">
       <title>Macro Enabled Counter - Outlook</title>
       <single>
         <search>
-          <query>`sysmon` event_id=13 registry_key_path="*Software\\Microsoft\\VBA\\7.1\\Common*" |map search="search (`sysmon` process_command_line="*Content.Outlook*" (process_parent_guid=$$process_guid$$ OR process_guid=$$process_guid$$))" | dedup process_command_line |stats count</query>
+          <progress>
+            <condition match="'job.resultCount' &gt; 1">
+              <set token="panel_outlook">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_outlook"></unset>
+            </condition>
+          </progress>          
+          <query>`sysmon` host_fqdn=$host_fqdn$ registry_key_path=*Software\\Microsoft\\VBA\\7.1\\Common |map search="search (`sysmon` process_command_line=*Content.Outlook* (process_parent_guid=$$process_guid$$ OR process_guid=$$process_guid$$))" | dedup process_command_line |stats count</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -32,16 +37,50 @@
         <option name="refresh.display">progressbar</option>
         <option name="useColors">1</option>
         <option name="useThousandSeparators">1</option>
-        <drilldown>
-          <link target="_blank">search?q=sourcetype=%22WinEventLog:Microsoft-Windows-Sysmon/Operational%22%20TargetObject=*Software%5C%5CMicrosoft%5C%5CVBA%5C%5C7.1%5C%5CCommon&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
-        </drilldown>
       </single>
     </panel>
+    <panel depends="$panel_outlook$">
+      <title>Macro Enabled Documents - Outlook</title>
+      <table>
+        <search>
+          <query>`sysmon` host_fqdn=$host_fqdn$ registry_key_path=*Software\\Microsoft\\VBA\\7.1\\Common |map search="search (`sysmon` process_command_line=*Content.Outlook* (process_parent_guid=$$process_guid$$ OR process_guid=$$process_guid$$))" | dedup process_command_line |eval splitprocess_command_line=split(process_command_line,"\\") | eval Newprocess_command_line=mvindex(splitprocess_command_line,-1) |eval tmpUserName=mvindex(User,-1)| eval splitUserName=split(tmpUserName, "\\")| eval UserName=mvindex(tmpUserName,0) |eval splitDocName=split(Newprocess_command_line, "\"")|eval DocName=mvindex(splitDocName,0) | eval file_name=DocName  |eval "user_name"=UserName |table _time file_name host_fqdn user_name process_parent_name </query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">cell</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <format type="number" field="ParentImage"></format>
+        <format type="color" field="host">
+          <colorPalette type="sharedList"></colorPalette>
+          <scale type="sharedCategory"></scale>
+        </format>
+        <format type="color" field="file_name">
+          <colorPalette type="sharedList"></colorPalette>
+          <scale type="sharedCategory"></scale>
+        </format>
+        <format type="color" field="user_name">
+          <colorPalette type="sharedList"></colorPalette>
+          <scale type="sharedCategory"></scale>
+        </format>
+        <format type="color" field="host_fqdn">
+          <colorPalette type="sharedList"></colorPalette>
+          <scale type="sharedCategory"></scale>
+        </format>
+        <format type="color" field="process_parent_name">
+          <colorPalette type="sharedList"></colorPalette>
+          <scale type="sharedCategory"></scale>
+        </format>
+      </table>
+    </panel>
+  </row>
+  <row>
     <panel>
-      <title>Macro Enabled Counter - Desktop</title>
+      <title>Macro Enabled Counter - Opened document</title>
       <single>
         <search>
-          <query> `sysmon` event_id=13 registry_key_path="*trustrecords*" | rex field=registry_key_path "(?&lt;doc_name&gt;((\/)(.+\.\w+)$))"  |makemv delim="/" doc_name|eval doc=mvindex(doc_name,-1)| search doc_name=* |dedup doc|eval  start_time = relative_time(_time, "-1h@h")|eval  end_time = relative_time(_time, "+1h@h")| stats count</query>
+          <query> `sysmon` host_fqdn=$host_fqdn$ trustrecords host=*| rex field=registry_key_path "(?&lt;doc_name&gt;((\/)(.+\.\w+)$))"  |makemv delim="/" doc_name|eval doc=mvindex(doc_name,-1)| search doc_name=* |dedup doc|eval  start_time = relative_time(_time, "-1h@h")|eval  end_time = relative_time(_time, "+1h@h")| stats count</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -52,88 +91,33 @@
         <option name="trellis.enabled">0</option>
         <option name="trellis.size">small</option>
         <option name="useColors">1</option>
-        <drilldown>
-          <link target="_blank">search?q=trustrecords%20sourcetype=%22WinEventLog:Microsoft-Windows-Sysmon/Operational%22%20host=*%7C%20rex%20field=registry_key_path%20%22(?%3Cdoc_name%3E((%5C/)(.+%5C.%5Cw+)$))%22%20%20%7Cmakemv%20delim=%22/%22%20doc_name%7Ceval%20doc=mvindex(doc_name,-1)%7C%20search%20doc_name=*%20%7Cdedup%20doc%7Ceval%20%20start_time%20=%20relative_time(_time,%20%22-1h@h%22)%7Ceval%20%20end_time%20=%20relative_time(_time,%20%22+1h@h%22)%7C%20stats%20count&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
-        </drilldown>
       </single>
     </panel>
-  </row>
-  <row>
     <panel>
-      <title>Macro Enabled Documents - Outlook</title>
+      <title>Macro Enabled Documents - Opened document</title>
       <table>
         <search>
-          <query>`sysmon` TargetObject=*Software\\Microsoft\\VBA\\7.1\\Common |map search="search (`sysmon` CommandLine=*Content.Outlook* (ParentProcessGuid=$$ProcessGuid$$ OR ProcessGuid=$$ProcessGuid$$))" | dedup CommandLine |eval splitCommandLine=split(CommandLine,"\\") | eval NewCommandLine=mvindex(splitCommandLine,-1) |eval tmpUserName=mvindex(User,-1)| eval splitUserName=split(tmpUserName, "\\")| eval UserName=mvindex(tmpUserName,0) |eval splitDocName=split(NewCommandLine, "\"")|eval DocName=mvindex(splitDocName,0) | eval "Document Name"=DocName |eval "Host Name"=host |eval "User Name"=UserName|table _time "Document Name" "Host Name" "User Name" ParentImage </query>
+          <query>`sysmon` host_fqdn=$host_fqdn$ trustrecords host=* | rex field=registry_key_path "(?&lt;doc_name&gt;((\/)(.+\.\w+)$))" |makemv delim="/" doc_name|eval doc=mvindex(doc_name,-1)| search   doc_name=* |dedup doc|eval  start_time = relative_time(_time, "-1h@h")|eval file_name=doc |eval  end_time = relative_time(_time, "+1h@h") |table _time file_name process_name host_fqdn</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
         <option name="count">10</option>
-        <option name="drilldown">cell</option>
-        <option name="rowNumbers">false</option>
-        <option name="totalsRow">false</option>
-        <format type="number" field="ParentImage"></format>
-        <format type="color" field="UserName">
-          <colorPalette type="sharedList"></colorPalette>
-          <scale type="sharedCategory"></scale>
-        </format>
-        <format type="color" field="host">
-          <colorPalette type="sharedList"></colorPalette>
-          <scale type="sharedCategory"></scale>
-        </format>
-        <format type="color" field="DocName">
-          <colorPalette type="sharedList"></colorPalette>
-          <scale type="sharedCategory"></scale>
-        </format>
-        <format type="color" field="User Name">
-          <colorPalette type="sharedList"></colorPalette>
-          <scale type="sharedCategory"></scale>
-        </format>
-        <format type="color" field="Host Name">
-          <colorPalette type="sharedList"></colorPalette>
-          <scale type="sharedCategory"></scale>
-        </format>
-        <format type="color" field="Document Name">
-          <colorPalette type="sharedList"></colorPalette>
-          <scale type="sharedCategory"></scale>
-        </format>
-        <drilldown>
-          <link target="_blank">search?q=sourcetype=%22WinEventLog:Microsoft-Windows-Sysmon/Operational%22%20TargetObject=*Software%5C%5CMicrosoft%5C%5CVBA%5C%5C7.1%5C%5CCommon%20%7Cmap%20search=%22search%20(sourcetype=%22WinEventLog:Microsoft-Windows-Sysmon/Operational%22%20CommandLine=*Content.Outlook*%20(ParentProcessGuid=$$ProcessGuid$$%20OR%20ProcessGuid=$$ProcessGuid$$))%22%20%7C%20dedup%20CommandLine%20%7Ceval%20splitCommandLine=split(CommandLine,%22%5C%5C%22)%20%7C%20eval%20NewCommandLine=mvindex(splitCommandLine,-1)%20%7Ceval%20tmpUserName=mvindex(User,-1)%7C%20eval%20splitUserName=split(tmpUserName,%20%22%5C%5C%22)%7C%20eval%20UserName=mvindex(tmpUserName,0)%20%7Ceval%20splitDocName=split(NewCommandLine,%20%22%5C%22%22)%7Ceval%20DocName=mvindex(splitDocName,0)%20%7Ctable%20_time%20DocName%20host%20UserName%20ParentImage&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
-        </drilldown>
-      </table>
-    </panel>
-    <panel>
-      <title>Macro Enabled Documents - Desktop</title>
-      <table>
-        <search>
-          <query>`sysmon` trustrecords host=* | rex field=registry_key_path "(?&lt;doc_name&gt;((\/)(.+\.\w+)$))" |makemv delim="/" doc_name|eval doc=mvindex(doc_name,-1)| search   doc_name=* |dedup doc|eval  start_time = relative_time(_time, "-1h@h")|eval "Document Name"=doc |eval  end_time = relative_time(_time, "+1h@h") |eval "Host Name"=host_name|table _time "Document Name" process_name "Host Name"</query>
-          <earliest>$time_picker.earliest$</earliest>
-          <latest>$time_picker.latest$</latest>
-        </search>
-        <option name="count">10</option>
-        <option name="dataOverlayMode">highlow</option>
+        <option name="dataOverlayMode">heatmap</option>
         <option name="drilldown">cell</option>
         <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
         <option name="rowNumbers">false</option>
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
-        <format type="color" field="doc">
+        <format type="color" field="host_fqdn">
           <colorPalette type="sharedList"></colorPalette>
           <scale type="sharedCategory"></scale>
         </format>
-        <format type="color" field="ComputerName">
-          <colorPalette type="list">[#53A051,#006D9C,#F8BE34,#F1813F,#AF575A,#DC4E41]</colorPalette>
-          <scale type="threshold">0,30,70,100,200</scale>
-        </format>
-        <format type="number" field="doc"></format>
-        <format type="color" field="host_name">
+        <format type="color" field="file_name">
           <colorPalette type="sharedList"></colorPalette>
           <scale type="sharedCategory"></scale>
         </format>
-        <format type="color" field="Document Name">
-          <colorPalette type="sharedList"></colorPalette>
-          <scale type="sharedCategory"></scale>
-        </format>
-        <format type="color" field="Host Name">
+        <format type="color" field="process_name">
           <colorPalette type="sharedList"></colorPalette>
           <scale type="sharedCategory"></scale>
         </format>
@@ -141,16 +125,46 @@
     </panel>
   </row>
   <row>
+    <panel>
+      <title>Macro Enabled Correlation</title>
+      <viz type="force_directed_viz.force_directed">
+        <search>
+          <query>`sysmon` host_fqdn=$host_fqdn$ (event_id=13 OR event_id=13) (registry_key_path=*trustrecords* OR *Software\\Microsoft\\VBA\\7.1\\Common) 
+|map search="search (`sysmon` process_name=*winword.exe* OR process_name=*excel.exe* OR process_name=*outlook.exe* OR process_parent_command_line=*winword.exe* OR process_parent_command_line=*excel.exe* OR process_parent_command_line=*outlook.exe* OR process_command_line=*winword.exe* OR process_command_line=*excel.exe* OR process_command_line=*outlook.exe*) AND (process_command_line!=*explorer.exe* OR process_parent_command_line!=*explorer.exe*)"
+|eval tmpUserName=mvindex(User,-1)
+|eval splitUserName=split(tmpUserName, "\\")
+|eval UserName=mvindex(tmpUserName,0)  
+|stats count by UserName, process_command_line</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="force_directed_viz.force_directed.AttractDistanceMax">200</option>
+        <option name="force_directed_viz.force_directed.AttractDistanceMin">60</option>
+        <option name="force_directed_viz.force_directed.AttractForceStrength">-200</option>
+        <option name="force_directed_viz.force_directed.CollisionIterations">1</option>
+        <option name="force_directed_viz.force_directed.CollisionRadius">20</option>
+        <option name="force_directed_viz.force_directed.CollisionStrength">0.7</option>
+        <option name="force_directed_viz.force_directed.ForceCollision">15</option>
+        <option name="force_directed_viz.force_directed.RepelDistanceMax">100</option>
+        <option name="force_directed_viz.force_directed.RepelDistanceMin">10</option>
+        <option name="force_directed_viz.force_directed.RepelForceStrength">-140</option>
+        <option name="force_directed_viz.force_directed.StrokeWidth">1</option>
+        <option name="force_directed_viz.force_directed.theme">light</option>
+        <option name="height">400</option>
+        <option name="refresh.display">progressbar</option>
+      </viz>
+    </panel>
     <panel>
       <title>Macro Enabled Timeline Investigation</title>
       <viz type="timeline_app.timeline">
         <search>
-          <query>`sysmon` (EventCode=13 OR EventCode=13) (TargetObject=*trustrecords* OR *Software\\Microsoft\\VBA\\7.1\\Common)|dedup Image |table Image |map search="search(`sysmon` Image=$$Image$$)" |map search="search (`sysmon` (ParentProcessGuid=$$ProcessGuid$$ OR ProcessGuid=$$ProcessGuid$$ OR ParentImage=$$Image$$))"
+          <query>`sysmon` host_fqdn=$host_fqdn$ (event_id=13 OR event_id=13) (registry_key_path=*trustrecords* OR *Software\\Microsoft\\VBA\\7.1\\Common)|dedup Image |table Image |map search="search(`sysmon` Image=$$Image$$)" |map search="search (`sysmon` (process_parent_guid=$$process_guid$$ OR process_guid=$$process_guid$$ OR ParentImage=$$Image$$))"
 |eval tmpUserName=mvindex(User,-1)
 |eval splitUserName=split(tmpUserName, "\\")
 |eval UserName=mvindex(tmpUserName,0)
 |where UserName!="NOT_TRANSLATED"
-|table _time UserName CommandLine</query>
+|table _time UserName process_command_line</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -168,69 +182,13 @@
   </row>
   <row>
     <panel>
-      <title>Macro Enabled Correlation</title>
-      <viz type="force_directed_viz.force_directed">
-        <search>
-          <query>`sysmon` (EventCode=13 OR EventCode=13) (TargetObject=*trustrecords* OR *Software\\Microsoft\\VBA\\7.1\\Common) 
-|map search="search (`sysmon` process_name=*winword.exe* OR process_name=*excel.exe* OR process_name=*outlook.exe* OR ParentCommandLine=*winword.exe* OR ParentCommandLine=*excel.exe* OR ParentCommandLine=*outlook.exe* OR CommandLine=*winword.exe* OR CommandLine=*excel.exe* OR CommandLine=*outlook.exe*) AND (CommandLine!=*explorer.exe* OR ParentCommandLine!=*explorer.exe*)"
-|eval tmpUserName=mvindex(User,-1)
-|eval splitUserName=split(tmpUserName, "\\")
-|eval UserName=mvindex(tmpUserName,0)  
-|stats count by UserName, CommandLine</query>
-          <earliest>$time_picker.earliest$</earliest>
-          <latest>$time_picker.latest$</latest>
-        </search>
-        <option name="drilldown">none</option>
-        <option name="force_directed_viz.force_directed.AttractDistanceMax">200</option>
-        <option name="force_directed_viz.force_directed.AttractDistanceMin">60</option>
-        <option name="force_directed_viz.force_directed.AttractForceStrength">-300</option>
-        <option name="force_directed_viz.force_directed.CollisionIterations">1</option>
-        <option name="force_directed_viz.force_directed.CollisionRadius">30</option>
-        <option name="force_directed_viz.force_directed.CollisionStrength">0.7</option>
-        <option name="force_directed_viz.force_directed.ColorRange1">100</option>
-        <option name="force_directed_viz.force_directed.ColorRange1Code">#65a637</option>
-        <option name="force_directed_viz.force_directed.ColorRange2">500</option>
-        <option name="force_directed_viz.force_directed.ColorRange2Code">#6db7c6</option>
-        <option name="force_directed_viz.force_directed.ColorRange3">1000</option>
-        <option name="force_directed_viz.force_directed.ColorRange3Code">#f7bc38</option>
-        <option name="force_directed_viz.force_directed.ColorRange4">10000</option>
-        <option name="force_directed_viz.force_directed.ColorRange4Code">#f58f39</option>
-        <option name="force_directed_viz.force_directed.ColorRange5">1000000</option>
-        <option name="force_directed_viz.force_directed.ColorRange5Code">#d93f3c</option>
-        <option name="force_directed_viz.force_directed.ForceCollision">20</option>
-        <option name="force_directed_viz.force_directed.LineColor">enabled</option>
-        <option name="force_directed_viz.force_directed.LinkDistance">100</option>
-        <option name="force_directed_viz.force_directed.LinkLength">1</option>
-        <option name="force_directed_viz.force_directed.PanZoom">enabled</option>
-        <option name="force_directed_viz.force_directed.RepelDistanceMax">50</option>
-        <option name="force_directed_viz.force_directed.RepelDistanceMin">10</option>
-        <option name="force_directed_viz.force_directed.RepelForceStrength">-140</option>
-        <option name="force_directed_viz.force_directed.SWRange1">1</option>
-        <option name="force_directed_viz.force_directed.SWRange2">1</option>
-        <option name="force_directed_viz.force_directed.SWRange3">1</option>
-        <option name="force_directed_viz.force_directed.SWRange4">1</option>
-        <option name="force_directed_viz.force_directed.SWRange5">1</option>
-        <option name="force_directed_viz.force_directed.StrokeWidth">1</option>
-        <option name="force_directed_viz.force_directed.arrows">disabled</option>
-        <option name="force_directed_viz.force_directed.circleSize">5</option>
-        <option name="force_directed_viz.force_directed.lowerRange">5</option>
-        <option name="force_directed_viz.force_directed.panzoom">disabled</option>
-        <option name="force_directed_viz.force_directed.theme">light</option>
-        <option name="force_directed_viz.force_directed.upperRange">5</option>
-      </viz>
-    </panel>
-  </row>
-  <row>
-    <panel>
       <title>Macro Enabled related events - Based on logon session</title>
       <table>
         <search>
-          <query>`sysmon` (EventCode=13 OR EventCode=13) (TargetObject=*trustrecords* OR *Software\\Microsoft\\VBA\\7.1\\Common)|map search="search (Image=$$Image$$)" |map search="search (user_logon_guid=$$user_logon_guid$$)"
-
-|eval tmpUserName=mvindex(User,-1)
+          <query>index=windows host_fqdn=$host_fqdn$ (source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" OR source="WinEventLog:Microsoft-Windows-Sysmon/Operational") event_id=13 (registry_key_path=*trustrecords* OR registry_key_path=*Software\\Microsoft\\VBA\\7.1\\Common) | map search="search (`sysmon` Image=$$Image$$ OR ParentImage=$$Image$$)" |map search="search (`sysmon` user_logon_guid=$$user_logon_guid$$)" |eval tmpUserName=mvindex(User,-1)
 |eval splitUserName=split(tmpUserName, "\\")
 |eval UserName=mvindex(tmpUserName,0)  
-|table _time UserName host CommandLine Hashes Image user_logon_guid ProcessGuid</query>
+|table _time UserName host process_command_line Hashes Image user_logon_guid process_guid</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -244,7 +202,7 @@
           <colorPalette type="sharedList"></colorPalette>
           <scale type="sharedCategory"></scale>
         </format>
-        <format type="color" field="CommandLine">
+        <format type="color" field="process_command_line">
           <colorPalette type="sharedList"></colorPalette>
           <scale type="sharedCategory"></scale>
         </format>
