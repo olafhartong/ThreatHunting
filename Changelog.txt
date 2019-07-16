@@ -10,7 +10,8 @@ New Features
 - Added Mitre ATT&CK stacking page
 - Added DNS stacking page with beaconing detection
 - Added User drilldown page
-- Added 11 new searches
+- Added Macro hunting dashboard
+- Added 21 new searches
 
 Changes
 - Renamed pipe_created_whitelist macro to pipe_whitelist
