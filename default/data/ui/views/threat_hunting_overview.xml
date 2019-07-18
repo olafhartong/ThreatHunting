@@ -355,7 +355,7 @@
         <option name="totalsRow">false</option>
         <drilldown>
           <link target="_blank">
-            <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*$row.mitre_category$*&earliest=$earliest$&latest=$latest$]]>
+            <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_technique_id=$row.mitre_technique_id$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
           </link>
         </drilldown>
       </table>

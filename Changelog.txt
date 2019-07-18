@@ -22,12 +22,15 @@ Changes
 - Added Credits pane
 - Rebuilt the whitelisting, searches are a LOT quicker now and take less resources
 - Added original_file_name to event_id 1 and 7 
+- Top triggered techniques drilldown changed to technique_id
 
 Bugfixes
 - T1197 had a typo
 - props fix for host_fqdn in non-xml ingest
 - whitelisting with long csv files caused bad behavior
-- File created events didnt show
+- File created events didn't show
+- Inital Access events didn't show on overview
+- T1044 was misrepresented 
 
 Todo
 - Add whitelisting to all _time fields throughout the app
