@@ -48,7 +48,7 @@
       <single>
         <title>Initial Access</title>
         <search>
-          <query>index=threathunting mitre_category="*Initial Access*" ($exclude_technique$) AND ($exclude_host_fqdn$)
+          <query>index=threathunting mitre_category="*Initial_Access*" ($exclude_technique$) AND ($exclude_host_fqdn$)
 | timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -65,7 +65,7 @@
         <option name="useColors">1</option>
         <drilldown>
           <link target="_blank">
-            <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*Persistence*&earliest=$earliest$&latest=$latest$]]>
+            <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*Initial_Access*&earliest=$earliest$&latest=$latest$]]>
           </link>
         </drilldown>
       </single>
