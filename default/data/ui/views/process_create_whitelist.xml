@@ -34,7 +34,8 @@
     </input>
     <input type="text" token="process_command_line">
       <label>process_command_line</label>
-      <default></default>
+      <default>*</default>
+      <initialValue>*</initialValue>
     </input>
     <input type="text" token="hash_sha256">
       <label>hash_sha256</label>
