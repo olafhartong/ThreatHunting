@@ -185,8 +185,8 @@
       <title>Macro Enabled related events - Based on logon session</title>
       <table>
         <search>
-          <query>index=windows host_fqdn=$host_fqdn$ (source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" OR source="WinEventLog:Microsoft-Windows-Sysmon/Operational") event_id=13 (registry_key_path=*trustrecords* OR registry_key_path=*Software\\Microsoft\\VBA\\7.1\\Common) | map search="search (`sysmon` Image=$$Image$$ OR ParentImage=$$Image$$)" |map search="search (`sysmon` user_logon_guid=$$user_logon_guid$$)" 
-|table _time user_name host_fqdn process_parent_name process_name process_command_line process_guid hash_sha256 user_logon_guid process_parent_guid</query>
+          <query>`sysmon` host_fqdn=$host_fqdn$ event_id=13 (registry_key_path=*trustrecords* OR registry_key_path=*Software\\Microsoft\\VBA\\7.1\\Common) | map search="search (`sysmon` Image=$$Image$$ OR ParentImage=$$Image$$)" |map search="search (`sysmon` user_logon_guid=$$user_logon_guid$$)" 
+|table _time user_name host_fqdn process_parent_name process_name process_command_line process_guid hash_sha256 user_logon_guid process_parent_guid </query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
