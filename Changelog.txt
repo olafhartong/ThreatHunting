@@ -9,9 +9,11 @@ New Features
 - Added Stacking tools section
 - Added Mitre ATT&CK stacking page
 - Added DNS stacking page with beaconing detection
+- Added DNS whitelist
 - Added User drilldown page
 - Added Macro drilldown dashboard
 - Added 24 new searches
+- Added Credits pane
 
 Changes
 - Renamed pipe_created_whitelist macro to pipe_whitelist
@@ -19,13 +21,11 @@ Changes
 - Replaced the force directed visual by link analysis for network connection drilldown
 - Added a few fields to props.conf, including Sysmon DNS events
 - Extended T1218,T1216,T1081,T1075 searches
-- Added Credits pane
 - Rebuilt the whitelisting, searches are a LOT quicker now and take less resources
 - Added original_file_name to event_id 1 and 7 
 - Top triggered techniques drilldown changed to technique_id
 - Added google lookups to WMI consumers
 - Added DNS drilldown on network events
-- Added DNS whitelist
 - Added user drilldown on all relevant events
 - Synced all drilldowns to have the same behavior
 
