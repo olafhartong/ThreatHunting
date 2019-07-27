@@ -1,0 +1,69 @@
+<form>
+  <label>DNS whitelist editor</label>
+  <fieldset submitButton="true" autoRun="true">
+    <input type="text" token="host_fqdn">
+      <label>host_fqdn</label>
+      <default></default>
+    </input>
+    <input type="text" token="process_path">
+      <label>process_path</label>
+      <default></default>
+    </input>
+    <input type="text" token="query_name">
+      <label>query_name</label>
+      <default></default>
+    </input>
+    <input type="text" token="input_reason">
+      <label>reason</label>
+      <default>CHANGEME</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>Today's Entries</title>
+        <search>
+          <query>| makeresults
+    | eval host_fqdn = COALESCE(if(trim("$host_fqdn$")="", "*", trim("$host_fqdn$")), "*")
+    | eval reason = trim("$input_reason$")
+    | eval process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*")
+    | eval query_name = COALESCE(if(trim("$query_name$")="", "*", trim("$query_name$")), "*")
+    | eval added_date = strftime(now(), "%Y-%m-%d")
+    | table *
+
+    | fields - _raw _time
+    | where reason!="CHANGEME"
+    | inputlookup append=t threathunting_dns_whitelist.csv
+
+| sort -added_date
+| dedup host_fqdn process_path query_name
+| outputlookup threathunting_dns_whitelist.csv
+| fields added_date contact reason host_fqdn process_path query_name
+          </query>
+          <earliest>0</earliest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">20</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Current Entries</title>
+        <search>
+          <query>| inputlookup threathunting_dns_whitelist.csv | sort -added_datetime | fields added_date contact reason host_fqdn process_path query_name</query>
+          <earliest>0</earliest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">100</option>
+      </table>
+    </panel>
+  </row>
+</form>

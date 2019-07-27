@@ -32,6 +32,7 @@
         <view name="remote_thread_whitelist"/>            
         <view name="registry_whitelist"/>      
         <view name="image_load_whitelist"/>
+        <view name="dns_whitelist"/>        
         <view name="pipe_whitelist"/>
         <view name="wmi_whitelist"/>      
      </collection>

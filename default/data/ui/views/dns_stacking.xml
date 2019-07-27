@@ -40,6 +40,7 @@
             </condition>
           </progress>
           <query>`sysmon` event_id=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$
+| `dns_whitelist`
 | eventstats count, sparkline by host_fqdn process_path query_name query_status
 | dedup host_fqdn process_path query_name query_status 
 | sort -count 
@@ -54,40 +55,21 @@
         <drilldown>
           <condition field="count">
             <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_create_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.process_parent_path=$row.process_parent_path$&form.process_command_line=$row.process_command_line$&form.process_parent_command_line=$row.process_parent_command_line$&form.hash_sha256=$row.hash_sha256$]]>
+              <![CDATA[/app/ThreatHunting/dns_whitelist?form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.query_name=$row.query_name$]]>
             </link>
-          </condition>
-          <condition field="Category">
-            <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
-          </condition>
-          <condition field="Technique">
-            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
-          </condition>
-          <condition field="ID">
-            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
-          </condition>
-          <condition field="hash_sha256">
-            <link target="_blank">https://www.virustotal.com/#/file/$row.hash_sha256$/detection</link>
           </condition>
           <condition field="user_name">
             <link target="_blank">
-              <![CDATA[/app/ThreatHunting/activity_drilldown?form.user=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
+              <![CDATA[/app/ThreatHunting/user_drilldown?form.user_name=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
             </link>
-          </condition>
+          </condition> 
           <condition field="host_fqdn">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
-          <condition field="process_guid">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
-          </condition>
-          <condition>
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
+          <condition field="query_name">
+            <link target="_blank">https://censys.io/certificates?q=$row.query_name$</link>
           </condition>
         </drilldown>
       </table>
@@ -102,6 +84,7 @@
             </condition>
           </progress>
           <query>`sysmon` event_id=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$ 
+| `dns_whitelist`
 | eventstats count, sparkline by process_path query_name query_status host_fqdn 
 | dedup process_path query_name query_status host_fqdn 
 | sort -count 
@@ -114,44 +97,23 @@
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
         <drilldown>
-          <condition field="Category">
-            <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
-          </condition>
-          <condition field="Technique">
-            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
-          </condition>
-          <condition field="ID">
-            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
+          <condition field="count">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/dns_whitelist?form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.query_name=$row.query_name$]]>
+            </link>
           </condition>
           <condition field="user_name">
             <link target="_blank">
-              <![CDATA[/app/ThreatHunting/activity_drilldown?form.user=$row.user_name$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+              <![CDATA[/app/ThreatHunting/user_drilldown?form.user_name=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
             </link>
-          </condition>
-          <condition field="target_process_guid">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.target_process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
-          </condition>
-          <condition field="count">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_access_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.target_process_path=$row.target_process_path$&form.process_path=$row.process_path$&form.process_granted_access=$row.process_granted_access$]]>
-            </link>
-          </condition>
+          </condition> 
           <condition field="host_fqdn">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
-          <condition field="process_guid">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
-          </condition>
-          <condition>
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
+          <condition field="query_name">
+            <link target="_blank">https://censys.io/certificates?q=$row.query_name$</link>
           </condition>
         </drilldown>
       </table>
@@ -163,9 +125,7 @@
       <chart>
         <search>
           <query>`sysmon` event_id=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$
-| search NOT 
-    [| inputlookup threathunting_dns_whitelist.csv 
-    | fields query_name ]
+| `dns_whitelist`
 | eval current_time=_time
 | sort 0 + current_time
 | streamstats global=f window=2 current=f last(current_time) AS previous_time by host_fqdn, query_name
@@ -212,9 +172,9 @@
       <chart>
         <search>
           <query>`sysmon` event_id=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$
-| search NOT 
-    [| inputlookup threathunting_dns_whitelist.csv 
-    | fields query_name ]| fields host_fqdn, query_name, _time | fields - _raw 
+| `dns_whitelist` 
+| fields host_fqdn, query_name, _time 
+| fields - _raw 
 | sort 0 query_name,host_fqdn,-_time
 | streamstats current=f window=1 first(_time) as next_query by query_name, host_fqdn
 | eval delta=round(abs(next_query-_time),0)
