@@ -61,7 +61,7 @@
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
         <drilldown>
-          <condition field="_time indextime">
+          <condition field="_time">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_create_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.process_parent_path=$row.process_parent_path$&form.process_command_line=$row.process_command_line$&form.process_parent_command_line=$row.process_parent_command_line$&form.hash_sha256=$row.hash_sha256$]]>
             </link>
@@ -80,14 +80,9 @@
           </condition>
           <condition field="user_name">
             <link target="_blank">
-              <![CDATA[/app/ThreatHunting/activity_drilldown?form.user=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
+              <![CDATA[/app/ThreatHunting/user_drilldown?form.user_name=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
             </link>
           </condition>
-          <condition field="_time">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_access_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.target_process_path=$row.target_process_path$&form.process_path=$row.process_path$&form.process_granted_access=$row.process_granted_access$]]>
-            </link>
-          </condition>          
           <condition field="host_fqdn">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -98,13 +93,33 @@
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
+          <condition field="process_path">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="original_file_name">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>    
+          <condition field="process_command_line">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_id">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>                          
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
-        </drilldown>
-      </table>
+        </drilldown>      
+        </table>
     </panel>
   </row>
   <row>
@@ -158,14 +173,24 @@
               <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
-          <condition field="process_guid">
+          <condition field="target_process_guid">
             <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.target_process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="target_process_id">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.target_process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="target_process_path">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.target_process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
           <condition>
             <link target="_blank">
-              <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+              <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
         </drilldown>
@@ -291,11 +316,6 @@
               <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
-          <condition field="process_guid">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
-          </condition>
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -342,6 +362,11 @@
           <condition field="ID">
             <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
           </condition>
+          <condition field="user_name">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/user_drilldown?form.user_name=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>          
           <condition field="src_ip">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/network_connection_drilldown?form.src_ip=$row.src_ip$&earliest=$earliest$&latest=$latest$]]>
@@ -352,6 +377,16 @@
               <![CDATA[/app/ThreatHunting/network_connection_drilldown?form.dst_ip=$row.dst_ip$&earliest=$earliest$&latest=$latest$]]>
             </link>
           </condition>
+          <condition field="src_host_name">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/dns_stacking?form.query_name=$row.src_host_name$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+          <condition field="dst_host_name">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/dns_stacking?form.query_name=$row.dst_host_name$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>                    
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
@@ -404,14 +439,19 @@
               <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
-          <condition field="process_guid">
+          <condition field="target_process_guid">
             <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.target_process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
-          <condition field="process__parent_guid">
+          <condition field="target_process_path">
             <link target="_blank">
-              <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.target_process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>          
+          <condition field="process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
           <condition>
@@ -469,6 +509,11 @@
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
+          <condition field="process_path">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>          
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -511,19 +556,20 @@
           <condition field="ID">
             <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
           </condition>
+          <condition field="user_name">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/user_drilldown?form.user_name=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition> 
+          <condition field="wmi_consumer_name">
+            <link target="_blank">https://www.google.com/search?q=$row.wmi_consumer_name$</link>
+          </condition>
+          <condition field="wmi_consumer_destination">
+            <link target="_blank">https://www.google.com/search?q=$row.wmi_consumer_destination$</link>
+          </condition>                                       
           <condition field="host_fqdn">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
-            </link>
-          </condition>
-          <condition field="process_guid">
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
-            </link>
-          </condition>          
-          <condition>
-            <link target="_blank">
-              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
         </drilldown>
