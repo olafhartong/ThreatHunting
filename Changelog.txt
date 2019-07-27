@@ -23,6 +23,11 @@ Changes
 - Rebuilt the whitelisting, searches are a LOT quicker now and take less resources
 - Added original_file_name to event_id 1 and 7 
 - Top triggered techniques drilldown changed to technique_id
+- Added google lookups to WMI consumers
+- Added DNS drilldown on network events
+- Added DNS whitelist
+- Added user drilldown on all relevant events
+- Synced all drilldowns to have the same behavior
 
 Bugfixes
 - T1197 had a typo
@@ -31,9 +36,10 @@ Bugfixes
 - File created events didn't show
 - Inital Access events didn't show on overview
 - T1044 was misrepresented 
+- Fixed several drilldown bugs
 
 Todo
-- Add whitelisting to all _time fields throughout the app
+- Add driver drilldown dashboard
 
 ### Updates 1.3.4
 
