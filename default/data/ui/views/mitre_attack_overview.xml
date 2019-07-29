@@ -104,7 +104,7 @@
               <unset token="panel_proc_show"></unset>
             </condition>
           </progress>
-          <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="Process Creation" ($exclude_technique$) AND ($exclude_host_fqdn$)
+          <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ eevent_description="Process Creat*" ($exclude_technique$) AND ($exclude_host_fqdn$)
 | eval hash_sha256=lower(hash_sha256)
 | `process_create_whitelist`
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
