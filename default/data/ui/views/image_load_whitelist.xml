@@ -58,7 +58,7 @@
     | eval process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*")
     | eval driver_is_signed = COALESCE(if(trim("$driver_is_signed$")="", "*", trim("$driver_is_signed$")), "*")
     | eval driver_signature = COALESCE(if(trim("$driver_signature$")="", "*", trim("$driver_signature$")), "*")
-    | eval driver_signatureStatus = COALESCE(if(trim("$driver_signature_status$")="", "*", trim("$driver_signature_status$")), "*")
+    | eval driver_signature_status = COALESCE(if(trim("$driver_signature_status$")="", "*", trim("$driver_signature_status$")), "*")
     | eval added_date = strftime(now(), "%Y-%m-%d")
     | eval contact = ("$env:user$")
     | table *
@@ -68,9 +68,9 @@
     | inputlookup append=t threathunting_image_load_whitelist.csv
 
 | sort -added_date
-| dedup mitre_technique_id host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signatureStatus
+| dedup mitre_technique_id host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status
 | outputlookup threathunting_image_load_whitelist.csv
-| fields added_date contact mitre_technique_id reason host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signatureStatus
+| fields added_date contact mitre_technique_id reason host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status
 
           </query>
           <earliest>0</earliest>
