@@ -524,7 +524,7 @@
               <unset token="panel_proc_show"></unset>
             </condition>
           </progress>
-          <query>index=threathunting user_name=$user_name$ event_description="Process Create"
+          <query>index=threathunting user_name=$user_name$ event_description="Process Creation"
 | eval hash_sha256=lower(hash_sha256)
 | `process_create_whitelist`
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
