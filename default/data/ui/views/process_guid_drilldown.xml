@@ -323,7 +323,7 @@
               <unset token="panel_img_show"></unset>
             </condition>
           </progress>
-          <query>index=threathunting process_guid=$process_guid$ event_description="Image *" | `image_load_whitelist`
+          <query>index=threathunting process_guid=$process_guid$ event_description="Image *"  | fillnull value=NULL | `image_load_whitelist`
           | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
           | table _time indextime ID Technique Category Trigger host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status process_id process_guid</query>
           <earliest>$time_picker.earliest$</earliest>
