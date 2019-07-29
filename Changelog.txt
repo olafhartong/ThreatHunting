@@ -28,6 +28,7 @@ Changes
 - Added DNS drilldown on network events
 - Added user drilldown on all relevant events
 - Synced all drilldowns to have the same behavior
+- Removed the hashes from the process_create whitelist macro for 4688 compatibility
 
 Bugfixes
 - T1197 had a typo
