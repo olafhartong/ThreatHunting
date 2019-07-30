@@ -36,6 +36,8 @@
         <view name="pipe_whitelist"/>
         <view name="wmi_whitelist"/>      
      </collection>
-  <view name="about" />  
+    <collection label="About">     
+       <view name="about"/>  
+       <view name="coverage"/>  
   <view name="search" />
 </nav>

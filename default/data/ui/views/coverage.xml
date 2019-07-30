@@ -1,0 +1,85 @@
+<dashboard>
+  <label>MITRE Coverage</label>
+  <row>
+    <panel>
+      <title>MITRE Category Searches</title>
+      <chart>
+        <search>
+          <query>| rest /servicesNS/-/ThreatHunting/saved/searches 
+| search title="[T*]*" 
+| makemv delim="," action.summary_index.mitre_category 
+| mvexpand action.summary_index.mitre_category 
+| stats dc(action.summary_index.mitre_technique) AS Searches by action.summary_index.mitre_category 
+| sort action.summary_index.mitre_category 
+| rename action.summary_index.mitre_category AS "MITRE Category"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.showDataLabels">all</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.legend.placement">none</option>
+      </chart>
+    </panel>
+  </row>
+    <row>
+    <panel>
+    <title>Currently active triggers</title>
+      <table>
+        <search>
+          <query>| inputlookup techniques.csv 
+| eval tag="csv" 
+| append 
+    [| rest splunk_server=local count=0 /servicesNS/-/ThreatHunting/saved/searches 
+    | rex field=title "(?&lt;ID&gt;T[0-9]{4})" 
+    | regex ID=T\d+ 
+    | rename action.summary_index.mitre_category AS ta 
+    | makemv delim="," ta 
+    | mvexpand ta 
+    | eval tag="rest" 
+    | eval Tactics=case(like(ta, "Initial_Access"), "Initial Access", like( ta, "Execution"), "Execution", like( ta, "Persistence"), "Persistence", like( ta, "Privilege_Escalation"), "Privilege Escalation", like( ta, "Defense_Evasion"), "Defense Evasion", like( ta, "Credential_Access"), "Credential Access", like( ta, "Discovery"), "Discovery", like( ta, "Lateral_Movement"), "Lateral Movement", like( ta, "Collection"), "Collection", like( ta, "Exfiltration"), "Exfiltration", like( ta, "Command_and_Control"), "Command And Control")] 
+| stats count(eval(tag=="csv")) as csv count(eval(tag=="rest")) as rest list(Technique) as Technique by ID Tactics 
+| eval Status=if((rest&gt;0), "1", "0") | where rest >0
+| eval Technique_Status=rest." - ".Technique
+| stats list(Technique_Status) by Tactics 
+| transpose 0 header_field=Tactics 
+| table "Initial Access" "Execution" "Persistence" "Privilege Escalation" "Defense Evasion" "Credential Access" "Discovery" "Lateral Movement" "Collection" "Command And Control" "Exfiltration" "Impact"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">50</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Currently active triggers</title>
+      <table>
+        <search>
+          <query>| rest /servicesNS/-/ThreatHunting/saved/searches  | search title="[T*]*"  
+| rename action.summary_index.mitre_category as "MITRE Category" action.summary_index.mitre_technique as "MITRE Technique" action.summary_index.hunting_trigger as "Hunting Trigger"
+| table title "MITRE Category" "MITRE Technique" "Hunting Trigger"</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="count">20</option>
+        <option name="drilldown">none</option>
+      </table>
+    </panel>
+  </row>  
+</dashboard>

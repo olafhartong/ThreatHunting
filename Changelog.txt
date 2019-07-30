@@ -12,8 +12,9 @@ New Features
 - Added DNS whitelist
 - Added User drilldown page
 - Added Macro drilldown dashboard
-- Added 24 new searches
+- Added 25 new searches
 - Added Credits pane
+- Added Requirement checks page and changed the about page
 
 Changes
 - Renamed pipe_created_whitelist macro to pipe_whitelist
