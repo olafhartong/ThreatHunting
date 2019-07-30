@@ -38,6 +38,7 @@
      </collection>
     <collection label="About">     
        <view name="about"/>  
-       <view name="coverage"/>  
+       <view name="coverage"/>
+    </collection>     
   <view name="search" />
 </nav>
