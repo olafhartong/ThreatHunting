@@ -2,7 +2,7 @@
   <label>MITRE Coverage</label>
   <row>
     <panel>
-      <title>MITRE Category Searches</title>
+      <title>MITRE Techniques covered by Tactic</title>
       <chart>
         <search>
           <query>| rest /servicesNS/-/ThreatHunting/saved/searches 
@@ -31,7 +31,7 @@
   </row>
     <row>
     <panel>
-    <title>Currently active triggers</title>
+    <title>Technique coverage</title>
       <table>
         <search>
           <query>| inputlookup techniques.csv 
