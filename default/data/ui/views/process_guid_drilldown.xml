@@ -78,7 +78,7 @@
       <title>Process Create</title>
       <table>
         <search>
-          <query>index=threathunting process_guid=$process_guid$ eevent_description="Process Creat*"
+          <query>index=threathunting process_guid=$process_guid$ event_description="Process Creat*"
 | eval hash_sha256=lower(hash_sha256)
 | `process_create_whitelist`
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
