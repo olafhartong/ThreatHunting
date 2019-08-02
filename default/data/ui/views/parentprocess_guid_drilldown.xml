@@ -686,9 +686,9 @@
           </progress>
           <query>`sysmon` process_guid=$process_parent_guid$
           | `dns_whitelist`
-          | stats count by query_name query_status process_path host_fqdn 
+          | stats count by query_name query_status query_results process_path host_fqdn 
           | sort -count 
-          | table count query_name query_status process_path host_fqdn</query>
+          | table count query_name query_status query_results process_path host_fqdn</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -720,9 +720,9 @@
               <![CDATA[/app/ThreatHunting/dns_stacking?form.host_fqdn=$row.host_fqdn$&form.query_name=$row.query_name$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
-          <condition field="query_result">
+          <condition field="query_results">
             <link target="_blank">
-              <![CDATA[/app/ThreatHunting/network_drilldown?form.host_fqdn=$row.host_fqdn$&form.dst_ip=$row.query_name$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+              <![CDATA[/app/ThreatHunting/network_drilldown?form.host_fqdn=$row.host_fqdn$&form.dst_ip=$row.query_results$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>          
           <condition>

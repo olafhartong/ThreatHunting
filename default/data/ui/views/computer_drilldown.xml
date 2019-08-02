@@ -649,7 +649,7 @@
           <query>index=threathunting event_description="DNS Query" host_fqdn=$computer$
 | `dns_whitelist`
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| table _time ID Technique Category Trigger host_fqdn process_path query_name query_status query_result proces_guid</query>
+| table _time ID Technique Category Trigger host_fqdn process_path query_name query_status query_results proces_guid</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -681,9 +681,9 @@
               <![CDATA[/app/ThreatHunting/dns_stacking?form.host_fqdn=$row.host_fqdn$&form.query_name=$row.query_name$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
-          <condition field="query_result">
+          <condition field="query_results">
             <link target="_blank">
-              <![CDATA[/app/ThreatHunting/network_drilldown?form.host_fqdn=$row.host_fqdn$&form.dst_ip=$row.query_name$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+              <![CDATA[/app/ThreatHunting/network_drilldown?form.host_fqdn=$row.host_fqdn$&form.dst_ip=$row.query_results$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>          
           <condition>
