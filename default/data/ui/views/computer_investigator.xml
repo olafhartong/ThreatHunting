@@ -50,7 +50,7 @@
         <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
         <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
         <option name="charting.legend.mode">standard</option>
-        <option name="charting.legend.placement">right</option>
+        <option name="charting.legend.placement">bottom</option>
         <option name="charting.lineWidth">2</option>
         <option name="refresh.display">progressbar</option>
         <option name="trellis.enabled">0</option>
@@ -76,7 +76,7 @@
         <option name="charting.chart.showDataLabels">none</option>
         <option name="charting.drilldown">none</option>
         <option name="charting.layout.splitSeries">0</option>
-        <option name="charting.legend.placement">right</option>
+        <option name="charting.legend.placement">bottom</option>
         <option name="refresh.display">progressbar</option>
       </chart>
     </panel>
