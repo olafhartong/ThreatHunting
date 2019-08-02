@@ -79,8 +79,7 @@
       <title>PsExec execution</title>
       <table>
         <search>
-          <query>`sysmon` event_id=1 "psexec.exe"
-|  table _time indextime event_id event_description host user_name process_path process_id process_parent_id process_command_line process_parent_guid</query>
+          <query>`sysmon` event_id=17 (pipe_name="*PSEXESVC*" OR pipe_name="*PowerShellISEPipeName_*" OR pipe_name="*csexec*" OR pipe_name="*paexec*" OR pipe_name="*remcom*") | table _time indextime event_description host_fqdn pipe_name process_path process_guid process_id</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
           <progress>
