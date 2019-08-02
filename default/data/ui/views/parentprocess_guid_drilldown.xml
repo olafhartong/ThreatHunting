@@ -685,6 +685,7 @@
             </condition>
           </progress>
           <query>`sysmon` process_guid=$process_parent_guid$
+          | `dns_whitelist`
           | stats count by query_name query_status process_path host_fqdn 
           | sort -count 
           | table count query_name query_status process_path host_fqdn</query>
@@ -695,6 +696,15 @@
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
         <drilldown>
+          <condition field="Category">
+            <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
+          </condition>
+          <condition field="Technique">
+            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
+          </condition>
+          <condition field="ID">
+            <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
+          </condition>
           <condition field="host_fqdn">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -707,9 +717,14 @@
           </condition>
           <condition field="query_name">
             <link target="_blank">
-              <![CDATA[/app/ThreatHunting/pipe_drilldown?form.host_fqdn=$row.host_fqdn$&form.pipe_name=$row.pipe_name$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+              <![CDATA[/app/ThreatHunting/dns_stacking?form.host_fqdn=$row.host_fqdn$&form.query_name=$row.query_name$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
+          <condition field="query_result">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/network_drilldown?form.host_fqdn=$row.host_fqdn$&form.dst_ip=$row.query_name$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>          
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>

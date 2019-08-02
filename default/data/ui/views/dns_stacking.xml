@@ -75,7 +75,7 @@
       </table>
     </panel>
     <panel>
-      <title>DNS Requests by process, query</title>
+      <title>DoH Requests by process, query</title>
       <table>
         <search>
           <progress>
@@ -83,8 +83,9 @@
               <unset token="panel_proca_show"></unset>
             </condition>
           </progress>
-          <query>`sysmon` event_id=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$ 
-| `dns_whitelist`
+          <query>`sysmon` event_id=22 
+    [| inputlookup doh.csv] 
+| `dns_whitelist` 
 | eventstats count, sparkline by process_path query_name query_status host_fqdn 
 | dedup process_path query_name query_status host_fqdn 
 | sort -count 
