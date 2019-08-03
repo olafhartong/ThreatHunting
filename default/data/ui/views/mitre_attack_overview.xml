@@ -710,7 +710,7 @@
           <query>index=threathunting mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="DNS*"  ($exclude_technique$) AND ($exclude_host_fqdn$)
 | `dns_whitelist`
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| table _time ID Technique Category Trigger host_fqdn process_path query_name query_status query_results proces_guid</query>
+| table _time ID Technique Category Trigger host_fqdn process_path query_name query_status query_results process_guid</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
