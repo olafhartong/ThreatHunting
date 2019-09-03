@@ -80,7 +80,7 @@
       <title>Macro Enabled Counter - Opened document</title>
       <single>
         <search>
-          <query> `sysmon` host_fqdn=$host_fqdn$ trustrecords host=*| rex field=registry_key_path "(?&lt;doc_name&gt;((\/)(.+\.\w+)$))"  |makemv delim="/" doc_name|eval doc=mvindex(doc_name,-1)| search doc_name=* |dedup doc|eval  start_time = relative_time(_time, "-1h@h")|eval  end_time = relative_time(_time, "+1h@h")| stats count</query>
+          <query> `sysmon` host_fqdn=$host_fqdn$ trustrecords | rex field=registry_key_path "(?&lt;doc_name&gt;((\/)(.+\.\w+)$))"  |makemv delim="/" doc_name|eval doc=mvindex(doc_name,-1)| search doc_name=* |dedup doc|eval  start_time = relative_time(_time, "-1h@h")|eval  end_time = relative_time(_time, "+1h@h")| stats count</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -97,7 +97,7 @@
       <title>Macro Enabled Documents - Opened document</title>
       <table>
         <search>
-          <query>`sysmon` host_fqdn=$host_fqdn$ trustrecords host=* | rex field=registry_key_path "(?&lt;doc_name&gt;((\/)(.+\.\w+)$))" |makemv delim="/" doc_name|eval doc=mvindex(doc_name,-1)| search   doc_name=* |dedup doc|eval  start_time = relative_time(_time, "-1h@h")|eval file_name=doc |eval  end_time = relative_time(_time, "+1h@h") |table _time file_name process_name host_fqdn</query>
+          <query>`sysmon` host_fqdn=$host_fqdn$ trustrecords | rex field=registry_key_path "(?&lt;doc_name&gt;((\/)(.+\.\w+)$))" |makemv delim="/" doc_name|eval doc=mvindex(doc_name,-1)| search   doc_name=* |dedup doc|eval  start_time = relative_time(_time, "-1h@h")|eval file_name=doc |eval  end_time = relative_time(_time, "+1h@h") |table _time file_name process_name host_fqdn</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
