@@ -19,7 +19,7 @@
       <title>Logging Data distribution</title>
       <chart>
         <search>
-          <query>| tstats count WHERE index=windows AND (host=$host$) by _time host sourcetype span=15m | timechart span=15m sum(count) by sourcetype</query>
+          <query>| tstats count WHERE `hunt_indexes` AND (host=$host$) by _time host sourcetype span=15m | timechart span=15m sum(count) by sourcetype</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
