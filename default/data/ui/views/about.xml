@@ -14,7 +14,7 @@
 | eval tag="csv" 
 | append 
     [| rest /services/apps/local 
-    | search disabled=0 label="Force Directed Visualisation App for Splunk" OR label="Link Analysis App for Splunk" OR label="Microsoft Sysmon Add-on" OR label="Sankey Diagram" OR label="Punchcard" OR label="Timeline" 
+    | search disabled=0 [| inputlookup requirements where required="yes" | table label ] 
     | eval tag="rest" ] 
 | stats count(eval(tag=="csv")) as csv count(eval(tag=="rest")) as rest list(required) as required by label
 | eval status=if((rest&gt;0), "Installed", "Missing") | rename label as app
