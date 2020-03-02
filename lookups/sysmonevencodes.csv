@@ -20,4 +20,6 @@ EventCode,event_description
 19,WmiEventFilter activity detected
 20,WmiEventConsumer activity detected
 21,WmiEventConsumerToFilter activity detected
+22,DNS Query
 255,Error
+4688,Process Create
