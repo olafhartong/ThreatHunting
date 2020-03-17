@@ -37,6 +37,11 @@
       <default>*</default>
       <initialValue>*</initialValue>
     </input>
+    <input type="text" token="process_parent_command_line">
+      <label>process_parent_command_line</label>
+      <default>*</default>
+      <initialValue>*</initialValue>
+    </input>
     <input type="text" token="hash_sha256">
       <label>hash_sha256</label>
       <default></default>
@@ -57,6 +62,7 @@
     | eval mitre_technique_id = COALESCE(if(trim("$mitre_technique_id$")="", "*", trim("$mitre_technique_id$")), "*")
     | eval reason = trim("$input_reason$")
     | eval process_command_line = $process_command_line|s$
+    | eval process_parent_command_line = COALESCE(if(trim("$process_parent_command_line$")="", "*", trim("$process_parent_command_line$")), "*")
     | eval process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*")
     | eval process_parent_path = COALESCE(if(trim("$process_parent_path$")="", "*", trim("$process_parent_path$")), "*")
     | eval hash_sha256 = COALESCE(if(trim("$hash_sha256$")="", "*", trim("$hash_sha256$")), "*")
@@ -69,9 +75,9 @@
     | inputlookup append=t threathunting_process_create_whitelist.csv
 
 | sort -added_date
-| dedup host_fqdn, user_name, mitre_technique_id, process_path process_parent_path process_command_line hash_sha256
+| dedup host_fqdn, user_name, mitre_technique_id, process_path process_parent_path process_parent_command_line process_command_line hash_sha256
 | outputlookup threathunting_process_create_whitelist.csv
-| fields added_date contact mitre_technique_id reason host_fqdn user_name process_path process_parent_path process_command_line hash_sha256
+| fields added_date contact mitre_technique_id reason host_fqdn user_name process_path process_parent_path process_parent_command_line process_command_line hash_sha256
           </query>
           <earliest>0</earliest>
         </search>
@@ -88,7 +94,7 @@
       <table>
         <title>Current Entries</title>
         <search>
-          <query>| inputlookup threathunting_process_create_whitelist.csv | sort -added_date | fields added_date contact mitre_technique_id reason host_fqdn user_name process_path process_parent_path process_command_line hash_sha256
+          <query>| inputlookup threathunting_process_create_whitelist.csv | sort -added_date | fields added_date contact mitre_technique_id reason host_fqdn user_name process_path process_parent_path process_parent_command_line process_command_line hash_sha256
 </query>
           <earliest>0</earliest>
         </search>
