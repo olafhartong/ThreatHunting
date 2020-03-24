@@ -5,6 +5,7 @@
 ![Maintenance](https://img.shields.io/maintenance/yes/2020.svg?style=flat-square)
 [![GitHub last commit](https://img.shields.io/github/last-commit/olafhartong/ThreatHunting.svg?style=flat-square)](https://github.com/olafhartong/ThreatHunting/commit/master)
 [![Arsenal](https://github.com/toolswatch/badges/blob/d751cf6b715fffd6583de953434f3f7c9331ae1c/arsenal/europe/2018.svg)](https://www.toolswatch.org/2018/09/black-hat-arsenal-europe-2018-lineup-announced/)
+[![Arsenal](https://raw.githubusercontent.com/toolswatch/badges/master/arsenal/usa/2019.svg)](https://www.blackhat.com/us-19/arsenal/schedule/index.html)
 [![Twitter](https://img.shields.io/twitter/follow/olafhartong.svg?style=social&label=Follow)](https://twitter.com/olafhartong)
 
 This is a Splunk application containing several dashboards and over 130 reports that will facilitate initial hunting indicators to investigate.
