@@ -58,9 +58,12 @@
         <option name="colorMode">none</option>
         <option name="drilldown">all</option>
         <option name="height">125</option>
-        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
-        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="rangeColors">["0x000","0xd93f3c"]</option>
+        <option name="rangeValues">[0]</option>
         <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendDisplayMode">absolute</option>
         <option name="unitPosition">after</option>
         <option name="useColors">1</option>
         <drilldown>
@@ -84,8 +87,8 @@
         <option name="colorMode">none</option>
         <option name="drilldown">all</option>
         <option name="height">125</option>
-        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
-        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="rangeColors">["0x000","0xff2e45"]</option>
+        <option name="rangeValues">[0]</option>
         <option name="refresh.display">progressbar</option>
         <option name="unitPosition">after</option>
         <option name="useColors">1</option>
@@ -110,8 +113,8 @@
         <option name="colorMode">none</option>
         <option name="drilldown">all</option>
         <option name="height">125</option>
-        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
-        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="rangeColors">["0x000","0xff4785"]</option>
+        <option name="rangeValues">[0]</option>
         <option name="refresh.display">progressbar</option>
         <option name="unitPosition">after</option>
         <option name="useColors">1</option>
@@ -136,8 +139,8 @@
         <option name="colorMode">none</option>
         <option name="drilldown">all</option>
         <option name="height">125</option>
-        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
-        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="rangeColors">["0x000","0xff8041"]</option>
+        <option name="rangeValues">[0]</option>
         <option name="refresh.display">progressbar</option>
         <option name="unitPosition">after</option>
         <option name="useColors">1</option>
@@ -162,8 +165,8 @@
         <option name="colorMode">none</option>
         <option name="drilldown">all</option>
         <option name="height">125</option>
-        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
-        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="rangeColors">["0x000","0xffaf00"]</option>
+        <option name="rangeValues">[0]</option>
         <option name="refresh.display">progressbar</option>
         <option name="showTrendIndicator">1</option>
         <option name="trendDisplayMode">absolute</option>
@@ -190,8 +193,8 @@
         <option name="colorMode">none</option>
         <option name="drilldown">all</option>
         <option name="height">125</option>
-        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
-        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="rangeColors">["0x000","0xffd300"]</option>
+        <option name="rangeValues">[0]</option>
         <option name="refresh.display">progressbar</option>
         <option name="unitPosition">after</option>
         <option name="useColors">1</option>
@@ -216,8 +219,8 @@
         <option name="colorMode">none</option>
         <option name="drilldown">all</option>
         <option name="height">125</option>
-        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
-        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="rangeColors">["0x000","0xabc530"]</option>
+        <option name="rangeValues">[0]</option>
         <option name="refresh.display">progressbar</option>
         <option name="unitPosition">after</option>
         <option name="useColors">1</option>
@@ -242,8 +245,8 @@
         <option name="colorMode">none</option>
         <option name="drilldown">all</option>
         <option name="height">125</option>
-        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
-        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="rangeColors">["0x000","0x01c26d"]</option>
+        <option name="rangeValues">[0]</option>
         <option name="refresh.display">progressbar</option>
         <option name="trendInterval">-7d</option>
         <option name="unitPosition">after</option>
@@ -269,40 +272,14 @@
         <option name="colorMode">none</option>
         <option name="drilldown">all</option>
         <option name="height">125</option>
-        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
-        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="rangeColors">["0x000","0x007b84"]</option>
+        <option name="rangeValues">[0]</option>
         <option name="refresh.display">progressbar</option>
         <option name="unitPosition">after</option>
         <option name="useColors">1</option>
         <drilldown>
           <link target="_blank">
             <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*Collection*&earliest=$earliest$&latest=$latest$]]>
-          </link>
-        </drilldown>
-      </single>
-    </panel>
-    <panel>
-      <single>
-        <title>Exfiltration</title>
-        <search>
-          <query>index=threathunting mitre_category="*Exfiltration*" ($exclude_technique$) AND ($exclude_host_fqdn$) 
-| timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
-          <earliest>$time_picker.earliest$</earliest>
-          <latest>$time_picker.latest$</latest>
-          <sampleRatio>1</sampleRatio>
-        </search>
-        <option name="colorBy">value</option>
-        <option name="colorMode">none</option>
-        <option name="drilldown">all</option>
-        <option name="height">125</option>
-        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
-        <option name="rangeValues">[0,10,30,50]</option>
-        <option name="refresh.display">progressbar</option>
-        <option name="unitPosition">after</option>
-        <option name="useColors">1</option>
-        <drilldown>
-          <link target="_blank">
-            <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*Exfiltration*&earliest=$earliest$&latest=$latest$]]>
           </link>
         </drilldown>
       </single>
@@ -321,8 +298,8 @@
         <option name="colorMode">none</option>
         <option name="drilldown">all</option>
         <option name="height">125</option>
-        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
-        <option name="rangeValues">[0,10,30,50]</option>
+        <option name="rangeColors">["0x000","0x075190"]</option>
+        <option name="rangeValues">[0]</option>
         <option name="refresh.display">progressbar</option>
         <option name="showTrendIndicator">1</option>
         <option name="trendDisplayMode">absolute</option>
@@ -331,6 +308,32 @@
         <drilldown>
           <link target="_blank">
             <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*Command_and_Control*&earliest=$earliest$&latest=$latest$]]>
+          </link>
+        </drilldown>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Exfiltration</title>
+        <search>
+          <query>index=threathunting mitre_category="*Exfiltration*" ($exclude_technique$) AND ($exclude_host_fqdn$) 
+| timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">all</option>
+        <option name="height">125</option>
+        <option name="rangeColors">["0x000","0x86308c"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <drilldown>
+          <link target="_blank">
+            <![CDATA[/app/ThreatHunting/mitre_attack_overview?form.mitre_category=*Exfiltration*&earliest=$earliest$&latest=$latest$]]>
           </link>
         </drilldown>
       </single>
@@ -348,10 +351,9 @@
           <latest>$time_picker.latest$</latest>
         </search>
         <option name="count">10</option>
-        <option name="dataOverlayMode">heatmap</option>
+        <option name="dataOverlayMode">highlow</option>
         <option name="drilldown">cell</option>
         <option name="percentagesRow">false</option>
-        <option name="refresh.display">progressbar</option>
         <option name="totalsRow">false</option>
         <drilldown>
           <link target="_blank">
@@ -383,14 +385,38 @@
         </drilldown>
       </table>
     </panel>
+    <panel>
+      <title>Top triggered users by host_fqdns in the selected timeframe</title>
+      <table>
+        <search>
+          <query>index="threathunting" ($exclude_technique$) AND ($exclude_host_fqdn$) 
+| stats count by user_name, host_fqdn
+| sort -count</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">heatmap</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="totalsRow">false</option>
+        <drilldown>
+          <link target="_blank">
+            <![CDATA[/app/ThreatHunting/user_drilldown?form.user_name=$row.user_name$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+          </link>
+        </drilldown>
+      </table>
+    </panel>
   </row>
   <row>
     <panel>
       <title>Activity by time per day</title>
       <chart>
         <search>
-          <query>index=threathunting ($exclude_technique$) AND ($exclude_host_fqdn$) 
-          | stats count by _time, mitre_category| timechart span=15m sum(count) by mitre_category</query>
+          <query>index=threathunting 
+| stats count by _time, mitre_category 
+| timechart span=15m sum(count) by mitre_category useother=false</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -403,6 +429,8 @@
         <option name="charting.layout.splitSeries">0</option>
         <option name="charting.legend.placement">right</option>
         <option name="refresh.display">progressbar</option>
+        <option name="charting.legend.labels">[Initial_Access,Execution,Persistence,Privilege_Escalation,Defense_Evasion,Credential_Access,Discovery,Lateral_Movement,Collection,Command_and_Control,Exfiltration,Impact]</option>
+        <option name="charting.seriesColors">[0xd8031a,0xff2e45,0xff4785,0xff8041,0xffaf00,0xffd300,0xabc530,0x01c26d,0x007b84,0x075190,0x86308c,0x482569]</option>
       </chart>
     </panel>
   </row>
