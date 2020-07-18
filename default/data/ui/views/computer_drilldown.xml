@@ -1,4 +1,4 @@
-<form>
+<form theme="light">
   <label>Computer Drilldown</label>
   <fieldset submitButton="false">
     <input type="time" token="time_picker" searchWhenChanged="true">
@@ -102,7 +102,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>    
+          </condition>
           <condition field="process_command_line">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -112,14 +112,18 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>                          
+          </condition>
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
-        </drilldown>      
-        </table>
+        </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>
+      </table>
     </panel>
   </row>
   <row>
@@ -194,6 +198,10 @@
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>
       </table>
     </panel>
   </row>
@@ -264,13 +272,17 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/file_create_drilldown?form.process_path=$row.process_path$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>          
+          </condition>
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>
       </table>
     </panel>
   </row>
@@ -322,6 +334,10 @@
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>
       </table>
     </panel>
   </row>
@@ -366,7 +382,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/user_drilldown?form.user_name=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
             </link>
-          </condition>          
+          </condition>
           <condition field="src_ip">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/network_connection_drilldown?form.src_ip=$row.src_ip$&earliest=$earliest$&latest=$latest$]]>
@@ -386,13 +402,17 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/dns_stacking?form.query_name=$row.dst_host_name$&earliest=$earliest$&latest=$latest$]]>
             </link>
-          </condition>                    
+          </condition>
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>
       </table>
     </panel>
   </row>
@@ -448,7 +468,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.target_process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>          
+          </condition>
           <condition field="process_guid">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -460,6 +480,10 @@
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>
       </table>
     </panel>
   </row>
@@ -513,13 +537,17 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>          
+          </condition>
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>
       </table>
     </panel>
   </row>
@@ -560,19 +588,23 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/user_drilldown?form.user_name=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
             </link>
-          </condition> 
+          </condition>
           <condition field="wmi_consumer_name">
             <link target="_blank">https://www.google.com/search?q=$row.wmi_consumer_name$</link>
           </condition>
           <condition field="wmi_consumer_destination">
             <link target="_blank">https://www.google.com/search?q=$row.wmi_consumer_destination$</link>
-          </condition>                                       
+          </condition>
           <condition field="host_fqdn">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>
       </table>
     </panel>
   </row>
@@ -630,9 +662,13 @@
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>
       </table>
     </panel>
-  </row>  
+  </row>
   <row>
     <panel depends="$panel_dns_show$">
       <title>DNS</title>
@@ -685,16 +721,20 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/network_drilldown?form.host_fqdn=$row.host_fqdn$&form.dst_ip=$row.query_results$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>          
+          </condition>
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>
       </table>
     </panel>
-  </row>    
+  </row>
   <row>
     <panel>
       <title>Related raw logs</title>

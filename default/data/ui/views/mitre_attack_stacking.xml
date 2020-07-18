@@ -157,6 +157,10 @@
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>          
       </table>
     </panel>
   </row>
@@ -228,6 +232,10 @@
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>         
       </table>
     </panel>
   </row>
@@ -310,6 +318,10 @@
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>         
       </table>
     </panel>
   </row>
@@ -373,6 +385,10 @@
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>         
       </table>
     </panel>
   </row>
@@ -434,6 +450,10 @@
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>         
       </table>
     </panel>
   </row>
@@ -499,6 +519,10 @@
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>         
       </table>
     </panel>
   </row>
@@ -560,6 +584,10 @@
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>         
       </table>
     </panel>
   </row>
@@ -615,6 +643,10 @@
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>         
       </table>
     </panel>
   </row>
@@ -675,6 +707,10 @@
             </link>
           </condition>
         </drilldown>
+        <format type="color" field="Category">
+          <scale type="category"></scale>
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+        </format>         
       </table>
     </panel>
   </row>
