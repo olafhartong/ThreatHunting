@@ -1,0 +1,101 @@
+<form>
+  <label>Asset Priority</label>
+  <description>Used to adjust or set priorities for assets</description>
+  <fieldset submitButton="true" autoRun="true">
+    <input type="text" token="input_host_fqdn">
+      <label>host_fqdn</label>
+      <default></default>
+    </input>
+    <input type="dropdown" token="input_priority">
+      <label>Priority</label>
+      <choice value="critical">Critical</choice>
+      <choice value="high">High</choice>
+      <choice value="medium">Medium</choice>
+      <choice value="low">Low</choice>
+    </input>
+    <input type="radio" token="input_mode">
+      <label>Mode</label>
+      <choice value="add">Add</choice>
+      <choice value="delete">Remove</choice>
+      <default>add</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>Updated Asset Entries</title>
+        <search>
+          <query>| inputlookup threathunting_asset_priority.csv 
+| append 
+    [ stats count 
+    | eval host_fqdn= lower("$input_host_fqdn$") 
+    | eval priority = "$input_priority$" 
+    | eval temp_dt = now() 
+    | eval added_date = strftime(now(), "%Y-%m-%d") 
+    | fields - _raw _time count 
+    | table * 
+    | join type=outer 
+        [| rest /services/authentication/current-context/context 
+        | fields username 
+        | where username!="splunk-system-user" 
+        | rename username AS contact]] 
+| sort -temp_dt 
+| dedup host_fqdn 
+| fields - temp_dt 
+| sort - date_added 
+| eval mode = "$input_mode$" 
+| eval delete=if(mode="delete" and host_fqdn=lower("$input_host_fqdn$"), "yes", "no") 
+| where delete="no" 
+| fields - delete mode 
+| outputlookup threathunting_asset_priority.csv</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+    <panel>
+      <html>
+        <div style="text-align: left; padding-left: 40px; padding-top: 40px;">
+          To integrate this asset priority with your Assets within Enterprise Security, please add the code below to your LDAPSearch code after you gather the assets.
+          <br/>
+          <br/>
+          | join type=left dns 
+          <br/>
+          [ `threathunting_assets_dns` ]
+          <br/>
+          <br/>
+          To use this lookup with searches from the Threat Hunting app, you can copy the command below and add it to any searches with a host_fqdn field and it will give you a field called priority.
+          <br/>
+          <br/>
+          | lookup threathunting_asset_priority_lookup host_fqdn OUTPUT priority
+        </div>
+      </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Current Asset Entries</title>
+        <search>
+          <query>| inputlookup threathunting_asset_priority.csv
+| sort -added_date
+| fields added_date contact host_fqdn priority</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="count">100</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>
