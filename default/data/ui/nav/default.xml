@@ -14,15 +14,19 @@
      <collection label="Stacking Tools">
 		  <view name="mitre_attack_stacking"/>
         <view name="dns_stacking"/>
-    </collection>    
+    </collection> 
+    <collection label="Hunting Tools">
+         <view name="computer_investigator"/>
+    	   <view name="rare_process_chains"/>
+         <view name="search_based_drilldown"/>
+     </collection>       
     <collection label="Hunting Indicators">
         <view name="sysmon"/>
     	<view name="lateral_movement_indicators"/>
       	<view name="macro_drilldown"/>
          <view name="powershell_events"/>
-        <view name="newly_observed_hashes"/>
+         <view name="newly_observed_hashes"/>
      </collection>
-  <view name="computer_investigator"/>
     <collection label="Whitelist">
         <view name="process_create_whitelist"/>
         <view name="network_whitelist"/>      

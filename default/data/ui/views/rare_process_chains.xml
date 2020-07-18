@@ -1,0 +1,191 @@
+<form theme="light">
+  <label>Rare process chains, based on raw events</label>
+  <description>Keep this in mind, searches might take a bit</description>
+  <search id="raw">
+    <query>(`sysmon` event_id=1) OR ('windows-security' event_id=4688) host_fqdn=$computer$ process_parent_name=$process_parent_name$ process_name=$process_name$
+| fields _time host_fqdn user_name process_parent_name process_name process_parent_path process_path process_parent_guid process_guid process_parent_command_line process_command_line original_file_name</query>
+    <earliest>$time_picker.earliest$</earliest>
+    <latest>$time_picker.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <search id="thindex">
+    <query>index=threathunting host_fqdn=$computer$
+| fields _time host_fqdn user_name process_parent_path process_path process_parent_guid process_guid process_parent_command_line process_command_line original_file_name</query>
+    <earliest>$time_picker.earliest$</earliest>
+    <latest>$time_picker.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <fieldset submitButton="false" autoRun="false">
+    <input type="time" token="time_picker" searchWhenChanged="true">
+      <label>Timespan</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="text" token="computer" searchWhenChanged="true">
+      <label>host_fqdn</label>
+      <default>*</default>
+      <initialValue>*</initialValue>
+    </input>
+    <input type="text" token="process_parent_name" searchWhenChanged="true">
+      <label>process_parent_name</label>
+      <default>*</default>
+      <initialValue>*</initialValue>
+    </input>
+    <input type="text" token="process_name" searchWhenChanged="true">
+      <label>process_name</label>
+      <default>*</default>
+      <initialValue>*</initialValue>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <viz type="link_analysis_app.link_analysis">
+        <title>All rare proces chains</title>
+        <search base="raw">
+          <query>
+| fields _time host_fqdn process_parent_name process_name 
+| stats count by process_parent_name process_name 
+| where count &lt; 30</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="link_analysis_app.link_analysis.directed">false</option>
+        <option name="link_analysis_app.link_analysis.layoutStyle">klay</option>
+        <option name="link_analysis_app.link_analysis.pathAlgo">dijkstra</option>
+        <option name="link_analysis_app.link_analysis.recursiveLookup">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </viz>
+    </panel>
+    <panel>
+      <table>
+        <title>Click on a process for more details below</title>
+        <search base="raw">
+          <query>| fields _time host_fqdn process_parent_name process_name 
+| stats count by process_parent_name process_name 
+| where count &lt; 30</query>
+        </search>
+        <option name="count">18</option>
+        <option name="drilldown">cell</option>
+        <drilldown>
+          <set token="process_parent_name_det">$row.process_parent_name$</set>
+          <set token="process_name_det">$row.process_name$</set>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Details</title>
+        <search base="raw">
+          <query>| search process_parent_name="$process_parent_name_det$" process_name=$process_name_det$
+| table _time host_fqdn user_name process_parent_path process_parent_command_line process_path original_file_name process_command_line process_parent_guid process_guid</query>
+        </search>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">preview</option>
+        <drilldown>
+          <condition field="_time">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_create_whitelist?form.mitre_technique_id=$row.ID$&form.host_fqdn=$row.host_fqdn$&form.user_name=$row.user_name$&form.process_path=$row.process_path$&form.process_parent_path=$row.process_parent_path$&form.process_command_line=$row.process_command_line$&form.process_parent_command_line=$row.process_parent_command_line$&form.hash_sha256=$row.hash_sha256$]]>
+            </link>
+          </condition>
+          <condition field="user_name">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/user_drilldown?form.user_name=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
+            </link>
+          </condition>
+          <condition field="host_fqdn">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_guid">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_path">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="original_file_name">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_command_line">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="process_id">
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition>
+            <link target="_blank">
+              <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+        </drilldown>        
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Triggered processes (from threathunting index)</title>
+      <viz type="sankey_diagram_app.sankey_diagram">
+        <search base="thindex">
+          <query>| fields _time host_fqdn process_parent_path process_path 
+| stats count by process_parent_path process_path</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </viz>
+    </panel>
+    <panel>
+      <table>
+        <title>Click a process for more details below, results from threathunting index</title>
+        <search base="thindex">
+          <query>| fields _time host_fqdn process_parent_path process_path
+| stats count by process_parent_path process_path 
+| where count &lt; 30</query>
+        </search>
+        <option name="drilldown">cell</option>
+        <drilldown>
+          <set token="process_parent_path_det">$row.process_parent_path$</set>
+          <set token="process_path_det">$row.process_path$</set>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_proc2_show$">
+      <table>
+        <title>Details</title>
+        <search base="thindex">
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_proc2_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_proc2_show"></unset>
+            </condition>
+          </progress>
+          <query>| search process_parent_path="$process_parent_path_det$" process_path=$process_path_det$
+| table _time user process_parent_path process_parent_command_line process_path original_file_name process_command_line process_parent_guid process_guid</query>
+        </search>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">preview</option>
+      </table>
+    </panel>
+  </row>
+</form>
