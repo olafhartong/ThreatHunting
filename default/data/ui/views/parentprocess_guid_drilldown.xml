@@ -21,13 +21,6 @@
         <latest>now</latest>
       </default>
     </input>
-    <input type="time" token="time_picker2">
-      <label>Time span Sankey</label>
-      <default>
-        <earliest>-4h@h</earliest>
-        <latest>now</latest>
-      </default>
-    </input>
   </fieldset>
   <row>
     <panel>
@@ -35,8 +28,8 @@
         <search>
           <query>`sysmon` process_parent_guid=$process_parent_guid$ |  stats count by process_parent_guid,process_parent_path
 |  table process_parent_guid, process_parent_path, count</query>
-          <earliest>$time_picker2.earliest$</earliest>
-          <latest>$time_picker2.latest$</latest>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="drilldown">none</option>
@@ -53,25 +46,21 @@
         <option name="force_directed_viz.force_directed.StrokeWidth">1</option>
         <option name="force_directed_viz.force_directed.theme">light</option>
         <option name="height">400</option>
+        <option name="refresh.display">progressbar</option>
       </viz>
     </panel>
     <panel>
       <viz type="sankey_diagram_app.sankey_diagram">
         <search>
           <query>`sysmon` host_fqdn=$host_fqdn$ (process_guid=$process_parent_guid$ OR process_parent_guid=$process_parent_guid$)
-    [ search `sysmon` host_fqdn=$host_fqdn$
-    | stats count by process_guid
-    | fields process_guid ]
-| transaction process_guid
-| nomv process_path
-| eval processname= process_id .":" .process_path
-| eval parentprocessname = process_parent_id . ":" . process_parent_path
-| stats count by parentprocessname,processname</query>
-          <earliest>$time_picker2.earliest$</earliest>
-          <latest>$time_picker2.latest$</latest>
+| fields _time host_fqdn process_parent_path process_path 
+| stats count by process_parent_path process_path</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
         </search>
-        <option name="height">400</option>
         <option name="drilldown">none</option>
+        <option name="height">400</option>
+        <option name="refresh.display">progressbar</option>
       </viz>
     </panel>
   </row>
@@ -140,7 +129,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>    
+          </condition>
           <condition field="process_command_line">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -150,7 +139,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>                          
+          </condition>
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$row.time_picker.earliest$&form.time_picker.latest=$row.time_picker.latest$]]>
@@ -302,7 +291,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/file_create_drilldown?form.process_path=$row.process_path$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>          
+          </condition>
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -404,7 +393,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/user_drilldown?form.user_name=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
             </link>
-          </condition>          
+          </condition>
           <condition field="src_ip">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/network_connection_drilldown?form.src_ip=$row.src_ip$&earliest=$earliest$&latest=$latest$]]>
@@ -424,7 +413,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/dns_stacking?form.query_name=$row.dst_host_name$&earliest=$earliest$&latest=$latest$]]>
             </link>
-          </condition>                    
+          </condition>
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
@@ -434,7 +423,7 @@
       </table>
     </panel>
   </row>
-    <row>
+  <row>
     <panel depends="$panel_thread_show$">
       <title>Create Remote Thread</title>
       <table>
@@ -486,7 +475,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.target_process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>          
+          </condition>
           <condition field="process_guid">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -500,7 +489,7 @@
         </drilldown>
       </table>
     </panel>
-  </row>  
+  </row>
   <row>
     <panel depends="$panel_reg_show$">
       <title>Registry Access</title>
@@ -551,7 +540,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>          
+          </condition>
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -598,13 +587,13 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/user_drilldown?form.user_name=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
             </link>
-          </condition> 
+          </condition>
           <condition field="wmi_consumer_name">
             <link target="_blank">https://www.google.com/search?q=$row.wmi_consumer_name$</link>
           </condition>
           <condition field="wmi_consumer_destination">
             <link target="_blank">https://www.google.com/search?q=$row.wmi_consumer_destination$</link>
-          </condition>                                       
+          </condition>
           <condition field="host_fqdn">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -670,8 +659,8 @@
         </drilldown>
       </table>
     </panel>
-  </row>  
-    <row>
+  </row>
+  <row>
     <panel depends="$panel_dns_show$">
       <title>DNS requests</title>
       <table>
@@ -724,7 +713,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/network_drilldown?form.host_fqdn=$row.host_fqdn$&form.dst_ip=$row.query_results$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>          
+          </condition>
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
