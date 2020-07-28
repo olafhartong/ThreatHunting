@@ -85,9 +85,8 @@
       <title>Authentication Failures by user and host</title>
       <viz type="sankey_diagram_app.sankey_diagram">
         <search>
-          <query>`windows-security` (EventCode=4771 AND "Audit Failure" NOT Failure_Code=0x19) OR EventCode=4625 Account_Name!="*$$"  (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
-| eval user_name=mvindex(Account_Name,1) 
-| stats count by user_name, ComputerName
+          <query>`windows-security` (EventCode=4771 AND "Audit Failure" NOT Failure_Code=0x19) OR EventCode=4625 user_name!="*$$"  (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| stats count by user_name, Computer
 | sort -count 
 | head 10</query>
           <earliest>$time_picker.earliest$</earliest>
@@ -101,9 +100,8 @@
       <title>Authentication Success by user and host</title>
       <viz type="sankey_diagram_app.sankey_diagram">
         <search>
-          <query>`windows-security` EventCode=4624 Account_Name!="*$$" (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
-| eval user_name=mvindex(Account_Name,1)
-| stats count by user_name, ComputerName Logon_Type
+          <query>`windows-security` EventCode=4624 user_name!="*$" Logon_Type!=5 (user_name=** OR target_user_name=** OR Account_Name=** OR User_Name=**)
+| stats count by user_name, Computer Logon_Type
 | sort -count 
 | head 25</query>
           <earliest>$time_picker.earliest$</earliest>
@@ -128,12 +126,12 @@
               <unset token="panel_accreate"></unset>
             </condition>
           </progress>
-          <query>`windows-security` EventCode="4720" (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
-| eval "admin_name"=mvindex(Account_Name,0)
-| eval "user_name"=mvindex(Account_Name,1)
+          <query>`windows-security` EventCode="4720" (user_name=$user_name$ OR target_user_name=$user_name$ OR SubjectUserName=$user_name$ OR User_Name=$user_name$)
+| eval "admin_name"=SubjectUserName
+| eval "user_name"=TargetUserName
 | search admin_name!=SA_*
-| table _time user_name Display_Name admin_name 
-| rename user_name AS "Added User" Display_Name AS "Full User Name" admin_name AS "Added by"</query>
+| table _time user_name DisplayName admin_name 
+| rename user_name AS "Added User" DisplayName AS "Full User Name" admin_name AS "Added by"</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -161,9 +159,9 @@
               <unset token="panel_accenabled"></unset>
             </condition>
           </progress>
-          <query>`windows-security` EventCode="4722" (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
-| eval "user_name"=mvindex(Account_Name,1)
-| eval "admin_name"=mvindex(Account_Name,0)
+          <query>`windows-security` EventCode="4722" (user_name=$user_name$ OR target_user_name=$user_name$ OR SubjectUserName=$user_name$ OR User_Name=$user_name$)
+| eval "admin_name"=SubjectUserName
+| eval "user_name"=TargetUserName
 | table _time user_name admin_name
 | search admin_name!= SA_* user_name!=*$
 | rename user_name as "User Account" admin_name AS "Enabled By"</query>
@@ -194,9 +192,9 @@
               <unset token="panel_accdelete"></unset>
             </condition>
           </progress>
-          <query>`windows-security` EventCode="4726" (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
-| eval "admin_name"=mvindex(Account_Name,0)
-| eval "user_name"=mvindex(Account_Name,1)
+          <query>`windows-security` EventCode="4726" (user_name=$user_name$ OR target_user_name=$user_name$ OR SubjectUserName=$user_name$ OR User_Name=$user_name$)
+| eval "admin_name"=SubjectUserName
+| eval "user_name"=TargetUserName
 | search admin_name!=SA_* admin_name!=*$ 
 | table _time user_name admin_name 
 | rename user_name AS "Removed User" admin_name AS "Removed by"</query>
@@ -208,6 +206,7 @@
         <option name="dataOverlayMode">none</option>
         <option name="drilldown">cell</option>
         <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
         <option name="rowNumbers">false</option>
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
@@ -228,17 +227,8 @@
               <unset token="panel_acccreatech"></unset>
             </condition>
           </progress>
-          <query>`windows-security` (EventCode=4720 OR EventCode=4738 OR EventCode=4728 OR EventCode=4732 OR EventCode=4746 OR EventCode=4751 OR EventCode=4756 OR EventCode=4761) (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
-| eval user_sid=mvindex(Security_ID,0) 
-| eval target_account_sid=mvindex(Security_ID,1) 
-| eval target_user_name=mvindex(Account_Name,1) 
-| eval user_name=mvindex(Account_Name,0) 
-| rex field=Message "(?&lt;short_message&gt;.*\r)" 
-| fields _time host EventCode user_sid target_account_sid user_name target_user_name Group_Name short_message 
-| transaction maxspan=30m maxpause=5m fields=target_account_sid 
-| sort _time | eval eventcodes=mvcount(EventCode) 
-| where eventcodes &gt;1 
-| table _time host EventCode user_name target_user_name Group_Name short_message</query>
+          <query>`windows-security` (EventCode=4720 OR EventCode=4738 OR EventCode=4728 OR EventCode=4732 OR EventCode=4746 OR EventCode=4751 OR EventCode=4756 OR EventCode=4761) (user_name=$user_name$ OR target_user_name=$user_name$ OR SubjectUserName=$user_name$ OR User_Name=$user_name$)
+| table _time host EventCode SubjectUserName TargetUserName Group_Name signature</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -268,18 +258,8 @@
               <unset token="panel_accchrem"></unset>
             </condition>
           </progress>
-          <query>`windows-security` (EventCode=4738 OR EventCode=4729 OR EventCode=4733 OR EventCode=4747 OR EventCode=4752 OR EventCode=4756 OR EventCode=4762) (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
-| eval user_sid=mvindex(Security_ID,0) 
-| eval target_account_sid=mvindex(Security_ID,1) 
-| eval target_user_name=mvindex(Account_Name,1) 
-| eval user_name=mvindex(Account_Name,0) 
-| rex field=Message "(?&lt;short_message&gt;.*\r)" 
-| fields _time host EventCode user_sid target_account_sid user_name target_user_name Group_Name short_message 
-| transaction maxspan=30m maxpause=5m fields=target_account_sid 
-| sort _time 
-| eval eventcodes=mvcount(EventCode) 
-| where eventcodes &gt;1 
-| table _time host EventCode user_name target_user_name Group_Name short_message</query>
+          <query>`windows-security` (EventCode=4738 OR EventCode=4729 OR EventCode=4733 OR EventCode=4747 OR EventCode=4752 OR EventCode=4756 OR EventCode=4762) (user_name=$user_name$ OR target_user_name=$user_name$ OR SubjectUserName=$user_name$ OR User_Name=$user_name$)
+| table _time host EventCode SubjectUserName TargetUserName Group_Name signature</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -434,14 +414,15 @@
 | search user_name!="*$"
 | table _time user_name 
 | rename user_name as "User Account"</query>
-          <earliest>-24h@h</earliest>
-          <latest>now</latest>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="count">10</option>
         <option name="dataOverlayMode">none</option>
         <option name="drilldown">cell</option>
         <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
         <option name="rowNumbers">false</option>
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
@@ -460,14 +441,13 @@
               <unset token="panel_accpassadmin"></unset>
             </condition>
           </progress>
-          <query>`windows-security` EventCode="4724" (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
-| eval "user_name"=mvindex(Account_Name,1)
-| eval "admin_name"=mvindex(Account_Name,0)
+          <query>`windows-security` EventCode="4724"  (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+| eval "user_name"=TargetUserName | eval "admin_name"=SubjectUserName
 | search admin_name!="SA_*"
 | table _time user_name admin_name
 | rename user_name AS "User Account" admin_name AS "Changed By"</query>
-          <earliest>-24h@h</earliest>
-          <latest>now</latest>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="count">10</option>
@@ -476,6 +456,38 @@
         <option name="percentagesRow">false</option>
         <option name="refresh.display">progressbar</option>
         <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_ntlm$">
+      <title>Failed NTLM authentications</title>
+      <table>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_ntlm">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_ntlm"></unset>
+            </condition>
+          </progress>
+          <query>`windows-security` EventCode=4776 Status!=0x0 
+| eval description=case(ta_windows_status = "0xc0000064", "user name does not exist", ta_windows_status = "0xc000006a", "user name is correct but the password is wrong",ta_windows_status = "0xc0000234", "user is currently locked out",ta_windows_status = "0xc0000072", "account is currently disabled",ta_windows_status = "0xc000006F", "user tried to logon outside his day of week or time of day restrictions",ta_windows_status = "0xc0000070", "workstation restriction",ta_windows_status = "0xc0000193", "account expiration",ta_windows_status = "0xc0000071", "expired password",ta_windows_status = "0xc0000224", "user is required to change password at next logon") 
+| stats count by Computer TargetUserName status description 
+| sort - count</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">true</option>
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
       </table>
@@ -494,10 +506,10 @@
               <unset token="panel_pth"></unset>
             </condition>
           </progress>
-          <query>index=threathunting (user_name=$user_name$ OR target_user_name=$user_name$ OR Account_Name=$user_name$ OR User_Name=$user_name$)
+          <query>`windows-security` EventCode=4624 AND ((SubjectUserSid="NULL SID" OR SubjectUserSid="S-1-0-0") AND (LogonType="3") AND (src_ip != "*::1*") AND (LogonProcessName="*NtLmSsp") AND (KeyLength="0") AND (user != "*ANONYMOUS LOGON" OR TargetUserName != "*ANONYMOUS LOGON"))
 | table _time indextime,host_fqdn, user_sid, user_name src_host_name src_ip target_user_name target_user_domain</query>
-          <earliest>-24h@h</earliest>
-          <latest>now</latest>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="count">10</option>
@@ -577,7 +589,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>    
+          </condition>
           <condition field="process_command_line">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -587,7 +599,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>                          
+          </condition>
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -739,7 +751,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/file_create_drilldown?form.process_path=$row.process_path$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>          
+          </condition>
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -841,7 +853,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/user_drilldown?form.user_name=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
             </link>
-          </condition>          
+          </condition>
           <condition field="src_ip">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/network_connection_drilldown?form.src_ip=$row.src_ip$&earliest=$earliest$&latest=$latest$]]>
@@ -861,7 +873,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/dns_stacking?form.query_name=$row.dst_host_name$&earliest=$earliest$&latest=$latest$]]>
             </link>
-          </condition>                    
+          </condition>
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&earliest=$earliest$&latest=$latest$]]>
@@ -923,7 +935,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.target_process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>          
+          </condition>
           <condition field="process_guid">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -988,7 +1000,7 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>          
+          </condition>
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
@@ -1035,13 +1047,13 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/user_drilldown?form.user_name=$row.user_name$&earliest=$earliest$&latest=$latest$]]>
             </link>
-          </condition> 
+          </condition>
           <condition field="wmi_consumer_name">
             <link target="_blank">https://www.google.com/search?q=$row.wmi_consumer_name$</link>
           </condition>
           <condition field="wmi_consumer_destination">
             <link target="_blank">https://www.google.com/search?q=$row.wmi_consumer_destination$</link>
-          </condition>                                       
+          </condition>
           <condition field="host_fqdn">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
