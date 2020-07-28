@@ -462,6 +462,38 @@
     </panel>
   </row>
   <row>
+    <panel depends="$panel_ntlm$">
+      <title>Failed NTLM authentications</title>
+      <table>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_ntlm">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_ntlm"></unset>
+            </condition>
+          </progress>
+          <query>`windows-security` EventCode=4776 Status!=0x0 
+| eval description=case(ta_windows_status = "0xc0000064", "user name does not exist", ta_windows_status = "0xc000006a", "user name is correct but the password is wrong",ta_windows_status = "0xc0000234", "user is currently locked out",ta_windows_status = "0xc0000072", "account is currently disabled",ta_windows_status = "0xc000006F", "user tried to logon outside his day of week or time of day restrictions",ta_windows_status = "0xc0000070", "workstation restriction",ta_windows_status = "0xc0000193", "account expiration",ta_windows_status = "0xc0000071", "expired password",ta_windows_status = "0xc0000224", "user is required to change password at next logon") 
+| stats count by Computer TargetUserName status description 
+| sort - count</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">true</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
     <panel depends="$panel_pth$">
       <title>Pass the Hash</title>
       <table>
