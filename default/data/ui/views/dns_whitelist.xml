@@ -17,29 +17,44 @@
       <label>reason</label>
       <default>CHANGEME</default>
     </input>
+    <input type="radio" token="input_mode">
+      <label>Mode</label>
+      <choice value="add">Add</choice>
+      <choice value="delete">Remove</choice>
+      <default>add</default>
+    </input>
   </fieldset>
   <row>
     <panel>
       <table>
         <title>Today's Entries</title>
         <search>
-          <query>| makeresults
-    | eval host_fqdn = COALESCE(if(trim("$host_fqdn$")="", "*", trim("$host_fqdn$")), "*")
-    | eval reason = trim("$input_reason$")
-    | eval process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*")
-    | eval query_name = COALESCE(if(trim("$query_name$")="", "*", trim("$query_name$")), "*")
-    | eval added_date = strftime(now(), "%Y-%m-%d")
-    | table *
+          <query>| makeresults 
+| eval input_host_fqdn = COALESCE(if(trim("$host_fqdn$")="", "*", trim("$host_fqdn$")), "*") 
+| eval input_process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*") 
+| eval input_query_name = COALESCE(if(trim("$query_name$")="", "*", trim("$query_name$")), "*") 
 
-    | fields - _raw _time
-    | where reason!="CHANGEME"
-    | inputlookup append=t threathunting_dns_whitelist.csv
+| eval host_fqdn = input_host_fqdn 
+| eval process_path = input_process_path 
+| eval query_name = input_query_name 
+| eval reason = trim("$input_reason$") 
+| eval added_date = strftime(now(), "%Y-%m-%d") 
+| eval contact = ("$env:user$") 
+| table * 
+| fields - _raw _time 
+| where reason!="CHANGEME" 
 
-| sort -added_date
-| dedup host_fqdn process_path query_name
-| outputlookup threathunting_dns_whitelist.csv
-| fields added_date contact reason host_fqdn process_path query_name
-          </query>
+| inputlookup append=t threathunting_dns_whitelist.csv 
+| sort -added_date 
+| dedup host_fqdn process_path query_name 
+
+| eval mode = "$input_mode$" 
+| eval delete=if(mode="delete" and host_fqdn=input_host_fqdn and process_path=input_process_path and query_name=input_query_name, "yes", "no") 
+| where delete="no" 
+| fields - delete mode 
+
+| outputlookup threathunting_dns_whitelist.csv 
+| fields added_date contact reason host_fqdn process_path query_name</query>
           <earliest>0</earliest>
         </search>
         <option name="wrap">true</option>
