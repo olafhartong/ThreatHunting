@@ -20,7 +20,7 @@
       <title>User activity by technique</title>
       <viz type="punchcard_app.punchcard">
         <search>
-          <query>index=threathunting user_name=$user_name$
+          <query>`threathunting_index` user_name=$user_name$
 | stats count by date_hour mitre_technique</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -42,7 +42,7 @@
       <title>User activity by host</title>
       <table>
         <search>
-          <query>index=threathunting user_name=$user_name$
+          <query>`threathunting_index` user_name=$user_name$
 | eventstats count, sparkline by host_fqdn | dedup host_fqdn | table count sparkline host_fqdn user_name</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -536,7 +536,7 @@
               <unset token="panel_proc_show"></unset>
             </condition>
           </progress>
-          <query>index=threathunting user_name=$user_name$ event_description="Process Creat*"
+          <query>`threathunting_index` user_name=$user_name$ event_description="Process Creat*"
 | eval hash_sha256=lower(hash_sha256)
 | `process_create_whitelist`
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
@@ -614,7 +614,7 @@
       <title>Process Access</title>
       <table>
         <search>
-          <query>index=threathunting user_name=$user_name$ event_description="Process Access" | `process_access_whitelist`
+          <query>`threathunting_index` user_name=$user_name$ event_description="Process Access" | `process_access_whitelist`
           | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
           | table _time indextime ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access process_granted_access_description target_process_guid process_id target_process_id</query>
           <earliest>$time_picker.earliest$</earliest>
@@ -697,7 +697,7 @@
               <unset token="panel_filec_show"></unset>
             </condition>
           </progress>
-          <query>index=threathunting event_description="File Created" user_name=$user_name$
+          <query>`threathunting_index` event_description="File Created" user_name=$user_name$
 | `file_create_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
 | table _time ID Technique Category Trigger host_fqdn process_path file_name file_path process_guid process_id</query>
@@ -774,7 +774,7 @@
               <unset token="panel_img_show"></unset>
             </condition>
           </progress>
-          <query>index=threathunting user_name=$user_name$ event_description="Image *"  | fillnull value=NULL | `image_load_whitelist`
+          <query>`threathunting_index` user_name=$user_name$ event_description="Image *"  | fillnull value=NULL | `image_load_whitelist`
           | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
           | table _time indextime ID Technique Category Trigger host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status process_id process_guid</query>
           <earliest>$time_picker.earliest$</earliest>
@@ -817,7 +817,7 @@
       <title>Network Connection</title>
       <table>
         <search>
-          <query>index=threathunting user_name=$user_name$ event_description="Network *"
+          <query>`threathunting_index` user_name=$user_name$ event_description="Network *"
           | `network_whitelist`
           | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
           | table _time indextime ID Technique Category Trigger host_fqdn user_name process_path process_id process_guid src_ip dst_ip dst_port src_host_name dst_host_name</query>
@@ -896,7 +896,7 @@
               <unset token="panel_thread_show"></unset>
             </condition>
           </progress>
-          <query>index=threathunting event_description="Create Remote Thread" 
+          <query>`threathunting_index` event_description="Create Remote Thread" 
 | `remote_thread_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
 | table _time indextime ID Technique Category Trigger host_fqdn process_name target_process_path target_process_address thread_new_id process_guid process_parent_guid</query>
@@ -955,7 +955,7 @@
       <title>Registry Access</title>
       <table>
         <search>
-          <query>index=threathunting user_name=$user_name$ event_description="Registry*" | `registry_whitelist` | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
+          <query>`threathunting_index` user_name=$user_name$ event_description="Registry*" | `registry_whitelist` | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
           | table _time indextime ID Technique Category Trigger event_type host_fqdn process_path  process_id process_guid registry_key_path registry_key_details</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -1023,7 +1023,7 @@
               <unset token="panel_wmi_show"></unset>
             </condition>
           </progress>
-          <query>index=threathunting event_description="WMI*" user_name=$user_name$
+          <query>`threathunting_index` event_description="WMI*" user_name=$user_name$
 | `wmi_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
 | table _time ID Technique Category Trigger host_fqdn user_name wmi_consumer_name wmi_consumer_destination</query>
@@ -1076,7 +1076,7 @@
               <unset token="panel_pipe_show"></unset>
             </condition>
           </progress>
-          <query>index=threathunting event_description="Pipe*" user_name=$user_name$
+          <query>`threathunting_index` event_description="Pipe*" user_name=$user_name$
 | `pipe_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
 | table _time ID Technique Category Trigger host_fqdn pipe_name process_path process_guid process_id</query>

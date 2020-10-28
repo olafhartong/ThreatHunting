@@ -64,7 +64,7 @@
       <title>Activity by time per day</title>
       <chart>
         <search>
-          <query>index=threathunting host_fqdn="$host$*"
+          <query>`threathunting_index` host_fqdn="$host$*"
           | stats count by _time, mitre_category| timechart span=15m sum(count) by mitre_category</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -86,7 +86,7 @@
       <single>
         <title>Persistence</title>
         <search>
-          <query>index=threathunting mitre_category="*Persistence*" host_fqdn="$host$*"
+          <query>`threathunting_index` mitre_category="*Persistence*" host_fqdn="$host$*"
 | timechart span=24h count(mitre_category)</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -112,7 +112,7 @@
       <single>
         <title>Privilege Escalation</title>
         <search>
-          <query>index=threathunting mitre_category="*Privilege_Escalation*" host_fqdn="$host$*"
+          <query>`threathunting_index` mitre_category="*Privilege_Escalation*" host_fqdn="$host$*"
 | timechart span=24h count(mitre_category)</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -138,7 +138,7 @@
       <single>
         <title>Defense Evasion</title>
         <search>
-          <query>index=threathunting mitre_category="*Defense_Evasion*" host_fqdn="$host$*"
+          <query>`threathunting_index` mitre_category="*Defense_Evasion*" host_fqdn="$host$*"
 | timechart span=24h count(mitre_category)</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -164,7 +164,7 @@
       <single>
         <title>Credential Access</title>
         <search>
-          <query>index=threathunting mitre_category="*Credential_Access*" host_fqdn="$host$*"
+          <query>`threathunting_index` mitre_category="*Credential_Access*" host_fqdn="$host$*"
 | timechart span=24h count(mitre_category)</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -190,7 +190,7 @@
       <single>
         <title>Discovery</title>
         <search>
-          <query>index=threathunting mitre_category="*Discovery*" host_fqdn="$host$*"
+          <query>`threathunting_index` mitre_category="*Discovery*" host_fqdn="$host$*"
 | timechart span=24h count(mitre_category)</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -216,7 +216,7 @@
       <single>
         <title>Lateral Movement</title>
         <search>
-          <query>index=threathunting mitre_category="*Lateral_Movement*" host_fqdn="$host$*"
+          <query>`threathunting_index` mitre_category="*Lateral_Movement*" host_fqdn="$host$*"
 | timechart span=24h count(mitre_category)</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -243,7 +243,7 @@
       <single>
         <title>Execution</title>
         <search>
-          <query>index=threathunting mitre_category="*Execution*" host_fqdn="$host$*"
+          <query>`threathunting_index` mitre_category="*Execution*" host_fqdn="$host$*"
 | timechart span=24h count(mitre_category)</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -269,7 +269,7 @@
       <single>
         <title>Collection</title>
         <search>
-          <query>index=threathunting mitre_category="*Collection*" host_fqdn="$host$*"
+          <query>`threathunting_index` mitre_category="*Collection*" host_fqdn="$host$*"
 | timechart span=24h count(mitre_category)</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -295,7 +295,7 @@
       <single>
         <title>Exfiltration</title>
         <search>
-          <query>index=threathunting mitre_category="*Exfiltration*" host_fqdn="$host$*"
+          <query>`threathunting_index` mitre_category="*Exfiltration*" host_fqdn="$host$*"
 | timechart span=24h count(mitre_category)</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -321,7 +321,7 @@
       <single>
         <title>Command &amp; Control</title>
         <search>
-          <query>index=threathunting mitre_category="*Command_and_Control*" host_fqdn="$host$*"
+          <query>`threathunting_index` mitre_category="*Command_and_Control*" host_fqdn="$host$*"
 | timechart span=24h count(mitre_category)</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>

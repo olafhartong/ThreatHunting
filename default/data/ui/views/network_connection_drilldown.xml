@@ -58,8 +58,8 @@
       <title>Activity by destination IP</title>
       <viz type="timeline_app.timeline">
         <search>
-          <query>index=threathunting src_ip=$src_ip$ dst_ip=$dst_ip$ 
-| stats count by _time dst_ip</query>
+          <query>`threathunting_index` src_ip=$src_ip$ dst_ip=$dst_ip$ 
+| stats count by date_hour dst_ip</query>
           <earliest>$timepicker.earliest$</earliest>
           <latest>$timepicker.latest$</latest>
         </search>

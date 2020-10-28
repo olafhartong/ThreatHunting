@@ -36,32 +36,48 @@
       <label>reason</label>
       <default>CHANGEME</default>
     </input>
+    <input type="radio" token="input_mode">
+      <label>Mode</label>
+      <choice value="add">Add</choice>
+      <choice value="delete">Remove</choice>
+      <default>add</default>
+    </input>
   </fieldset>
   <row>
     <panel>
       <table>
         <title>Today's Entries</title>
         <search>
-          <query> | makeresults
-    | eval host_fqdn = COALESCE(if(trim("$host_fqdn$")="", "*", trim("$host_fqdn$")), "*")
-    | eval mitre_technique_id = COALESCE(if(trim("$mitre_technique_id$")="", "*", trim("$mitre_technique_id$")), "*")
-    | eval reason = trim("$input_reason$")
-    | eval process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*")
-    | eval process_granted_access = COALESCE(if(trim("$process_granted_access$")="", "*", trim("$process_granted_access$")), "*")
-    | eval target_process_path = COALESCE(if(trim("$target_process_path$")="", "*", trim("$target_process_path$")), "*")
-    | eval added_date = strftime(now(), "%Y-%m-%d")
-    | eval contact = ("$env:user$")
-    | table *
+          <query>| makeresults 
+| eval input_host_fqdn = COALESCE(if(trim("$host_fqdn$")="", "*", trim("$host_fqdn$")), "*") 
+| eval input_mitre_technique_id = COALESCE(if(trim("$mitre_technique_id$")="", "*", trim("$mitre_technique_id$")), "*") 
+| eval input_process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*") 
+| eval input_process_granted_access = COALESCE(if(trim("$process_granted_access$")="", "*", trim("$process_granted_access$")), "*") 
+| eval input_target_process_path = COALESCE(if(trim("$target_process_path$")="", "*", trim("$target_process_path$")), "*") 
 
-    | fields - _raw _time 
-    | where reason!="CHANGEME"
-    | inputlookup append=t threathunting_process_access_whitelist.csv
+| eval host_fqdn = input_host_fqdn 
+| eval mitre_technique_id = input_mitre_technique_id 
+| eval process_path = input_process_path 
+| eval process_granted_access = input_process_granted_access 
+| eval target_process_path = input_target_process_path 
+| eval added_date = strftime(now(), "%Y-%m-%d") 
+| eval reason = trim("$input_reason$") 
+| eval contact = ("$env:user$") 
+| table * 
+| fields - _raw _time 
+| where reason!="CHANGEME" 
 
-| sort -added_date
-| dedup mitre_technique_id host_fqdn process_path target_process_path process_granted_access
-| outputlookup threathunting_process_access_whitelist.csv
-| fields added_date contact mitre_technique_id reason host_fqdn process_path target_process_path process_granted_access
-          </query>
+| inputlookup append=t threathunting_process_access_whitelist.csv 
+| sort -added_date 
+| dedup mitre_technique_id host_fqdn process_path target_process_path process_granted_access 
+
+| eval mode = "$input_mode$" 
+| eval delete=if(mode="delete" and mitre_technique_id=input_mitre_technique_id and host_fqdn=input_host_fqdn and process_path=input_process_path and process_granted_access=input_process_granted_access and target_process_path=input_target_process_path, "yes", "no") 
+| where delete="no" 
+| fields - delete mode 
+
+| outputlookup threathunting_process_access_whitelist.csv 
+| fields added_date contact mitre_technique_id reason host_fqdn process_path target_process_path process_granted_access</query>
           <earliest>0</earliest>
         </search>
         <option name="wrap">true</option>
