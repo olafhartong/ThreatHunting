@@ -32,19 +32,11 @@
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="drilldown">none</option>
-        <option name="force_directed_viz.force_directed.AttractDistanceMax">200</option>
-        <option name="force_directed_viz.force_directed.AttractDistanceMin">60</option>
-        <option name="force_directed_viz.force_directed.AttractForceStrength">-200</option>
-        <option name="force_directed_viz.force_directed.CollisionIterations">1</option>
-        <option name="force_directed_viz.force_directed.CollisionRadius">20</option>
-        <option name="force_directed_viz.force_directed.CollisionStrength">0.7</option>
-        <option name="force_directed_viz.force_directed.ForceCollision">15</option>
-        <option name="force_directed_viz.force_directed.RepelDistanceMax">100</option>
-        <option name="force_directed_viz.force_directed.RepelDistanceMin">10</option>
-        <option name="force_directed_viz.force_directed.RepelForceStrength">-140</option>
-        <option name="force_directed_viz.force_directed.StrokeWidth">1</option>
-        <option name="force_directed_viz.force_directed.theme">light</option>
         <option name="height">400</option>
+        <option name="link_analysis_app.link_analysis.directed">false</option>
+        <option name="link_analysis_app.link_analysis.layoutStyle">klay</option>
+        <option name="link_analysis_app.link_analysis.pathAlgo">dijkstra</option>
+        <option name="link_analysis_app.link_analysis.recursiveLookup">false</option>
       </viz>
     </panel>
     <panel>
@@ -64,21 +56,14 @@
   <row>
     <panel>
       <title>Activity by destination IP</title>
-      <viz type="punchcard_app.punchcard">
+      <viz type="timeline_app.timeline">
         <search>
           <query>index=threathunting src_ip=$src_ip$ dst_ip=$dst_ip$ 
-| stats count by date_hour dst_ip</query>
+| stats count by _time dst_ip</query>
           <earliest>$timepicker.earliest$</earliest>
           <latest>$timepicker.latest$</latest>
         </search>
         <option name="drilldown">none</option>
-        <option name="punchcard_app.punchcard.colorMode">categorical</option>
-        <option name="punchcard_app.punchcard.labelRotation">angle</option>
-        <option name="punchcard_app.punchcard.maxColor">#3fc77a</option>
-        <option name="punchcard_app.punchcard.minColor">#d93f3c</option>
-        <option name="punchcard_app.punchcard.numOfBins">9</option>
-        <option name="punchcard_app.punchcard.radiusScale">global</option>
-        <option name="punchcard_app.punchcard.useColors">false</option>
         <option name="refresh.display">preview</option>
       </viz>
     </panel>
