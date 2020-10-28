@@ -9,7 +9,7 @@
     <sampleRatio>1</sampleRatio>
   </search>
   <search id="thindex">
-    <query>index=threathunting host_fqdn=$computer$
+    <query>`threathunting_index` host_fqdn=$computer$
 | fields _time host_fqdn user_name process_parent_path process_path process_parent_guid process_guid process_parent_command_line process_command_line original_file_name</query>
     <earliest>$time_picker.earliest$</earliest>
     <latest>$time_picker.latest$</latest>
