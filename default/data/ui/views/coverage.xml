@@ -7,11 +7,12 @@
         <search>
           <query>| rest /servicesNS/-/ThreatHunting/saved/searches 
 | search title="[T*]*" 
-| makemv delim="," action.summary_index.mitre_category 
-| mvexpand action.summary_index.mitre_category 
-| stats dc(action.summary_index.mitre_technique) AS Searches by action.summary_index.mitre_category 
-| sort action.summary_index.mitre_category 
-| rename action.summary_index.mitre_category AS "MITRE Category"</query>
+| rex field=search "mitre_technique_id=\"(?&lt;id&gt;[T0-9\.]*)\"" 
+| rex field=search "mitre_technique=\"(?&lt;mitre_technique&gt;[a-zA-Z\s]*)\"" 
+| rex field=search "mitre_category=\"(?&lt;mitre_category&gt;[a-zA-Z_,]*)\"" 
+| makemv delim="," mitre_category 
+| mvexpand mitre_category 
+| stats count by mitre_category</query>
           <earliest>-24h@h</earliest>
           <latest>now</latest>
         </search>
@@ -71,8 +72,12 @@
       <title>Currently active triggers</title>
       <table>
         <search>
-          <query>| rest /servicesNS/-/ThreatHunting/saved/searches  | search title="[T*]*"  
-| rename action.summary_index.mitre_category as "MITRE Category" action.summary_index.mitre_technique as "MITRE Technique" action.summary_index.hunting_trigger as "Hunting Trigger"
+          <query>| rest /servicesNS/-/ThreatHunting/saved/searches  
+| search title="[T*]*" 
+| rex field=search "mitre_technique_id=\"(?&lt;id&gt;[T0-9\.]*)\"" 
+| rex field=search "mitre_technique=\"(?&lt;mitre_technique&gt;[a-zA-Z\s]*)\"" 
+| rex field=search "mitre_category=\"(?&lt;mitre_category&gt;[a-zA-Z_,]*)\""            
+| rename mitre_category as "MITRE Category" mitre_technique as "MITRE Technique" hunting_trigger as "Hunting Trigger"
 | table title "MITRE Category" "MITRE Technique" "Hunting Trigger"</query>
           <earliest>-15m</earliest>
           <latest>now</latest>
