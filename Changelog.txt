@@ -1,3 +1,49 @@
+### Updates 1.5.0
+
+New Features
+- NEW REQUIREMENT : Event Timeline app
+- GrantedAccess descriptions for the most common occurences
+- Rare process chains dashboard finished
+- Search based drilldown dashboard Added
+- The threathunting index is now customizable in a macro
+- lateral movement indicator dashboard overhaul, plus new panels
+- user drilldown dashboard improved
+- Network connection drilldown has clearer visualization for beaconing behavior, replaced punchcard by timeline visualization
+- Updated the following changes to the whitelist dashboards:
+    Registry - Add "add/remove" option for entries
+    Process create - Add "add/remove" option for entries
+    Network - Add "add/remove" option for entries, put sort before dedup like others
+    File access - Add "add/remove" option for entries, added contact like others
+    File create - Add "add/remove" option for entries, added contact like others, eval error with file_name pointed at file_path
+    Process access - Add "add/remove" option for entries
+    Remote threat - Add "add/remove" option for entries
+    Image load - Add "add/remove" option for entries
+    DNS - Add "add/remove" option for entries, added contact like others
+    Pipe created - Add "add/remove" option for entries
+    WMI - Add "add/remove" option for entries
+- added OriginalFileName mapping to file_name 
+- working new searches
+
+Bugfixes
+- tons!!
+
+
+### Updates 1.4.2
+
+New Features
+- Rare process chains dashboard (still wip)
+- Colors sprinkled though-out the app according to the ATT&CK Rainbow of Tactics
+
+Changes 
+- Rebuilt some dashboards to have a significant speed increase and more efficient searches
+- Changed the searches on the (Parent)ProcessGuid dashboards to have slightly less detail but a huge speed improvement
+
+Bugfixes
+- Some time pickers didn't properly translate to drilldowns
+- Overlap with windows TA field mappings removed
+- Fixed a faulty field name in one of the lookups
+- Added the missing the blank lookup files
+
 ### Updates 1.4.0
 
 New Features
