@@ -38,7 +38,7 @@
       <title>Recorded file create events</title>
       <table>
         <search>
-          <query>index=threathunting file_name=$file_name$ host_fqdn=$host_fqdn$ file_path=$file_path$ process_path=$process_path$
+          <query>`threathunting_index` file_name=$file_name$ host_fqdn=$host_fqdn$ file_path=$file_path$ process_path=$process_path$
 | `file_create_whitelist` 
 | table _time host_fqdn file_name file_path process_path process_guid</query>
           <earliest>$timepicker.earliest$</earliest>
