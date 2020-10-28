@@ -44,35 +44,52 @@
       <label>reason</label>
       <default>CHANGEME</default>
     </input>
+    <input type="radio" token="input_mode">
+      <label>Mode</label>
+      <choice value="add">Add</choice>
+      <choice value="delete">Remove</choice>
+      <default>add</default>
+    </input>
   </fieldset>
   <row>
     <panel>
       <table>
         <title>Recent Entries</title>
         <search>
-          <query>
-    | makeresults
-    | eval host_fqdn = COALESCE(if(trim("$host_fqdn$")="", "*", trim("$host_fqdn$")), "*")
-    | eval user_name = COALESCE(if(trim("$user_name$")="", "*", trim("$user_name$")), "*")
-    | eval mitre_technique_id = COALESCE(if(trim("$mitre_technique_id$")="", "*", trim("$mitre_technique_id$")), "*")
-    | eval reason = trim("$input_reason$")     
-    | eval process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*")
-    | eval src_ip = COALESCE(if(trim("$src_ip$")="", "*", trim("$src_ip$")), "*")
-    | eval dst_ip = COALESCE(if(trim("$dst_ip$")="", "*", trim("$dst_ip$")), "*") 
-    | eval dst_port = COALESCE(if(trim("$dst_port$")="", "*", trim("$dst_port$")), "*") 
-    | eval contact = ("$env:user$")
-    | eval added_date = strftime(now(), "%Y-%m-%d")     
-    | table *
-    | fields - _raw _time count
-    | where NOT (reason="CHANGEME")
-| inputlookup append=t threathunting_network_whitelist.csv
+          <query>| makeresults 
+| eval input_host_fqdn = COALESCE(if(trim("$host_fqdn$")="", "*", trim("$host_fqdn$")), "*") 
+| eval input_user_name = COALESCE(if(trim("$user_name$")="", "*", trim("$user_name$")), "*") 
+| eval input_mitre_technique_id = COALESCE(if(trim("$mitre_technique_id$")="", "*", trim("$mitre_technique_id$")), "*") 
+| eval input_process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*") 
+| eval input_src_ip = COALESCE(if(trim("$src_ip$")="", "*", trim("$src_ip$")), "*") 
+| eval input_dst_ip = COALESCE(if(trim("$dst_ip$")="", "*", trim("$dst_ip$")), "*") 
+| eval input_dst_port = COALESCE(if(trim("$dst_port$")="", "*", trim("$dst_port$")), "*") 
 
-| dedup host_fqdn, user_name, mitre_technique_id, process_path src_ip dst_ip dst_port
+| eval host_fqdn = input_host_fqdn 
+| eval user_name = input_user_name 
+| eval mitre_technique_id = input_mitre_technique_id 
+| eval process_path = input_process_path 
+| eval src_ip = input_src_ip 
+| eval dst_ip = input_dst_ip 
+| eval dst_port = input_dst_port 
+| eval reason = trim("$input_reason$") 
+| eval contact = ("$env:user$") 
+| eval added_date = strftime(now(), "%Y-%m-%d") 
+| table * 
+| fields - _raw _time count 
+| where NOT (reason="CHANGEME") 
+
+| inputlookup append=t threathunting_network_whitelist.csv 
 | sort -added_date
-| outputlookup threathunting_network_whitelist.csv
-| fields added_date contact mitre_technique_id reason host_fqdn user_name process_path src_ip dst_ip dst_port 
-          
-          </query>
+| dedup host_fqdn, user_name, mitre_technique_id, process_path src_ip dst_ip dst_port 
+ 
+| eval mode = "$input_mode$" 
+| eval delete=if(mode="delete" and mitre_technique_id=input_mitre_technique_id and host_fqdn=input_host_fqdn and user_name=input_user_name and process_path=input_process_path and src_ip=input_src_ip and dst_ip=input_dst_ip and dst_port=input_dst_port, "yes", "no") 
+| where delete="no" 
+| fields - delete mode  
+
+| outputlookup threathunting_network_whitelist.csv 
+| fields added_date contact mitre_technique_id reason host_fqdn user_name process_path src_ip dst_ip dst_port</query>
           <earliest>0</earliest>
         </search>
         <option name="wrap">true</option>
