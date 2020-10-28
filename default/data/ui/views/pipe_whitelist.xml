@@ -32,32 +32,46 @@
       <label>reason</label>
       <default>CHANGEME</default>
     </input>
+    <input type="radio" token="input_mode">
+      <label>Mode</label>
+      <choice value="add">Add</choice>
+      <choice value="delete">Remove</choice>
+      <default>add</default>
+    </input>
   </fieldset>
   <row>
     <panel>
       <table>
         <title>Today's Entries</title>
         <search>
-          <query>| makeresults
-    | eval host_fqdn = COALESCE(if(trim("$host_fqdn$")="", "*", trim("$host_fqdn$")), "*")
-    | eval mitre_technique_id = COALESCE(if(trim("$mitre_technique_id$")="", "*", trim("$mitre_technique_id$")), "*")
-    | eval reason = trim("$input_reason$")
-    | eval process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*")
-    | eval pipe_name = COALESCE(if(trim("$pipe_name$")="", "*", trim("$pipe_name$")), "*")
-    | eval added_date = strftime(now(), "%Y-%m-%d")
-    | eval contact = ("$env:user$")
-    | table *
+          <query>| makeresults 
+| eval input_host_fqdn = COALESCE(if(trim("$host_fqdn$")="", "*", trim("$host_fqdn$")), "*") 
+| eval input_mitre_technique_id = COALESCE(if(trim("$mitre_technique_id$")="", "*", trim("$mitre_technique_id$")), "*") 
+| eval input_process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*") 
+| eval input_pipe_name = COALESCE(if(trim("$pipe_name$")="", "*", trim("$pipe_name$")), "*") 
 
-    | fields - _raw _time 
-    | where reason!="CHANGEME"
-    | inputlookup append=t threathunting_pipe_whitelist.csv
+| eval host_fqdn = input_host_fqdn 
+| eval mitre_technique_id = input_mitre_technique_id 
+| eval process_path = input_process_path 
+| eval pipe_name = input_pipe_name 
+| eval reason = trim("$input_reason$") 
+| eval added_date = strftime(now(), "%Y-%m-%d") 
+| eval contact = ("$env:user$") 
+| table * 
+| fields - _raw _time 
+| where reason!="CHANGEME" 
 
-| sort -added_date
-| dedup mitre_technique_id host_fqdn process_path pipe_name
-| outputlookup threathunting_pipe_whitelist.csv
-| fields added_date contact mitre_technique_id reason host_fqdn process_path pipe_name
+| inputlookup append=t threathunting_pipe_whitelist.csv 
+| sort -added_date 
+| dedup mitre_technique_id host_fqdn process_path pipe_name 
 
-          </query>
+| eval mode = "$input_mode$" 
+| eval delete=if(mode="delete" and mitre_technique_id=input_mitre_technique_id and host_fqdn=input_host_fqdn and process_path=input_process_path and pipe_name=input_pipe_name, "yes", "no") 
+| where delete="no" 
+| fields - delete mode
+
+| outputlookup threathunting_pipe_whitelist.csv 
+| fields added_date contact mitre_technique_id reason host_fqdn process_path pipe_name</query>
           <earliest>0</earliest>
         </search>
         <option name="wrap">true</option>
