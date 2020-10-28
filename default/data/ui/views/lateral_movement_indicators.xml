@@ -1,6 +1,6 @@
 <form>
   <label>Lateral Movement Indicators</label>
-  <description>This dashboard will populate with various indicators for lateral movement. When empty, good news, there was nothing found in the selected timeframe.</description>
+  <description>This dashboard will populate with various indicators for lateral movement. When empty, good news, there was nothing found in the selected timeframe. It is running searches, so it might take a bit of time to load.</description>
   <fieldset submitButton="false" autoRun="true">
     <input type="time" token="field1">
       <label></label>
@@ -11,44 +11,54 @@
     </input>
   </fieldset>
   <row>
-    <panel>
-      <title>Windows Remote Management PowerShell remote process</title>
+    <panel depends="$panel_winrm$">
+      <title>Windows Remote Management (WinRM)</title>
       <table>
         <search>
-          <query>`sysmon` event_id=1 "wsmprovhost.exe" 
-|  table _time indextime event_id event_description host user_name process_path process_id process_parent_id process_command_line process_parent_guid user_session_id</query>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_winrm">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_winrm"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` event_id=1 process_parent_path="*wsmprovhost.exe" 
+|  table _time indextime event_id event_description user_name process_parent_path process_path original_file_name process_parent_command_line process_command_line process_parent_guid process_guid hash_sha256 process_id process_parent_id</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
           <progress>
             <condition match="'job.resultCount' &gt; 0">
               <set token="panel_show">true</set>
             </condition>
-            <condition match="'job.resultCount' eq 0">
+            <condition>
               <unset token="panel_show"></unset>
             </condition>
           </progress>
         </search>
-        <option name="count">20</option>
-        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
         <option name="drilldown">cell</option>
-        <option name="percentagesRow">false</option>
-        <option name="rowNumbers">false</option>
-        <option name="totalsRow">false</option>
-        <option name="wrap">true</option>
-        <format type="color" field="user_name">
-          <colorPalette type="map">{"NT AUTHORITY\\SYSTEM":#ED8440}</colorPalette>
-        </format>
+        <option name="refresh.display">progressbar</option>
         <drilldown>
           <link target="_blank">/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$</link>
         </drilldown>
+        <format type="color" field="user_name">
+          <colorPalette type="map">{"NT AUTHORITY\\SYSTEM":#ED8440}</colorPalette>
+        </format>
       </table>
     </panel>
-  </row>
-  <row>
-    <panel>
-      <title>Windows Remote Management (WinRM) traffic</title>
+    <panel depends="$panel_winrmtraf$">
+      <title>Windows Remote Management (WinRM) - Traffic</title>
       <table>
         <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_winrmtraf">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_winrmtraf"></unset>
+            </condition>
+          </progress>
           <query>`sysmon` event_id=3 (dst_port=5985 OR dst_port=5986) initiated=true
 |  table _time indextime event_id event_description host SourceIp src_port user_name DestinationIp process_path process_id Protocol transport initiated</query>
           <earliest>$field1.earliest$</earliest>
@@ -75,10 +85,60 @@
     </panel>
   </row>
   <row>
-    <panel>
-      <title>PsExec execution</title>
+    <panel depends="$panel_powershell$">
+      <title>Windows Remote Management PowerShell remote process</title>
       <table>
         <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_powershell">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_powershell"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` event_id=1 "wsmprovhost.exe" 
+|  table _time indextime event_id event_description host user_name process_path process_id process_parent_id process_command_line process_parent_guid user_session_id</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_show">true</set>
+            </condition>
+            <condition match="'job.resultCount' eq 0">
+              <unset token="panel_show"></unset>
+            </condition>
+          </progress>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+        <format type="color" field="user_name">
+          <colorPalette type="map">{"NT AUTHORITY\\SYSTEM":#ED8440}</colorPalette>
+        </format>
+        <drilldown>
+          <link target="_blank">/app/ThreatHunting/parentprocess_guid_drilldown?form.process_parent_guid=$row.process_parent_guid$</link>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_psexec$">
+      <title>PSexec execution</title>
+      <table>
+        <search>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_psexec">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_psexec"></unset>
+            </condition>
+          </progress>
           <query>`sysmon` event_id=17 (pipe_name="*PSEXESVC*" OR pipe_name="*PowerShellISEPipeName_*" OR pipe_name="*csexec*" OR pipe_name="*paexec*" OR pipe_name="*remcom*") | table _time indextime event_description host_fqdn pipe_name process_path process_guid process_id</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
@@ -102,13 +162,18 @@
     </panel>
   </row>
   <row>
-    <panel>
+    <panel depends="$panel_wmi$">
       <title>WMI commands executed</title>
       <table>
         <search>
-          <query>`sysmon` event_id=1 process_parent_path="*\\WmiPrvSE.exe" | table  _time indextime event_description hash_sha1 host user_name process_path process_id process_parent_id process_command_line process_parent_guid</query>
-          <earliest>$field1.earliest$</earliest>
-          <latest>$field1.latest$</latest>
+          <progress>
+            <condition match="'job.resultCount' &gt; 0">
+              <set token="panel_wmi">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_wmi"></unset>
+            </condition>
+          </progress>
           <progress>
             <condition match="'job.resultCount' &gt; 0">
               <set token="panel_show">true</set>
@@ -117,8 +182,12 @@
               <unset token="panel_show"></unset>
             </condition>
           </progress>
+          <query>`sysmon` event_id=1 process_parent_path="*\\WmiPrvSE.exe" process_command_line!="*conhost.exe*"| table  _time indextime event_description hash_sha1 host user_name process_path process_id process_parent_id process_command_line process_parent_guid</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
         </search>
         <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
         <format type="color" field="user_name">
           <colorPalette type="map">{"NT AUTHORITY\\SYSTEM":#ED8440}</colorPalette>
         </format>
