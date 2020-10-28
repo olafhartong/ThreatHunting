@@ -13,7 +13,7 @@
       <fieldForLabel>mitre_technique_id</fieldForLabel>
       <fieldForValue>mitre_technique_id</fieldForValue>
       <search>
-        <query>index=threathunting 
+        <query>`threathunting_index` 
 | stats count by mitre_technique_id 
 | sort -count</query>
         <earliest>$time_picker.earliest$</earliest>
@@ -30,7 +30,7 @@
       <fieldForLabel>host_fqdn</fieldForLabel>
       <fieldForValue>host_fqdn</fieldForValue>
       <search>
-        <query>index=threathunting 
+        <query>`threathunting_index` 
 | stats count by host_fqdn 
 | sort -count</query>
         <earliest>$time_picker.earliest$</earliest>
@@ -48,7 +48,7 @@
       <single>
         <title>Initial Access</title>
         <search>
-          <query>index=threathunting mitre_category="*Initial_Access*" ($exclude_technique$) AND ($exclude_host_fqdn$)
+          <query>`threathunting_index` mitre_category="*Initial_Access*" ($exclude_technique$) AND ($exclude_host_fqdn$)
 | timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -77,7 +77,7 @@
       <single>
         <title>Execution</title>
         <search>
-          <query>index=threathunting mitre_category="*Execution*" ($exclude_technique$) AND ($exclude_host_fqdn$)
+          <query>`threathunting_index` mitre_category="*Execution*" ($exclude_technique$) AND ($exclude_host_fqdn$)
 | timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -103,7 +103,7 @@
       <single>
         <title>Persistence</title>
         <search>
-          <query>index=threathunting mitre_category="*Persistence*" ($exclude_technique$) AND ($exclude_host_fqdn$)
+          <query>`threathunting_index` mitre_category="*Persistence*" ($exclude_technique$) AND ($exclude_host_fqdn$)
 | timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -129,7 +129,7 @@
       <single>
         <title>Privilege Escalation</title>
         <search>
-          <query>index=threathunting mitre_category="*Privilege_Escalation*" ($exclude_technique$) AND ($exclude_host_fqdn$) 
+          <query>`threathunting_index` mitre_category="*Privilege_Escalation*" ($exclude_technique$) AND ($exclude_host_fqdn$) 
 | timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -155,7 +155,7 @@
       <single>
         <title>Defense Evasion</title>
         <search>
-          <query>index=threathunting mitre_category="*Defense_Evasion*" ($exclude_technique$) AND ($exclude_host_fqdn$) 
+          <query>`threathunting_index` mitre_category="*Defense_Evasion*" ($exclude_technique$) AND ($exclude_host_fqdn$) 
 | timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -183,7 +183,7 @@
       <single>
         <title>Credential Access</title>
         <search>
-          <query>index=threathunting mitre_category="*Credential_Access*" ($exclude_technique$) AND ($exclude_host_fqdn$) 
+          <query>`threathunting_index` mitre_category="*Credential_Access*" ($exclude_technique$) AND ($exclude_host_fqdn$) 
 | timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -209,7 +209,7 @@
       <single>
         <title>Discovery</title>
         <search>
-          <query>index=threathunting mitre_category="*Discovery*" ($exclude_technique$) AND ($exclude_host_fqdn$)
+          <query>`threathunting_index` mitre_category="*Discovery*" ($exclude_technique$) AND ($exclude_host_fqdn$)
 | timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -235,7 +235,7 @@
       <single>
         <title>Lateral Movement</title>
         <search>
-          <query>index=threathunting mitre_category="*Lateral_Movement*" ($exclude_technique$) AND ($exclude_host_fqdn$)
+          <query>`threathunting_index` mitre_category="*Lateral_Movement*" ($exclude_technique$) AND ($exclude_host_fqdn$)
 | timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -262,7 +262,7 @@
       <single>
         <title>Collection</title>
         <search>
-          <query>index=threathunting mitre_category="*Collection*" ($exclude_technique$) AND ($exclude_host_fqdn$)
+          <query>`threathunting_index` mitre_category="*Collection*" ($exclude_technique$) AND ($exclude_host_fqdn$)
 | timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -288,7 +288,7 @@
       <single>
         <title>Command &amp; Control</title>
         <search>
-          <query>index=threathunting mitre_category="*Command_and_Control*" ($exclude_technique$) AND ($exclude_host_fqdn$) 
+          <query>`threathunting_index` mitre_category="*Command_and_Control*" ($exclude_technique$) AND ($exclude_host_fqdn$) 
 | timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -316,7 +316,7 @@
       <single>
         <title>Exfiltration</title>
         <search>
-          <query>index=threathunting mitre_category="*Exfiltration*" ($exclude_technique$) AND ($exclude_host_fqdn$) 
+          <query>`threathunting_index` mitre_category="*Exfiltration*" ($exclude_technique$) AND ($exclude_host_fqdn$) 
 | timechart span=24h count(mitre_category) | appendpipe [stats count | where count=0]</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
@@ -344,7 +344,7 @@
       <title>Top triggered techniques in the selected timeframe</title>
       <table>
         <search>
-          <query>index="threathunting" ($exclude_technique$) AND ($exclude_host_fqdn$)
+          <query>`threathunting_index` ($exclude_technique$) AND ($exclude_host_fqdn$)
 | stats count by mitre_technique_id, mitre_technique, mitre_category
 | sort -count</query>
           <earliest>$time_picker.earliest$</earliest>
@@ -366,7 +366,7 @@
       <title>Top triggered host_fqdns in the selected timeframe</title>
       <table>
         <search>
-          <query>index="threathunting" ($exclude_technique$) AND ($exclude_host_fqdn$) 
+          <query>`threathunting_index` ($exclude_technique$) AND ($exclude_host_fqdn$) 
 | stats count by host_fqdn
 | sort -count</query>
           <earliest>$time_picker.earliest$</earliest>
@@ -389,7 +389,7 @@
       <title>Top triggered users by host_fqdns in the selected timeframe</title>
       <table>
         <search>
-          <query>index="threathunting" ($exclude_technique$) AND ($exclude_host_fqdn$) 
+          <query>`threathunting_index` ($exclude_technique$) AND ($exclude_host_fqdn$) 
 | stats count by user_name, host_fqdn
 | sort -count</query>
           <earliest>$time_picker.earliest$</earliest>
@@ -414,7 +414,7 @@
       <title>Activity by time per day</title>
       <chart>
         <search>
-          <query>index=threathunting 
+          <query>`threathunting_index` 
 | stats count by _time, mitre_category 
 | timechart span=15m sum(count) by mitre_category useother=false</query>
           <earliest>$time_picker.earliest$</earliest>
