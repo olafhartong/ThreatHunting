@@ -367,7 +367,9 @@
       <table>
         <search>
           <query>`threathunting_index` ($exclude_technique$) AND ($exclude_host_fqdn$) 
-| stats count by host_fqdn
+| stats count by host_fqdn 
+| lookup threathunting_asset_priority.csv host_fqdn 
+| table host_fqdn count priority 
 | sort -count</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>

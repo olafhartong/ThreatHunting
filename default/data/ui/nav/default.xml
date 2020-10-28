@@ -27,7 +27,8 @@
          <view name="powershell_events"/>
          <view name="newly_observed_hashes"/>
      </collection>
-    <collection label="Whitelist">
+    <collection label="Lists">
+        <view name="asset_priority"/>
         <view name="process_create_whitelist"/>
         <view name="network_whitelist"/>      
         <view name="file_access_whitelist"/>
