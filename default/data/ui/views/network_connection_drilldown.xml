@@ -66,7 +66,7 @@
       <title>Activity by destination IP</title>
       <viz type="punchcard_app.punchcard">
         <search>
-          <query>index=threathunting src_ip=$src_ip$ dst_ip=$dst_ip$ 
+          <query>`threathunting_index` src_ip=$src_ip$ dst_ip=$dst_ip$ 
 | stats count by date_hour dst_ip</query>
           <earliest>$timepicker.earliest$</earliest>
           <latest>$timepicker.latest$</latest>

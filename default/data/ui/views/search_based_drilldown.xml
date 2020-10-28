@@ -1,7 +1,7 @@
 <form>
   <label>Search based drilldown</label>
   <search id="raw">
-    <query>index=threathunting | fields *</query>
+    <query>`threathunting_index` | fields *</query>
     <earliest>$time_picker.earliest$</earliest>
     <latest>$time_picker.latest$</latest>
   </search>
