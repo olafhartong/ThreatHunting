@@ -133,7 +133,7 @@
         <search>
           <query>index=threathunting host_fqdn=$computer$ event_description="Process Access" | `process_access_whitelist`
           | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-          | table _time indextime ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access target_process_guid process_id target_process_id</query>
+          | table _time indextime ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access process_granted_access_description target_process_guid process_id target_process_id</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
           <progress>

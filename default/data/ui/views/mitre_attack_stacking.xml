@@ -183,7 +183,7 @@
 | eventstats count, sparkline by ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access
 | dedup ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access 
 | sort -count 
-| table count sparkline ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access</query>
+| table count sparkline ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access process_granted_access_description</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
