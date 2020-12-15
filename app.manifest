@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "2.0.0", 
+  "info": {
+    "title": "ThreatHunting", 
+    "id": {
+      "group": null, 
+      "name": "ThreatHunting", 
+      "version": "1.4.9"
+    }, 
+    "author": [
+      {
+        "name": "Olaf Hartong", 
+        "email": null, 
+        "company": null
+      }
+    ], 
+    "releaseDate": null, 
+    "description": "A Splunk app mapped to MITRE ATT&CK to guide your threat hunts", 
+    "classification": {
+      "intendedAudience": null, 
+      "categories": [], 
+      "developmentStatus": null
+    }, 
+    "commonInformationModels": null, 
+    "license": {
+      "name": null, 
+      "text": "./LICENSE", 
+      "uri": null
+    }, 
+    "privacyPolicy": {
+      "name": null, 
+      "text": null, 
+      "uri": null
+    }, 
+    "releaseNotes": {
+      "name": null, 
+      "text": "./README.md", 
+      "uri": null
+    }
+  }, 
+  "dependencies": null, 
+  "tasks": null, 
+  "inputGroups": null, 
+  "incompatibleApps": null, 
+  "platformRequirements": null, 
+  "supportedDeployments": [
+    "_standalone", 
+    "_distributed"
+  ], 
+  "targetWorkloads": ["_search_heads"]
+}
