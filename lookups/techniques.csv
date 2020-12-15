@@ -201,7 +201,7 @@ T1013,Privilege Escalation,Port Monitors,File monitoring,API monitoring,DLL moni
 T1086,Execution,PowerShell,PowerShell logs,Loaded DLLs,DLL monitoring,Windows Registry,File monitoring,Process monitoring,Process command-line parameters,,,,,
 T1145,Credential Access,Private Keys,File monitoring,,,,,,,,,,,
 T1057,Discovery,Process Discovery,Process monitoring,Process command-line parameters,,,,,,,,,,
-T1186,Defense Evasion,Process Doppelg‰nging,API monitoring,Process monitoring,,,,,,,,,,
+T1186,Defense Evasion,Process Doppelg√§nging,API monitoring,Process monitoring,,,,,,,,,,
 T1093,Defense Evasion,Process Hollowing,Process monitoring,API monitoring,,,,,,,,,,
 T1055,Defense Evasion,Process Injection,API monitoring,Windows Registry,File monitoring,DLL monitoring,Process monitoring,Named Pipes,,,,,,
 T1055,Privilege Escalation,Process Injection,API monitoring,Windows Registry,File monitoring,DLL monitoring,Process monitoring,Named Pipes,,,,,,
