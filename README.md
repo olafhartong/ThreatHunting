@@ -26,18 +26,10 @@ I strive to map all searches to the ATT&CK framework.
 A current ATT&CK navigator export of all linked configurations is found [here](attack_matrix/threathunting.json) and can be viewed [here](https://mitre.github.io/attack-navigator/enterprise/#layerURL=https%3A%2F%2Fraw.githubusercontent.com%2Folafhartong%2Fthreathunting%2Fmaster%2Fattack_matrix%2Fthreathunting.json&scoring=false&clear_annotations=false)
 ![Mapping](attack_matrix/threathunting.png)
 
-### App Prerequisites
-
-Install the following apps to your SearchHead:
-
-- [Add-on for Microsoft Sysmon](https://splunkbase.splunk.com/app/1914/)
-- [Punchcard Visualization](https://splunkbase.splunk.com/app/3129/)
-- [Force Directed Visualization](https://splunkbase.splunk.com/app/3767/)
-- [Sankey Diagram Visualization](https://splunkbase.splunk.com/app/3112/)
-- [Lookup File Editor](https://splunkbase.splunk.com/app/1724/)
 
 ## Required actions after deployment
 
+- Follow all the steps on the About page in the app, make sure all requirements are met.
 - Make sure the threathunting index is present on your indexers
 - Edit the macro's to suit your environment > https://YOURSPLUNK/en-US/manager/ThreatHunting/admin/macros (*make sure the sourcetype is correct*)
 - The app is shipped without whitelist lookup files, you'll need to create them yourself. This is so you won't accidentally overwrite them on an upgrade of the app.
