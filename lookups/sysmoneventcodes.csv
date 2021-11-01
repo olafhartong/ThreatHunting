@@ -22,6 +22,8 @@ EventCode,event_description
 21,WmiEventConsumerToFilter activity detected
 22,DNS Query
 23,File deleted
-24,Clipboard 
+24,Clipboard
+25,Process Tampering
+26,File delete detected
 255,Error
 4688,Process Create
