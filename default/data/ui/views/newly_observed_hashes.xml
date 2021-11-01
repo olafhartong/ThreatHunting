@@ -1,19 +1,44 @@
-<dashboard>
+<form>
   <label>Newly observed hashes</label>
-  <description>in the last 24hours</description>
+  <fieldset submitButton="false" autoRun="true">
+    <input type="time" token="timeframe" searchWhenChanged="true">
+      <label>timeframe</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <chart>
+        <search>
+          <query>index="threathunting_file_summary" 
+| bin span=60m _time 
+|  stats count by _time</query>
+          <earliest>$timeframe.earliest$</earliest>
+          <latest>$timeframe.latest$</latest>
+        </search>
+        <option name="charting.chart">area</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
   <row>
     <panel>
       <table>
         <search>
-          <query>index=* EventChannel="Microsoft-Windows-Sysmon/Operational" event_id=1 | dedup hash_sha256 process_name | stats earliest(_time) as earliest latest(_time) as latest by hash_sha256 process_name host_fqdn | inputlookup append=t threathunting_new_hashes.csv | stats min(earliest) as earliest, max(latest) as latest by hash_sha256 process_name host_fqdn | outputlookup threathunting_new_hashes.csv | eval new_hash=if(earliest&gt;=relative_time(now(), "-7d@d"), 1, 0) | where new_hash=1 | eval earliest = strftime(earliest, "%Y-%m-%d %H:%M") | eval latest = strftime(latest, "%Y-%m-%d %H:%M") | table hash_sha256 process_name host_fqdn latest</query>
-          <earliest>-60m@m</earliest>
-          <latest>now</latest>
+          <query>`threathunting_file_summary_index` | eval FirstSeen=strftime(FirstSeen, "%Y-%m-%d %H:%M:%S") | table FirstSeen,hash_sha256,file_name,host_fqdn,file_company,file_signature,file_is_signed</query>
+          <earliest>$timeframe.earliest$</earliest>
+          <latest>$timeframe.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="count">100</option>
         <option name="dataOverlayMode">none</option>
         <option name="drilldown">cell</option>
         <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
         <option name="rowNumbers">false</option>
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
@@ -25,9 +50,9 @@
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/computer_drilldown?form.computer=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
             </link>
-          </condition>          
+          </condition>
         </drilldown>
       </table>
     </panel>
   </row>
-</dashboard>
+</form>
