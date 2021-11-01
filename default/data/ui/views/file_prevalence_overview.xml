@@ -1,0 +1,129 @@
+<form>
+  <label>File Prevalence Overview</label>
+  <description>This dashboard looks for the occurrence of a file hash based on the Sysmon data within the selected timeframe.</description>
+  <fieldset submitButton="true" autoRun="false">
+    <input type="time" token="time_picker" searchWhenChanged="true">
+      <label>Timespan</label>
+      <default>
+        <earliest>-7d@d</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="text" token="file_name" searchWhenChanged="false">
+      <label>File name</label>
+      <default>*</default>
+      <suffix>*</suffix>
+    </input>
+    <input type="text" token="hash" searchWhenChanged="true">
+      <label>Hash value</label>
+      <default>*</default>
+      <initialValue>*</initialValue>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <single>
+        <title>Prevalence (distinct host_fqdns)</title>
+        <search>
+          <query>`sysmon` (event_id=1 OR event_id=7 OR event_id=15 OR event_id=25) (hash_md5=$hash$ OR hash_sha1=$hash$ OR hash_sha256=$hash$)
+| eval dllname=case(event_id=7,replace(ImageLoaded,"(.*\\\)(?=.*(\.\w*)$|(\w+)$)",""))
+| eval filename=case(event_id=1,process_name,event_id=7,dllname,(event_id=15 OR event_id=25),file_name) | stats dc(host_fqdn) as Prevalence by filename,hash_sha1,hash_sha256,hash_md5,hash_imphash | table Prevalence</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">preview</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Frequency (how often seen)</title>
+        <search>
+          <query>`sysmon` (event_id=1 OR event_id=7 OR event_id=15 OR event_id=25) (hash_md5=$hash$ OR hash_sha1=$hash$ OR hash_sha256=$hash$)
+| eval dllname=case(event_id=7,replace(ImageLoaded,"(.*\\\)(?=.*(\.\w*)$|(\w+)$)",""))
+| eval filename=case(event_id=1,process_name,event_id=7,dllname,(event_id=15 OR event_id=25),file_name) | stats count(_time) as Frequency by filename,hash_sha1,hash_sha256,hash_md5,hash_imphash | table Frequency</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">preview</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Unique Filenames</title>
+        <search>
+          <query>`sysmon` (event_id=1 OR event_id=7 OR event_id=15 OR event_id=25) (hash_md5=$hash$ OR hash_sha1=$hash$ OR hash_sha256=$hash$)
+| eval dllname=case(event_id=7,replace(ImageLoaded,"(.*\\\)(?=.*(\.\w*)$|(\w+)$)",""))
+| eval filename=case(event_id=1,process_name,event_id=7,dllname,(event_id=15 OR event_id=25),file_name) | stats dc(filename) as Filenames by hash_sha1,hash_sha256,hash_md5 | table Filenames</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>First time observed (looks in threathunting_file_summary index)</title>
+        <search>
+          <query>`threathunting_file_summary_index` earliest=0 (hash_sha1=$hash$ OR hash_sha256=$hash$) filename=$file_name$ | eval FirstSeen=strftime(FirstSeen, "%Y-%m-%d %H:%M:%S")
+| table FirstSeen,file_name,host_fqdn,user_name,event_type,file_company,file_signature,file_is_signed,hash_sha256,hash_sha1,hash_imphash</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <condition field="filename">
+            <link target="_blank">https://www.google.com/search?q=$row.filename$</link>
+          </condition>
+          <condition field="hash_sha256">
+            <link target="_blank">https://www.virustotal.com/#/file/$row.hash_sha256$/detection</link>
+          </condition>
+          <condition field="hash_sha1">
+            <link target="_blank">https://www.virustotal.com/#/file/$row.hash_sha1$/detection</link>
+          </condition>
+          <condition field="hash_md5">
+            <link target="_blank">https://www.virustotal.com/#/file/$row.hash_md5$/detection</link>
+          </condition>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Details</title>
+        <search>
+          <query>`sysmon` (event_id=1 OR event_id=7 OR event_id=15 OR event_id=25) (hash_md5=$hash$ OR hash_sha1=$hash$ OR hash_sha256=$hash$)
+| eval dllname=case(event_id=7,replace(ImageLoaded,"(.*\\\)(?=.*(\.\w*)$|(\w+)$)",""))
+| eval filename=case(event_id=1,process_name,event_id=7,dllname,(event_id=15 OR event_id=25),file_name)| table _time,host_fqdn,user_name,process_name,original_file_name,process_command_line,file_company,file_description, process_parent_name, process_parent_command_line</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Additional files with the same Import Hash (slow)</title>
+        <search>
+          <query>`sysmon` (event_id=1 OR event_id=7 OR event_id=15 OR event_id=25)
+  [search `sysmon` (event_id=1 OR event_id=7 OR event_id=15 OR event_id=25) (hash_md5=$hash$ OR hash_sha1=$hash$ OR hash_sha256=$hash$) | table hash_imphash | dedup hash_imphash ] 
+| eval dllname=case(event_id=7,replace(ImageLoaded,"(.*\\\)(?=.*(\.\w*)$|(\w+)$)",""))
+| eval filename=case(event_id=1,process_name,event_id=7,dllname,(event_id=15 OR event_id=25),file_name)
+| stats values(hash_imphash) by filename, hash_sha256</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+      </table>
+    </panel>
+  </row>
+</form>

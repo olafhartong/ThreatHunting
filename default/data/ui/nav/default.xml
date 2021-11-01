@@ -19,6 +19,7 @@
          <view name="computer_investigator"/>
     	   <view name="rare_process_chains"/>
          <view name="search_based_drilldown"/>
+         <view name="file_prevalence_overview"/>
      </collection>       
     <collection label="Hunting Indicators">
         <view name="sysmon"/>

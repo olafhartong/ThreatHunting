@@ -60,16 +60,45 @@
   </row>
   <row>
     <panel>
+      <title>File prevalence recording prerequisites</title>
+      <html>
+        <p>To enable the first seen recording of files and hashes make sure to follow these steps: </p>
+        <p> -1- Make sure to create an index is present on your indexers</p>
+        <p> -2- edit the threat hunting_file_summary_index macro </p>
+          <li>
+          <a class="external text" target="_blank" href="../../manager/ThreatHunting/admin/macros">Edit Macro's here</a>
+        </li>
+        <p> -3- enable the following scheduled search [TH-SUPP] File - First seen tracking to summay index</p>
+      </html>
+      <table>
+        <title>Index validation check</title>
+        <search>
+          <query>`threathunting_file_summary_index` earliest=0 | head 1 | table index</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="count">2</option>
+        <option name="drilldown">row</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <link target="_blank">
+            <![CDATA[../../manager/ThreatHunting/admin/macros]]>
+          </link>
+        </drilldown>
+      </table>
+    </panel>
+    <panel>
       <title>Macro's - make sure the indexes are set properly</title>
       <table>
         <search>
-          <query>| rest /servicesNS/-/ThreatHunting/configs/conf-macros | search title!="*_whitelist" | table title definition</query>
+          <query>| rest /servicesNS/-/ThreatHunting/configs/conf-macros | search eai:appName="*threathunting" AND definition="*index*" | table title definition</query>
           <earliest>-15m</earliest>
           <latest>now</latest>
         </search>
         <option name="count">20</option>
         <option name="drilldown">row</option>
-              <drilldown>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
           <link target="_blank">
             <![CDATA[../../manager/ThreatHunting/admin/macros]]>
           </link>
