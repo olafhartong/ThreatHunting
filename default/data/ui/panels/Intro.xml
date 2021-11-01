@@ -3,6 +3,7 @@
   <html>
     <p>This app incorporates the work of many fabuloous researches and developers, some honorary mentions;</p>
     <ul>
+      <li><a class="external text" target="_blank" href="https://twitter.com/contrablueteam">@ContraBlueteam</a> Stuart for all his support</li>
       <li><a class="external text" target="_blank" href="https://github.com/Cyb3rWard0g/OSSEM">OSSEM</a> by Roberto Rodriguez</li>
       <li><a class="external text" target="_blank" href="https://github.com/secops4thewin">secops4thewin</a> for his great visualizations</li>
       <li><a class="external text" target="_blank" href="https://www.swisscom.ch">Swisscom</a> for their Virustotal checker for new binaries</li>
