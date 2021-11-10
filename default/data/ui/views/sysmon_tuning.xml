@@ -1,0 +1,525 @@
+<form>
+  <label>Sysmon Tuning</label>
+  <search id="formSearch">
+    <query>index=_internal type=Usage source="*license_usage.log*" $included_idx$ $remove_host$ h!=DATA h!=CHANGE h!="" s="*Sysmon/Operational"
+      | stats sum(b) AS host_volume by h date_mday
+      | eval host_volume_MB=(host_volume/1024/1024)
+      | stats avg(host_volume_MB) AS host_volume_avg_MB by h
+      | eval host_volume_avg_MB=round(host_volume_avg_MB,3)
+      | sort - host_volume_avg_MB</query>
+    <earliest>$time.earliest$</earliest>
+    <latest>$time.latest$</latest>
+  </search>
+  <fieldset submitButton="false" autoRun="true">
+    <input type="multiselect" token="included_idx" searchWhenChanged="true">
+      <label>Add Indexes to the overview</label>
+      <search>
+        <query>index=_internal type=Usage source="*license_usage.log*" h!=DATA h!=CHANGE | stats count by idx | fields idx</query>
+        <earliest>$time.earliest$</earliest>
+        <latest>$time.latest$</latest>
+      </search>
+      <fieldForLabel>idx</fieldForLabel>
+      <fieldForValue>idx</fieldForValue>
+      <delimiter> OR </delimiter>
+      <prefix>(</prefix>
+      <suffix>)</suffix>
+      <valuePrefix>idx="</valuePrefix>
+      <valueSuffix>"</valueSuffix>
+      <choice value="None">None</choice>
+      <default>None</default>
+      <initialValue>None</initialValue>
+    </input>
+    <input type="multiselect" token="remove_host" searchWhenChanged="true">
+      <label>Remove HOSTS From Calculations</label>
+      <search>
+        <query>index=_internal type=Usage source="*license_usage.log*" h!=DATA h!=CHANGE $included_idx$ | stats count by h | fields h</query>
+        <earliest>$time.earliest$</earliest>
+        <latest>$time.latest$</latest>
+      </search>
+      <fieldForLabel>h</fieldForLabel>
+      <fieldForValue>h</fieldForValue>
+      <prefix>(</prefix>
+      <suffix>)</suffix>
+      <valuePrefix>h!="</valuePrefix>
+      <valueSuffix>"</valueSuffix>
+      <delimiter> AND </delimiter>
+      <choice value="All_Hosts_Base">All_Hosts_Base</choice>
+      <default>All_Hosts_Base</default>
+      <initialValue>All_Hosts_Base</initialValue>
+    </input>
+    <input type="time" token="time" searchWhenChanged="true">
+      <label>Timespan</label>
+      <default>
+        <earliest>-7d@d</earliest>
+        <latest>@d</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <chart>
+        <title>Click on Desired Host to View Source Usage details</title>
+        <search base="formSearch">
+          <query>| top 30 host_volume_avg_MB by h
+            | fields - count percent
+            | sort - host_volume_avg_MB
+            | rename s AS Source, h AS Host, host_volume_avg_MB AS "Host Volume Avg (MB)", avg_host_count AS "Avg Host Count", avg_source_volume_MB AS "Avg Source Volume (MB)", avg_host_source_volume_MB AS "Avg Host Source Volume (MB)"</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <set token="drilldown_host">$row.Host$</set>
+        </drilldown>
+      </chart>
+    </panel>
+    <panel depends="$drilldown_host$">
+      <chart>
+        <title>EventID Usage Detail</title>
+        <search>
+          <query>`sysmon` host=$drilldown_host$
+| stats count by EventID
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.chart.showDataLabels">all</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="refresh.display">progressbar</option>
+        <drilldown>
+          <set token="drilldown_eventid">$row.EventID$</set>
+        </drilldown>
+      </chart>
+    </panel>
+    <panel>
+      <single>
+        <title>Average DAILY Data Ingestion per Host</title>
+        <search base="formSearch">
+          <query>| stats avg(host_volume_avg_MB) | rename s AS Source, h AS Host, host_volume_avg_MB AS "Host Volume Avg (MB)", avg_host_count AS "Avg Host Count", avg_source_volume_MB AS "Avg Source Volume (MB)", avg_host_source_volume_MB AS "Avg Host Source Volume (MB)"</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0.000</option>
+        <option name="rangeColors">["0x65a637","0x006d9c"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unit">MB</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_1_show$">
+      <table>
+        <title>Process create overview</title>
+        <search>
+          <progress>
+            <condition match="$drilldown_eventid$ = 1">
+              <set token="panel_1_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_1_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` host=$drilldown_host$ EventID=$drilldown_eventid$
+| stats count by ParentImage,Image,OriginalFileName,CommandLine,ParentCommandLine
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_2_show$">
+      <table>
+        <title>File Create overview</title>
+        <search>
+          <progress>
+            <condition match="$drilldown_eventid$ = 2">
+              <set token="panel_2_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_2_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` host=$drilldown_host$ EventID=$drilldown_eventid$
+| stats count by Image, TargetFileName
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_3_show$">
+      <table>
+        <title>Network connection overview</title>
+        <search>
+          <progress>
+            <condition match="$drilldown_eventid$ = 3">
+              <set token="panel_3_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_3_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` host=$drilldown_host$ EventID=$drilldown_eventid$
+| stats count by Image,SourceIp,Initiated,DestinationIp, DestinationPort, DestinationHostname
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_5_show$">
+      <table>
+        <title>Process Terminate overview</title>
+        <search>
+          <progress>
+            <condition match="$drilldown_eventid$ = 5">
+              <set token="panel_5_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_5_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` host=$drilldown_host$ EventID=$drilldown_eventid$
+| stats count by Image
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_7_show$">
+      <table>
+        <title>Image load overview</title>
+        <search>
+          <progress>
+            <condition match="$drilldown_eventid$ = 7">
+              <set token="panel_7_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_7_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` host=$drilldown_host$ EventID=$drilldown_eventid$
+| stats count by Image,ImageLoaded,OriginalFileName,Signed,Signature,SignatureStatus
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_8_show$">
+      <table>
+        <title>Remote thread overview</title>
+        <search>
+          <progress>
+            <condition match="$drilldown_eventid$ = 8">
+              <set token="panel_8_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_8_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` host=$drilldown_host$ EventID=$drilldown_eventid$
+| stats count by SourceImage, TargetImage,StartModule,StartFunction
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_10_show$">
+      <table>
+        <title>Process Access overview</title>
+        <search>
+          <progress>
+            <condition match="$drilldown_eventid$ = 10">
+              <set token="panel_10_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_10_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` host=$drilldown_host$ EventID=$drilldown_eventid$
+| stats count by SourceImage, TargetImage,GrantedAccess,CallTrace
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_11_show$">
+      <table>
+        <title>File Create overview</title>
+        <search>
+          <progress>
+            <condition match="$drilldown_eventid$ = 11">
+              <set token="panel_11_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_11_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` host=$drilldown_host$ EventID=$drilldown_eventid$
+| stats count by Image,TargetFilename
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_12_show$">
+      <table>
+        <title>Registry Key Create/Delete overview</title>
+        <search>
+          <progress>
+            <condition match="$drilldown_eventid$ = 12">
+              <set token="panel_12_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_12_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` host=$drilldown_host$ EventID=$drilldown_eventid$
+| stats count by Image,TargetObject
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_13_show$">
+      <table>
+        <title>Registry Key Set overview</title>
+        <search>
+          <progress>
+            <condition match="$drilldown_eventid$ = 13">
+              <set token="panel_13_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_13_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` host=$drilldown_host$ EventID=$drilldown_eventid$
+| stats count by Image,TargetObject,Details
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_14_show$">
+      <table>
+        <title>Registry Key Rename overview</title>
+        <search>
+          <progress>
+            <condition match="$drilldown_eventid$ = 14">
+              <set token="panel_14_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_14_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` host=$drilldown_host$ EventID=$drilldown_eventid$
+| stats count by Image,TargetObject,NewName
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_15_show$">
+      <table>
+        <title>Registry Key Rename overview</title>
+        <search>
+          <progress>
+            <condition match="$drilldown_eventid$ = 15">
+              <set token="panel_15_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_15_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` host=$drilldown_host$ EventID=$drilldown_eventid$
+| stats count by Image,TargetFilename
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_17_show$">
+      <table>
+        <title>Pipe create overview</title>
+        <search>
+          <progress>
+            <condition match="$drilldown_eventid$ = 17">
+              <set token="panel_17_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_17_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` host=$drilldown_host$ EventID=$drilldown_eventid$
+| stats count by Image,PipeName
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_22_show$">
+      <table>
+        <title>DNS Request overview</title>
+        <search>
+          <progress>
+            <condition match="$drilldown_eventid$ = 22">
+              <set token="panel_22_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_22_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` host=$drilldown_host$ EventID=$drilldown_eventid$
+| stats count by Image,QueryName,QueryStatus
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_23_show$">
+      <table>
+        <title>File Delete overview</title>
+        <search>
+          <progress>
+            <condition match="$drilldown_eventid$ = 23">
+              <set token="panel_23_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_23_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` host=$drilldown_host$ EventID=$drilldown_eventid$
+| stats count by Image,TargetFilename
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$panel_26_show$">
+      <table>
+        <title>File Delete Detected overview</title>
+        <search>
+          <progress>
+            <condition match="$drilldown_eventid$ = 26">
+              <set token="panel_26_show">true</set>
+            </condition>
+            <condition>
+              <unset token="panel_26_show"></unset>
+            </condition>
+          </progress>
+          <query>`sysmon` host=$drilldown_host$ EventID=$drilldown_eventid$
+| stats count by Image,TargetFilename
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+</form>
