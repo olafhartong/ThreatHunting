@@ -69,13 +69,6 @@
       <title>Process Create</title>
       <table>
         <search>
-          <query>`threathunting_index` process_parent_guid=$process_parent_guid$ event_description="Process Creat*"
-| eval hash_sha256=lower(hash_sha256)
-| `process_create_whitelist`
-| rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-| table _time indextime ID Technique Category Trigger host_fqdn user_name process_path process_parent_path original_file_name process_parent_command_line process_command_line process_guid hash_sha256 process_id process_parent_id</query>
-          <earliest>$time_picker.earliest$</earliest>
-          <latest>$time_picker.latest$</latest>
           <progress>
             <condition match="'job.resultCount' &gt; 0">
               <set token="panel_proc_show">true</set>
@@ -84,9 +77,17 @@
               <unset token="panel_proc_show"></unset>
             </condition>
           </progress>
+          <query>`threathunting_index` process_parent_guid=$process_parent_guid$ event_description="Process Creat*"
+| eval hash_sha256=lower(hash_sha256)
+| `process_create_whitelist`
+| rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
+| table _time indextime ID Technique Category Trigger host_fqdn user_name process_path process_parent_path original_file_name process_parent_command_line process_command_line parent_user_name process_guid hash_sha256 process_id process_parent_id</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
         </search>
         <option name="count">12</option>
         <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
         <drilldown>
           <condition field="_time">
             <link target="_blank">
@@ -154,11 +155,6 @@
       <title>Process Access</title>
       <table>
         <search>
-          <query>`threathunting_index` process_parent_guid=$process_parent_guid$ event_description="Process Access" | `process_access_whitelist`
-          | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-          | table _time indextime ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access process_granted_access_description target_process_guid process_id target_process_id</query>
-          <earliest>$time_picker.earliest$</earliest>
-          <latest>$time_picker.latest$</latest>
           <progress>
             <condition match="'job.resultCount' &gt; 0">
               <set token="panel_proca_show">true</set>
@@ -167,9 +163,15 @@
               <unset token="panel_proca_show"></unset>
             </condition>
           </progress>
+          <query>`threathunting_index` process_parent_guid=$process_parent_guid$ event_description="Process Access" | `process_access_whitelist`
+          | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
+          | table _time indextime ID Technique Category Trigger host_fqdn user_name target_user_name process_path target_process_path process_granted_access process_granted_access_description target_process_guid process_id target_process_id</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
         </search>
         <option name="count">6</option>
         <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
         <drilldown>
           <condition field="Category">
             <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
@@ -240,7 +242,7 @@
           <query>`threathunting_index` mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="File Created"  ($exclude_technique$) AND ($exclude_host_fqdn$)
 | `file_create_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| table _time ID Technique Category Trigger host_fqdn process_path file_name file_path process_guid process_id</query>
+| table _time ID Technique Category Trigger host_fqdn user_name process_path file_name file_path process_guid process_id</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -316,7 +318,7 @@
           </progress>
           <query>`threathunting_index` process_parent_guid=$process_parent_guid$ event_description="Image *"  | fillnull value=NULL | `image_load_whitelist`
           | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-          | table _time indextime ID Technique Category Trigger host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status process_id process_guid</query>
+          | table _time indextime ID Technique Category Trigger host_fqdn user_name process_path driver_loaded driver_is_signed driver_signature driver_signature_status process_id process_guid</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -357,12 +359,6 @@
       <title>Network Connection</title>
       <table>
         <search>
-          <query>`threathunting_index` process_parent_guid=$process_parent_guid$ event_description="Network *"
-          | `network_whitelist`
-          | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-          | table _time indextime ID Technique Category Trigger host_fqdn user_name process_path process_id process_guid src_ip dst_ip dst_port src_host_name dst_host_name</query>
-          <earliest>$time_picker.earliest$</earliest>
-          <latest>$time_picker.latest$</latest>
           <progress>
             <condition match="'job.resultCount' &gt; 0">
               <set token="panel_net_show">true</set>
@@ -371,9 +367,16 @@
               <unset token="panel_net_show"></unset>
             </condition>
           </progress>
+          <query>`threathunting_index` process_parent_guid=$process_parent_guid$ event_description="Network *"
+          | `network_whitelist`
+          | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
+          | table _time indextime ID Technique Category Trigger host_fqdn user_name process_path process_id process_guid src_ip dst_ip dst_port src_host_name dst_host_name</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
         </search>
         <option name="count">6</option>
         <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
         <drilldown>
           <condition field="_time">
             <link target="_blank">
@@ -439,7 +442,7 @@
           <query>`threathunting_index` event_description="Create Remote Thread" 
 | `remote_thread_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| table _time indextime ID Technique Category Trigger host_fqdn process_name target_process_path target_process_address thread_new_id process_guid process_parent_guid</query>
+| table _time indextime ID Technique Category Trigger host_fqdn user_name target_user_name process_name target_process_path target_process_address thread_new_id process_guid process_parent_guid</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -495,10 +498,6 @@
       <title>Registry Access</title>
       <table>
         <search>
-          <query>`threathunting_index` host_fqdn=$computer$ event_description="Registry*" | `registry_whitelist`| rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
-          | table _time indextime ID Technique Category Trigger event_type host_fqdn process_path  process_id process_guid registry_key_path registry_key_details</query>
-          <earliest>$time_picker.earliest$</earliest>
-          <latest>$time_picker.latest$</latest>
           <progress>
             <condition match="'job.resultCount' &gt; 0">
               <set token="panel_reg_show">true</set>
@@ -507,6 +506,10 @@
               <unset token="panel_reg_show"></unset>
             </condition>
           </progress>
+          <query>`threathunting_index` host_fqdn=$computer$ event_description="Registry*" | `registry_whitelist`| rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger
+          | table _time indextime ID Technique Category Trigger event_type host_fqdn user_name process_path  process_id process_guid registry_key_path registry_key_details</query>
+          <earliest>$time_picker.earliest$</earliest>
+          <latest>$time_picker.latest$</latest>
         </search>
         <option name="count">6</option>
         <option name="drilldown">cell</option>
@@ -619,7 +622,7 @@
           <query>`threathunting_index` mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="Pipe*"  ($exclude_technique$) AND ($exclude_host_fqdn$)
 | `pipe_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| table _time ID Technique Category Trigger host_fqdn pipe_name process_path process_guid process_id</query>
+| table _time ID Technique Category Trigger host_fqdn user_name pipe_name process_path process_guid process_id</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -677,7 +680,7 @@
           | `dns_whitelist`
           | stats count by query_name query_status query_results process_path host_fqdn 
           | sort -count 
-          | table count query_name query_status query_results process_path host_fqdn</query>
+          | table count query_name query_status query_results process_path host_fqdn user_name</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>

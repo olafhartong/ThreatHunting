@@ -40,7 +40,7 @@
         <search>
           <query>`threathunting_index` file_name=$file_name$ host_fqdn=$host_fqdn$ file_path=$file_path$ process_path=$process_path$
 | `file_create_whitelist` 
-| table _time host_fqdn file_name file_path process_path process_guid</query>
+| table _time host_fqdn user_name file_name file_path process_path process_guid</query>
           <earliest>$timepicker.earliest$</earliest>
           <latest>$timepicker.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -85,8 +85,19 @@
           <latest>$timepicker.latest$</latest>
         </search>
         <option name="drilldown">none</option>
-        <option name="height">400</option>
+        <option name="height">600</option>
         <option name="refresh.display">preview</option>
+        <option name="sankey_diagram_app.sankey_diagram.colorMode">categorical</option>
+        <option name="sankey_diagram_app.sankey_diagram.maxColor">#3fc77a</option>
+        <option name="sankey_diagram_app.sankey_diagram.minColor">#d93f3c</option>
+        <option name="sankey_diagram_app.sankey_diagram.numOfBins">6</option>
+        <option name="sankey_diagram_app.sankey_diagram.showBackwards">false</option>
+        <option name="sankey_diagram_app.sankey_diagram.showLabels">true</option>
+        <option name="sankey_diagram_app.sankey_diagram.showLegend">true</option>
+        <option name="sankey_diagram_app.sankey_diagram.showSelf">false</option>
+        <option name="sankey_diagram_app.sankey_diagram.showTooltip">true</option>
+        <option name="sankey_diagram_app.sankey_diagram.styleBackwards">false</option>
+        <option name="sankey_diagram_app.sankey_diagram.useColors">true</option>
       </viz>
     </panel>
   </row>
@@ -142,7 +153,7 @@
         <search>
           <query>`sysmon` event_id=11 file_name=$file_name$ host_fqdn=$host_fqdn$ file_path=$file_path$ process_path=$process_path$
 | `file_create_whitelist` 
-| table _time host_fqdn file_name file_path process_path process_guid process_id</query>
+| table _time host_fqdn user_name file_name file_path process_path process_guid process_id</query>
           <earliest>$timepicker.earliest$</earliest>
           <latest>$timepicker.latest$</latest>
         </search>

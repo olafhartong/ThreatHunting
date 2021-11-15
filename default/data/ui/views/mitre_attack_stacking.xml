@@ -108,16 +108,21 @@
 | eval hash_sha256=lower(hash_sha256)
 | `process_create_whitelist`
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category | fillnull value=* Trigger
-| eventstats count, sparkline by ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_command_line hash_sha256
-| dedup ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_command_line hash_sha256 
+| eventstats count, sparkline by ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_command_line parent_user_name hash_sha256
+| dedup ID Technique Category Trigger host_fqdn user_name process_parent_path process_path process_command_line user_name hash_sha256 
 | sort - count 
-| table count sparkline ID Technique Category Trigger host_fqdn user_name process_parent_path process_path original_file_name process_command_line hash_sha256</query>
+| table count sparkline ID Technique Category Trigger host_fqdn user_name process_parent_path process_path original_file_name process_command_line user_name hash_sha256</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
         <option name="count">10</option>
         <option name="dataOverlayMode">none</option>
         <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <format type="color" field="Category">
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+          <scale type="category"></scale>
+        </format>
         <drilldown>
           <condition field="count">
             <link target="_blank">
@@ -157,10 +162,6 @@
             </link>
           </condition>
         </drilldown>
-        <format type="color" field="Category">
-          <scale type="category"></scale>
-          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
-        </format>          
       </table>
     </panel>
   </row>
@@ -180,10 +181,10 @@
           <query>`threathunting_index` mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="Process Access" ($exclude_technique$) AND ($exclude_host_fqdn$) 
 | `process_access_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| eventstats count, sparkline by ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access
-| dedup ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access 
+| eventstats count, sparkline by ID Technique Category Trigger host_fqdn user_name target_user_name process_path target_process_path process_granted_access
+| dedup ID Technique Category Trigger host_fqdn user_name target_user_name process_path target_process_path process_granted_access 
 | sort -count 
-| table count sparkline ID Technique Category Trigger host_fqdn process_path target_process_path process_granted_access process_granted_access_description</query>
+| table count sparkline ID Technique Category Trigger host_fqdn user_name target_user_name process_path target_process_path process_granted_access process_granted_access_description</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -191,6 +192,10 @@
         <option name="dataOverlayMode">none</option>
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
+        <format type="color" field="Category">
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+          <scale type="category"></scale>
+        </format>
         <drilldown>
           <condition field="Category">
             <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
@@ -232,10 +237,6 @@
             </link>
           </condition>
         </drilldown>
-        <format type="color" field="Category">
-          <scale type="category"></scale>
-          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
-        </format>         
       </table>
     </panel>
   </row>
@@ -256,10 +257,10 @@
 | `file_create_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
 | fillnull value=* Trigger 
-| eventstats count, sparkline by ID Technique Category Trigger host_fqdn process_path file_name file_path 
-| dedup ID Technique Category Trigger host_fqdn process_path file_name file_path 
+| eventstats count, sparkline by ID Technique Category Trigger host_fqdn user_name process_path file_name file_path 
+| dedup ID Technique Category Trigger host_fqdn user_name process_path file_name file_path 
 | sort -count 
-| table count sparkline ID Technique Category Trigger host_fqdn process_path file_name file_path</query>
+| table count sparkline ID Technique Category Trigger host_fqdn user_name process_path file_name file_path</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -267,6 +268,10 @@
         <option name="dataOverlayMode">none</option>
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
+        <format type="color" field="Category">
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+          <scale type="category"></scale>
+        </format>
         <drilldown>
           <condition field="Category">
             <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
@@ -318,10 +323,6 @@
             </link>
           </condition>
         </drilldown>
-        <format type="color" field="Category">
-          <scale type="category"></scale>
-          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
-        </format>         
       </table>
     </panel>
   </row>
@@ -341,10 +342,10 @@
           <query>`threathunting_index` mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="Image *" ($exclude_technique$) AND ($exclude_host_fqdn$) | fillnull value=NULL
 | `image_load_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| eventstats count, sparkline by ID Technique Category Trigger host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status
-| dedup ID Technique Category Trigger host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status 
+| eventstats count, sparkline by ID Technique Category Trigger host_fqdn user_name process_path driver_loaded driver_is_signed driver_signature driver_signature_status
+| dedup ID Technique Category Trigger host_fqdn user_name process_path driver_loaded driver_is_signed driver_signature driver_signature_status 
 | sort -count 
-| table count sparkline ID Technique Category Trigger host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status</query>
+| table count sparkline ID Technique Category Trigger host_fqdn user_name process_path driver_loaded driver_is_signed driver_signature driver_signature_status</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -354,6 +355,10 @@
         <option name="percentagesRow">false</option>
         <option name="refresh.display">progressbar</option>
         <option name="totalsRow">false</option>
+        <format type="color" field="Category">
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+          <scale type="category"></scale>
+        </format>
         <drilldown>
           <condition field="Category">
             <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
@@ -385,10 +390,6 @@
             </link>
           </condition>
         </drilldown>
-        <format type="color" field="Category">
-          <scale type="category"></scale>
-          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
-        </format>         
       </table>
     </panel>
   </row>
@@ -453,7 +454,7 @@
         <format type="color" field="Category">
           <scale type="category"></scale>
           <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
-        </format>         
+        </format>
       </table>
     </panel>
   </row>
@@ -473,16 +474,20 @@
           <query>`threathunting_index` mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="Create Remote Thread" ($exclude_technique$) AND ($exclude_host_fqdn$) 
 | `remote_thread_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| eventstats count, sparkline by ID Technique Category Trigger host_fqdn process_name target_process_path target_process_address
-| dedup ID Technique Category Trigger host_fqdn process_name target_process_path target_process_address 
+| eventstats count, sparkline by ID Technique Category Trigger host_fqdn user_name  target_user_name process_name target_process_path target_process_address
+| dedup ID Technique Category Trigger host_fqdn user_name target_user_name process_name target_process_path target_process_address 
 | sort -count 
-| table count sparkline ID Technique Category Trigger host_fqdn process_name target_process_path target_process_address</query>
+| table count sparkline ID Technique Category Trigger host_fqdn user_name process_name target_process_path target_process_address</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
         <option name="count">6</option>
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
+        <format type="color" field="Category">
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+          <scale type="category"></scale>
+        </format>
         <drilldown>
           <condition field="Category">
             <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
@@ -519,10 +524,6 @@
             </link>
           </condition>
         </drilldown>
-        <format type="color" field="Category">
-          <scale type="category"></scale>
-          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
-        </format>         
       </table>
     </panel>
   </row>
@@ -543,16 +544,20 @@
 | `registry_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
 | fillnull value=* registry_key_details Trigger 
-| eventstats count, sparkline by ID Technique Category Trigger event_type host_fqdn process_path registry_key_path registry_key_details
-| dedup ID Technique Category Trigger event_type host_fqdn process_path registry_key_path registry_key_details 
+| eventstats count, sparkline by ID Technique Category Trigger event_type host_fqdn user_name process_path registry_key_path registry_key_details
+| dedup ID Technique Category Trigger event_type host_fqdn user_name process_path registry_key_path registry_key_details 
 | sort -count 
-| table count sparkline ID Technique Category Trigger event_type host_fqdn process_path registry_key_path registry_key_details</query>
+| table count sparkline ID Technique Category Trigger event_type host_fqdn user_name process_path registry_key_path registry_key_details</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
         <option name="count">6</option>
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
+        <format type="color" field="Category">
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+          <scale type="category"></scale>
+        </format>
         <drilldown>
           <condition field="Category">
             <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
@@ -584,10 +589,6 @@
             </link>
           </condition>
         </drilldown>
-        <format type="color" field="Category">
-          <scale type="category"></scale>
-          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
-        </format>         
       </table>
     </panel>
   </row>
@@ -646,7 +647,7 @@
         <format type="color" field="Category">
           <scale type="category"></scale>
           <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
-        </format>         
+        </format>
       </table>
     </panel>
   </row>
@@ -666,16 +667,20 @@
           <query>`threathunting_index` mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="Pipe*" ($exclude_technique$) AND ($exclude_host_fqdn$) 
 | `pipe_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| eventstats count, sparkline by ID Technique Category Trigger host_fqdn pipe_name process_path
-| dedup ID Technique Category Trigger host_fqdn pipe_name process_path 
+| eventstats count, sparkline by ID Technique Category Trigger host_fqdn user_name pipe_name process_path
+| dedup ID Technique Category Trigger host_fqdn user_name pipe_name process_path 
 | sort -count 
-| table count sparkline ID Technique Category Trigger host_fqdn pipe_name process_path</query>
+| table count sparkline ID Technique Category Trigger host_fqdn user_name pipe_name process_path</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
         <option name="count">6</option>
         <option name="drilldown">cell</option>
         <option name="refresh.display">progressbar</option>
+        <format type="color" field="Category">
+          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
+          <scale type="category"></scale>
+        </format>
         <drilldown>
           <condition field="Category">
             <link target="_blank">https://attack.mitre.org/wiki/$row.Category$</link>
@@ -707,10 +712,6 @@
             </link>
           </condition>
         </drilldown>
-        <format type="color" field="Category">
-          <scale type="category"></scale>
-          <colorPalette type="map">{"Initial_Access":#d8031a,"Execution":#ff2e45,"Persistence":#ff4785,"Privilege_Escalation":#ff8041,"Defense_Evasion":#ffaf00,"Credential_Access":#ffd300,"Discovery":#abc530,"Lateral_Movement":#01c26d,"Collection":#007b84,"Command_and_Control":#075190,"Exfiltration":#86308c,"Impact":#482569,"Persistence,Privilege_Escalation":#ff4785,"Defense_Evasion,Execution":#ffaf00}</colorPalette>
-        </format>         
       </table>
     </panel>
   </row>
