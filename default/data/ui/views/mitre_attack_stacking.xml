@@ -139,7 +139,9 @@
             <link target="_blank">https://attack.mitre.org/wiki/Technique/$row.ID$</link>
           </condition>
           <condition field="hash_sha256">
-            <link target="_blank">https://www.virustotal.com/#/file/$row.hash_sha256$/detection</link>
+            <link target="_blank">
+                <![CDATA[/app/ThreatHunting/file_prevalence_overview?form.hash=$row.hash_sha256$&earliest=$earliest$&latest=$latest$]]>
+            </link>
           </condition>
           <condition field="user_name">
             <link target="_blank">
@@ -342,10 +344,10 @@
           <query>`threathunting_index` mitre_category=$mitre_category$ mitre_technique=$mitre_technique$ mitre_technique_id=$mitre_technique_id$ event_description="Image *" ($exclude_technique$) AND ($exclude_host_fqdn$) | fillnull value=NULL
 | `image_load_whitelist` 
 | rename mitre_technique_id AS ID, mitre_technique AS Technique, mitre_category AS Category, hunting_trigger AS Trigger 
-| eventstats count, sparkline by ID Technique Category Trigger host_fqdn user_name process_path driver_loaded driver_is_signed driver_signature driver_signature_status
+| eventstats count, sparkline by ID Technique Category Trigger host_fqdn user_name process_path driver_loaded driver_is_signed driver_signature driver_signature_status hash_sha256
 | dedup ID Technique Category Trigger host_fqdn user_name process_path driver_loaded driver_is_signed driver_signature driver_signature_status 
 | sort -count 
-| table count sparkline ID Technique Category Trigger host_fqdn user_name process_path driver_loaded driver_is_signed driver_signature driver_signature_status</query>
+| table count sparkline ID Technique Category Trigger host_fqdn user_name process_path driver_loaded driver_is_signed driver_signature driver_signature_status hash_sha256</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
         </search>
@@ -387,6 +389,11 @@
           <condition>
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="hash_sha256">
+            <link target="_blank">
+                <![CDATA[/app/ThreatHunting/file_prevalence_overview?form.hash=$row.hash_sha256$&earliest=$earliest$&latest=$latest$]]>
             </link>
           </condition>
         </drilldown>

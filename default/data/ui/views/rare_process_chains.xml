@@ -83,7 +83,7 @@
         <title>Details</title>
         <search base="raw">
           <query>| search process_parent_name="$process_parent_name_det$" process_name=$process_name_det$
-| table _time host_fqdn user_name process_parent_path process_parent_command_line process_path original_file_name process_command_line parent_user_name process_parent_guid process_guid</query>
+| table _time host_fqdn user_name process_parent_path process_parent_command_line process_path original_file_name process_command_line parent_user_name process_parent_guid process_guid hash_sha256</query>
         </search>
         <option name="drilldown">cell</option>
         <option name="refresh.display">preview</option>
@@ -126,6 +126,11 @@
           <condition field="process_id">
             <link target="_blank">
               <![CDATA[/app/ThreatHunting/process_guid_drilldown?form.process_guid=$row.process_guid$&form.host_fqdn=$row.host_fqdn$&form.time_picker.earliest=$time_picker.earliest$&form.time_picker.latest=$time_picker.latest$]]>
+            </link>
+          </condition>
+          <condition field="hash_sha256">
+            <link target="_blank">
+                <![CDATA[/app/ThreatHunting/file_prevalence_overview?form.hash=$row.hash_sha256$&earliest=$earliest$&latest=$latest$]]>
             </link>
           </condition>
           <condition>
