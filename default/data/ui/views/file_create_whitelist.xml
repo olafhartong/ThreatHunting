@@ -15,8 +15,8 @@
       <fieldForValue>id</fieldForValue>
       <choice value="*">All (*)</choice>
     </input>
-    <input type="text" token="host_fqdn">
-      <label>host_fqdn</label>
+    <input type="text" token="ComputerName">
+      <label>ComputerName</label>
       <default></default>
     </input>
     <input type="text" token="file_name">
@@ -48,12 +48,13 @@
         <title>Today's Entries</title>
         <search>
           <query>| makeresults 
+| eval input_ComputerName = COALESCE(if(trim("$ComputerName$")="", "*", trim("$ComputerName$")), "*") 
 | eval input_mitre_technique_id = COALESCE(if(trim("$mitre_technique_id$")="", "*", trim("$mitre_technique_id$")), "*") 
 | eval input_process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*") 
 | eval input_file_name = COALESCE(if(trim("$file_name$")="", "*", trim("$file_name$")), "*") 
 | eval input_file_path = COALESCE(if(trim("$file_path$")="", "*", trim("$file_path$")), "*") 
 
-| eval host_fqdn = input_host_fqdn 
+| eval ComputerName = input_ComputerName 
 | eval mitre_technique_id = input_mitre_technique_id 
 | eval process_path = input_process_path 
 | eval file_name = input_file_name
@@ -67,15 +68,15 @@
 
 | inputlookup append=t threathunting_file_create_whitelist.csv 
 | sort -added_date 
-| dedup mitre_technique_id host_fqdn process_path file_path file_name 
+| dedup mitre_technique_id ComputerName process_path file_path file_name 
 
 | eval mode = "$input_mode$" 
-| eval delete=if(mode="delete" and mitre_technique_id=input_mitre_technique_id and host_fqdn=input_host_fqdn and process_path=input_process_path and file_name=input_file_name and file_path=input_file_path, "yes", "no") 
+| eval delete=if(mode="delete" and mitre_technique_id=input_mitre_technique_id and ComputerName=input_ComputerName and process_path=input_process_path and file_name=input_file_name and file_path=input_file_path, "yes", "no") 
 | where delete="no" 
 | fields - delete mode 
 
 | outputlookup threathunting_file_create_whitelist.csv 
-| fields added_date contact mitre_technique_id reason host_fqdn process_path file_path file_name</query>
+| fields added_date contact mitre_technique_id reason ComputerName process_path file_path file_name</query>
           <earliest>0</earliest>
         </search>
         <option name="wrap">true</option>
@@ -91,7 +92,7 @@
       <table>
         <title>Current Entries</title>
         <search>
-          <query>| inputlookup threathunting_file_create_whitelist.csv | sort -added_datetime | fields added_date contact mitre_technique_id reason host_fqdn process_path file_path file_name
+          <query>| inputlookup threathunting_file_create_whitelist.csv | sort -added_datetime | fields added_date contact mitre_technique_id reason ComputerName process_path file_path file_name
 </query>
           <earliest>0</earliest>
         </search>
