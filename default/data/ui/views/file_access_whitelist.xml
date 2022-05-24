@@ -68,7 +68,7 @@
 | eval delete=if(mode="delete" and mitre_technique_id=input_mitre_technique_id and host_fqdn=input_host_fqdn and process_path=input_process_path and file_path=input_file_path, "yes", "no") 
 | where delete="no" 
 | fields - delete mode
-
+| fields - input_host_fqdn input_mitre_technique_id input_process_path input_file_path
 | outputlookup threathunting_file_access_whitelist.csv 
 | fields added_date contact mitre_technique_id reason host_fqdn process_path file_path</query>
           <earliest>0</earliest>

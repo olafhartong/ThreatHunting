@@ -80,7 +80,7 @@
 | eval delete=if(mode="delete" and mitre_technique_id=input_mitre_technique_id and host_fqdn=input_host_fqdn and event_type=input_event_type and process_name=input_process_name and target_process_path=input_target_process_path and target_process_address=input_target_process_address, "yes", "no") 
 | where delete="no" 
 | fields - delete mode
-
+| fields - input_host_fqdn input_event_type input_mitre_technique_id input_process_name input_target_process_path input_target_process_address
 | outputlookup threathunting_remote_thread_whitelist.csv 
 | fields added_date contact mitre_technique_id reason host_fqdn event_type process_name target_process_path target_process_address</query>
           <earliest>0</earliest>

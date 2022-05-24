@@ -74,7 +74,7 @@
 | eval delete=if(mode="delete" and mitre_technique_id=input_mitre_technique_id and host_fqdn=input_host_fqdn and wmi_consumer_name=input_wmi_consumer_name and wmi_consumer_destination=input_wmi_consumer_destination and user_name=input_user_name, "yes", "no") 
 | where delete="no" 
 | fields - delete mode 
-
+| fields - input_host_fqdn input_mitre_technique_id input_wmi_consumer_name input_wmi_consumer_destination input_user_name
 | outputlookup threathunting_wmi_whitelist.csv 
 | fields added_date contact mitre_technique_id reason host_fqdn user_name wmi_consumer_name wmi_consumer_destination</query>
           <earliest>0</earliest>

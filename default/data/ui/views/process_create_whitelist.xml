@@ -87,7 +87,7 @@
 | eval delete=if(mode="delete" and mitre_technique_id=input_mitre_technique_id and host_fqdn=input_host_fqdn and user_name=input_user_name and process_command_line=input_process_command_line and process_path=input_process_path and process_parent_path=input_process_parent_path and hash_sha256=input_hash_sha256, "yes", "no") 
 | where delete="no" 
 | fields - delete mode 
-
+| fields - input_host_fqdn input_user_name input_mitre_technique_id input_process_command_line input_process_path input_process_parent_path input_hash_sha256
 | outputlookup threathunting_process_create_whitelist.csv 
 | fields added_date contact mitre_technique_id reason host_fqdn user_name process_path process_parent_path process_command_line hash_sha256</query>
           <earliest>0</earliest>

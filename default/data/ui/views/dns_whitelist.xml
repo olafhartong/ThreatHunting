@@ -52,7 +52,7 @@
 | eval delete=if(mode="delete" and host_fqdn=input_host_fqdn and process_path=input_process_path and query_name=input_query_name, "yes", "no") 
 | where delete="no" 
 | fields - delete mode 
-
+| fields - input_host_fqdn input_process_path input_query_name
 | outputlookup threathunting_dns_whitelist.csv 
 | fields added_date contact reason host_fqdn process_path query_name</query>
           <earliest>0</earliest>
