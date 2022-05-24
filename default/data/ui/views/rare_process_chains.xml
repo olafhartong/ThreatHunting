@@ -2,7 +2,7 @@
   <label>Rare process chains, based on raw events</label>
   <description>Keep this in mind, searches might take a bit</description>
   <search id="raw">
-    <query>(`sysmon` event_id=1) OR ('windows-security' event_id=4688) host_fqdn=$computer$ process_parent_name=$process_parent_name$ process_name=$process_name$
+    <query>(`sysmon` event_code=1) OR ('windows-security' event_code=4688) host_fqdn=$computer$ process_parent_name=$process_parent_name$ process_name=$process_name$
 | fields _time host_fqdn user_name process_parent_name process_name process_parent_path process_path process_parent_guid process_guid process_parent_command_line process_command_line original_file_name</query>
     <earliest>$time_picker.earliest$</earliest>
     <latest>$time_picker.latest$</latest>

@@ -39,7 +39,7 @@
               <unset token="panel_proc_show"></unset>
             </condition>
           </progress>
-          <query>`sysmon` event_id=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$
+          <query>`sysmon` event_code=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$
 | `dns_whitelist`
 | eventstats count, sparkline by host_fqdn process_path query_name query_status
 | dedup host_fqdn process_path query_name query_status 
@@ -83,7 +83,7 @@
               <unset token="panel_proca_show"></unset>
             </condition>
           </progress>
-          <query>`sysmon` event_id=22 
+          <query>`sysmon` event_code=22 
     [| inputlookup doh.csv] 
 | `dns_whitelist` 
 | eventstats count, sparkline by process_path query_name query_status host_fqdn 
@@ -125,7 +125,7 @@
       <title>[Beaconing] Queries by connection count and deviation</title>
       <chart>
         <search>
-          <query>`sysmon` event_id=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$
+          <query>`sysmon` event_code=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$
 | `dns_whitelist`
 | eval current_time=_time
 | sort 0 + current_time
@@ -172,7 +172,7 @@
       <title>[Beaconing] Queries by time delta</title>
       <chart>
         <search>
-          <query>`sysmon` event_id=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$
+          <query>`sysmon` event_code=22 host_fqdn=$host_fqdn$ process_path=$process_path$ query_name=$query_name$ query_status=$query_status$
 | `dns_whitelist` 
 | fields host_fqdn, query_name, _time 
 | fields - _raw 

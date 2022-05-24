@@ -129,7 +129,7 @@
       <title>Macro Enabled Correlation</title>
       <viz type="force_directed_viz.force_directed">
         <search>
-          <query>`sysmon` host_fqdn=$host_fqdn$ (event_id=13 OR event_id=13) (registry_key_path=*trustrecords* OR *Software\\Microsoft\\VBA\\7.1\\Common) 
+          <query>`sysmon` host_fqdn=$host_fqdn$ (event_code=13 OR event_code=13) (registry_key_path=*trustrecords* OR *Software\\Microsoft\\VBA\\7.1\\Common) 
 |map search="search (`sysmon` process_name=*winword.exe* OR process_name=*excel.exe* OR process_name=*outlook.exe* OR process_parent_command_line=*winword.exe* OR process_parent_command_line=*excel.exe* OR process_parent_command_line=*outlook.exe* OR process_command_line=*winword.exe* OR process_command_line=*excel.exe* OR process_command_line=*outlook.exe*) AND (process_command_line!=*explorer.exe* OR process_parent_command_line!=*explorer.exe*)"
 |eval tmpUserName=mvindex(User,-1)
 |eval splitUserName=split(tmpUserName, "\\")
@@ -159,7 +159,7 @@
       <title>Macro Enabled Timeline Investigation</title>
       <viz type="timeline_app.timeline">
         <search>
-          <query>`sysmon` host_fqdn=$host_fqdn$ (event_id=13 OR event_id=13) (registry_key_path=*trustrecords* OR *Software\\Microsoft\\VBA\\7.1\\Common)|dedup Image |table Image |map search="search(`sysmon` Image=$$Image$$)" |map search="search (`sysmon` (process_parent_guid=$$process_guid$$ OR process_guid=$$process_guid$$ OR ParentImage=$$Image$$))"
+          <query>`sysmon` host_fqdn=$host_fqdn$ (event_code=13 OR event_code=13) (registry_key_path=*trustrecords* OR *Software\\Microsoft\\VBA\\7.1\\Common)|dedup Image |table Image |map search="search(`sysmon` Image=$$Image$$)" |map search="search (`sysmon` (process_parent_guid=$$process_guid$$ OR process_guid=$$process_guid$$ OR ParentImage=$$Image$$))"
 |eval tmpUserName=mvindex(User,-1)
 |eval splitUserName=split(tmpUserName, "\\")
 |eval UserName=mvindex(tmpUserName,0)
@@ -185,7 +185,7 @@
       <title>Macro Enabled related events - Based on logon session</title>
       <table>
         <search>
-          <query>`sysmon` host_fqdn=$host_fqdn$ event_id=13 (registry_key_path=*trustrecords* OR registry_key_path=*Software\\Microsoft\\VBA\\7.1\\Common) | map search="search (`sysmon` Image=$$Image$$ OR ParentImage=$$Image$$)" |map search="search (`sysmon` user_logon_guid=$$user_logon_guid$$)" 
+          <query>`sysmon` host_fqdn=$host_fqdn$ event_code=13 (registry_key_path=*trustrecords* OR registry_key_path=*Software\\Microsoft\\VBA\\7.1\\Common) | map search="search (`sysmon` Image=$$Image$$ OR ParentImage=$$Image$$)" |map search="search (`sysmon` user_logon_guid=$$user_logon_guid$$)" 
 |table _time user_name host_fqdn process_parent_name process_name process_command_line process_guid hash_sha256 user_logon_guid process_parent_guid </query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>

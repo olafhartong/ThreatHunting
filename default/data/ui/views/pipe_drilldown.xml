@@ -26,7 +26,7 @@
       <title>Pipe Create events</title>
       <table>
         <search>
-          <query>`sysmon` event_id=17 pipe_name=$pipe_name$ host_fqdn=$host_fqdn$ 
+          <query>`sysmon` event_code=17 pipe_name=$pipe_name$ host_fqdn=$host_fqdn$ 
 | `pipe_whitelist` 
 | table _time host_fqdn user_name pipe_name process_path process_guid</query>
           <earliest>$timepicker.earliest$</earliest>
@@ -67,7 +67,7 @@
       <title>Pipe Create and Connect events</title>
       <viz type="sankey_diagram_app.sankey_diagram">
         <search>
-          <query>`sysmon` (event_id=17 OR event_id=18) pipe_name=$pipe_name$ host_fqdn=$host_fqdn$
+          <query>`sysmon` (event_code=17 OR event_code=18) pipe_name=$pipe_name$ host_fqdn=$host_fqdn$
 | `pipe_whitelist` | stats count by process_path pipe_name</query>
           <earliest>$timepicker.earliest$</earliest>
           <latest>$timepicker.latest$</latest>
@@ -83,7 +83,7 @@
       <title>Activity by Pipe Connects</title>
       <viz type="punchcard_app.punchcard">
         <search>
-          <query>`sysmon` event_id=18 pipe_name=$pipe_name$ host_fqdn=$host_fqdn$ 
+          <query>`sysmon` event_code=18 pipe_name=$pipe_name$ host_fqdn=$host_fqdn$ 
 | `pipe_whitelist` 
 | stats count by date_hour pipe_name</query>
           <earliest>$timepicker.earliest$</earliest>
@@ -128,7 +128,7 @@
       <title>Pipe Connects</title>
       <table>
         <search>
-          <query>`sysmon` event_id=18 pipe_name=$pipe_name$ host_fqdn=$host_fqdn$ 
+          <query>`sysmon` event_code=18 pipe_name=$pipe_name$ host_fqdn=$host_fqdn$ 
 | `pipe_whitelist` 
 | table _time host_fqdn user_name pipe_name process_path process_guid process_id</query>
           <earliest>$timepicker.earliest$</earliest>
@@ -170,7 +170,7 @@
       <title>Raw events (not-whitelisted)</title>
       <event>
         <search>
-          <query>`sysmon` (event_id=17 OR event_id=18) pipe_name=$pipe_name$ host_fqdn=$host_fqdn$</query>
+          <query>`sysmon` (event_code=17 OR event_code=18) pipe_name=$pipe_name$ host_fqdn=$host_fqdn$</query>
           <earliest>$timepicker.earliest$</earliest>
           <latest>$timepicker.latest$</latest>
         </search>

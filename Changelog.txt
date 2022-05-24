@@ -69,7 +69,7 @@ Changes
 - Added a few fields to props.conf, including Sysmon DNS events
 - Extended T1218,T1216,T1081,T1075 searches
 - Rebuilt the whitelisting, searches are a LOT quicker now and take less resources
-- Added original_file_name to event_id 1 and 7 
+- Added original_file_name to event_code 1 and 7 
 - Top triggered techniques drilldown changed to technique_id
 - Added google lookups to WMI consumers
 - Added DNS drilldown on network events
@@ -95,7 +95,7 @@ New Features
 - Added Technique and Host filtering options to the threat hunting overview page
 - Added Timeline graph to the overview page
 - Added Technique and Host filtering options to the mitre att&ck overview page
-- Added New Files created page, based on Sysmon event_id 11
+- Added New Files created page, based on Sysmon event_code 11
 - Added File Create whitelist editor page
 - Initial mapping of Windows 4688 events in props.conf
 - Added 4688 events to 70 reports

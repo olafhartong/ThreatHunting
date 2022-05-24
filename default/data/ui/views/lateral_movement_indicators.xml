@@ -23,8 +23,8 @@
               <unset token="panel_winrm"></unset>
             </condition>
           </progress>
-          <query>`sysmon` event_id=1 process_parent_path="*wsmprovhost.exe" 
-|  table _time indextime event_id event_description user_name process_parent_path process_path original_file_name process_parent_command_line process_command_line process_parent_guid process_guid hash_sha256 process_id process_parent_id</query>
+          <query>`sysmon` event_code=1 process_parent_path="*wsmprovhost.exe" 
+|  table _time indextime event_code event_description user_name process_parent_path process_path original_file_name process_parent_command_line process_command_line process_parent_guid process_guid hash_sha256 process_id process_parent_id</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
           <progress>
@@ -59,8 +59,8 @@
               <unset token="panel_winrmtraf"></unset>
             </condition>
           </progress>
-          <query>`sysmon` event_id=3 (dst_port=5985 OR dst_port=5986) initiated=true
-|  table _time indextime event_id event_description host SourceIp src_port user_name DestinationIp process_path process_id Protocol transport initiated</query>
+          <query>`sysmon` event_code=3 (dst_port=5985 OR dst_port=5986) initiated=true
+|  table _time indextime event_code event_description host SourceIp src_port user_name DestinationIp process_path process_id Protocol transport initiated</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
           <progress>
@@ -97,8 +97,8 @@
               <unset token="panel_powershell"></unset>
             </condition>
           </progress>
-          <query>`sysmon` event_id=1 "wsmprovhost.exe" 
-|  table _time indextime event_id event_description host user_name process_path process_id process_parent_id process_command_line process_parent_guid user_session_id</query>
+          <query>`sysmon` event_code=1 "wsmprovhost.exe" 
+|  table _time indextime event_code event_description host user_name process_path process_id process_parent_id process_command_line process_parent_guid user_session_id</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
           <progress>
@@ -139,7 +139,7 @@
               <unset token="panel_psexec"></unset>
             </condition>
           </progress>
-          <query>`sysmon` event_id=17 (pipe_name="*PSEXESVC*" OR pipe_name="*PowerShellISEPipeName_*" OR pipe_name="*csexec*" OR pipe_name="*paexec*" OR pipe_name="*remcom*") | table _time indextime event_description host_fqdn pipe_name process_path process_guid process_id</query>
+          <query>`sysmon` event_code=17 (pipe_name="*PSEXESVC*" OR pipe_name="*PowerShellISEPipeName_*" OR pipe_name="*csexec*" OR pipe_name="*paexec*" OR pipe_name="*remcom*") | table _time indextime event_description host_fqdn pipe_name process_path process_guid process_id</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
           <progress>
@@ -182,7 +182,7 @@
               <unset token="panel_show"></unset>
             </condition>
           </progress>
-          <query>`sysmon` event_id=1 process_parent_path="*\\WmiPrvSE.exe" process_command_line!="*conhost.exe*"| table  _time indextime event_description hash_sha1 host user_name process_path process_id process_parent_id process_command_line process_parent_guid</query>
+          <query>`sysmon` event_code=1 process_parent_path="*\\WmiPrvSE.exe" process_command_line!="*conhost.exe*"| table  _time indextime event_description hash_sha1 host user_name process_path process_id process_parent_id process_command_line process_parent_guid</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
         </search>

@@ -2,9 +2,9 @@
   <label>File Prevalence Overview</label>
   <description>This dashboard looks for the occurrence of a file hash based on the Sysmon data within the selected timeframe.</description>
   <search id="raw">
-    <query>`sysmon` event_id IN (1,6,7,15,25) (hash_md5=$hash$ OR hash_sha1=$hash$ OR hash_sha256=$hash$) (original_file_name=$file_name$ OR process_name=$file_name$ OR file_name=$file_name$)
-| eval dllname=case(event_id=7,replace(ImageLoaded,"(.*\\\)(?=.*(\.\w*)$|(\w+)$)",""))
-| eval filename=case(event_id=1,process_name,event_id=7,dllname,(event_id=15 OR event_id=25),file_name) | fields * </query>
+    <query>`sysmon` event_code IN (1,6,7,15,25) (hash_md5=$hash$ OR hash_sha1=$hash$ OR hash_sha256=$hash$) (original_file_name=$file_name$ OR process_name=$file_name$ OR file_name=$file_name$)
+| eval dllname=case(event_code=7,replace(ImageLoaded,"(.*\\\)(?=.*(\.\w*)$|(\w+)$)",""))
+| eval filename=case(event_code=1,process_name,event_code=7,dllname,(event_code=15 OR event_code=25),file_name) | fields * </query>
     <earliest>$time_picker.earliest$</earliest>
     <latest>$time_picker.latest$</latest>
     <sampleRatio>1</sampleRatio>
@@ -91,10 +91,10 @@
       <table>
         <title>Additional files with the same Import Hash (slow)</title>
         <search>
-          <query>`sysmon` (event_id=1 OR event_id=7 OR event_id=15 OR event_id=25)
-  [search `sysmon` (event_id=1 OR event_id=7 OR event_id=15 OR event_id=25) (hash_md5=$hash$ OR hash_sha1=$hash$ OR hash_sha256=$hash$) (original_file_name=$file_name$ OR process_name=$file_name$)| table hash_imphash | dedup hash_imphash ] 
-| eval dllname=case(event_id=7,replace(ImageLoaded,"(.*\\\)(?=.*(\.\w*)$|(\w+)$)",""))
-| eval filename=case(event_id=1,process_name,event_id=7,dllname,(event_id=15 OR event_id=25),file_name)
+          <query>`sysmon` (event_code=1 OR event_code=7 OR event_code=15 OR event_code=25)
+  [search `sysmon` (event_code=1 OR event_code=7 OR event_code=15 OR event_code=25) (hash_md5=$hash$ OR hash_sha1=$hash$ OR hash_sha256=$hash$) (original_file_name=$file_name$ OR process_name=$file_name$)| table hash_imphash | dedup hash_imphash ] 
+| eval dllname=case(event_code=7,replace(ImageLoaded,"(.*\\\)(?=.*(\.\w*)$|(\w+)$)",""))
+| eval filename=case(event_code=1,process_name,event_code=7,dllname,(event_code=15 OR event_code=25),file_name)
 | stats values(hash_imphash) by filename, hash_sha256</query>
           <earliest>$time_picker.earliest$</earliest>
           <latest>$time_picker.latest$</latest>
