@@ -48,6 +48,7 @@
         <title>Today's Entries</title>
         <search>
           <query>| makeresults 
+| eval input_host_fqdn = COALESCE(if(trim("$host_fqdn$")="", "*", trim("$host_fqdn$")), "*") 
 | eval input_mitre_technique_id = COALESCE(if(trim("$mitre_technique_id$")="", "*", trim("$mitre_technique_id$")), "*") 
 | eval input_process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*") 
 | eval input_file_name = COALESCE(if(trim("$file_name$")="", "*", trim("$file_name$")), "*") 
