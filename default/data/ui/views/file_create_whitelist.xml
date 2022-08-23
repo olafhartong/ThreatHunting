@@ -16,7 +16,8 @@
       <fieldForLabel>id</fieldForLabel>
       <fieldForValue>id</fieldForValue>
       <choice value="*">All (*)</choice>
-    </input>    <input type="text" token="host_fqdn">
+    </input>
+    <input type="text" token="host_fqdn">
       <label>host_fqdn</label>
       <default></default>
     </input>
