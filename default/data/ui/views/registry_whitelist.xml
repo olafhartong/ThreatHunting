@@ -4,13 +4,14 @@
     <input type="dropdown" token="mitre_technique_id" id="mitre_technique_id">
       <label>mitre_technique_id</label>
       <search>
-        <query>| rest /servicesNS/-/ThreatHunting/saved/searches
-| search title="[T*]*"
-| makemv delim="," action.summary_index.mitre_technique_id
-| mvexpand action.summary_index.mitre_technique_id
-| stats dc(action.summary_index.mitre_technique) AS Searches by action.summary_index.mitre_technique_id
-| sort action.summary_index.mitre_technique_id
-| rename action.summary_index.mitre_technique_id AS "id" | table id</query>
+        <query>| rest /servicesNS/-/ThreatHunting/saved/searches 
+| fields title, search
+| eval search=urldecode(search)
+| regex search="(?i)mitre_technique_id=\"T\d+\""
+| rex field=search "mitre_technique_id=\"(?&lt;id&gt;T\d+)\"" 
+| stats dc(id) AS Searches by id 
+| sort id 
+| table id</query>
       </search>
       <fieldForLabel>id</fieldForLabel>
       <fieldForValue>id</fieldForValue>
