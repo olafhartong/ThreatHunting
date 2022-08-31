@@ -5,8 +5,10 @@
       <label>mitre_technique_id</label>
       <search>
         <query>| rest /servicesNS/-/ThreatHunting/saved/searches 
-| search title="[T*]*" 
-| rex field=search "mitre_technique_id=\"(?&lt;id&gt;[^\.]*)\"" 
+| fields title, search
+| eval search=urldecode(search)
+| regex search="(?i)mitre_technique_id=\"T\d+\""
+| rex field=search "mitre_technique_id=\"(?&lt;id&gt;T\d+)\"" 
 | stats dc(id) AS Searches by id 
 | sort id 
 | table id</query>
