@@ -104,7 +104,7 @@
       <table>
         <title>Current Entries</title>
         <search>
-          <query>| inputlookup threathunting_image_load_whitelist.csv | sort -added_datetime | fields added_date contact mitre_technique_id reason host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signatureStatus</query>
+          <query>| inputlookup threathunting_image_load_whitelist.csv | sort -added_datetime | fields added_date contact mitre_technique_id reason host_fqdn process_path driver_loaded driver_is_signed driver_signature driver_signature_status</query>
           <earliest>0</earliest>
         </search>
         <option name="wrap">true</option>
