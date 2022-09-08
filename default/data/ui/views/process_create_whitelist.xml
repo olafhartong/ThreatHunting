@@ -59,13 +59,13 @@
         <title>Recent Entries</title>
         <search>
           <query>| makeresults 
-| eval input_host_fqdn = COALESCE(if(trim("$host_fqdn$")="", "*", trim("$host_fqdn$")), "*") 
-| eval input_user_name = COALESCE(if(trim("$user_name$")="", "*", trim("$user_name$")), "*") 
-| eval input_mitre_technique_id = COALESCE(if(trim("$mitre_technique_id$")="", "*", trim("$mitre_technique_id$")), "*") 
-| eval input_process_command_line = COALESCE(if(trim("$process_command_line$")="", "*", trim("$process_command_line$")), "*") 
-| eval input_process_path = COALESCE(if(trim("$process_path$")="", "*", trim("$process_path$")), "*") 
-| eval input_process_parent_path = COALESCE(if(trim("$process_parent_path$")="", "*", trim("$process_parent_path$")), "*") 
-| eval input_hash_sha256 = COALESCE(if(trim("$hash_sha256$")="", "*", trim("$hash_sha256$")), "*") 
+| eval input_host_fqdn = COALESCE(if(trim($host_fqdn|s$)="", "*", trim($host_fqdn|s$)), "*") 
+| eval input_user_name = COALESCE(if(trim($user_name|s$)="", "*", trim($user_name|s$)), "*") 
+| eval input_mitre_technique_id = COALESCE(if(trim($mitre_technique_id|s$)="", "*", trim($mitre_technique_id|s$)), "*") 
+| eval input_process_command_line = COALESCE(if(trim($process_command_line|s$)="", "*", trim($process_command_line|s$)), "*") 
+| eval input_process_path = COALESCE(if(trim($process_path|s$)="", "*", trim($process_path|s$)), "*") 
+| eval input_process_parent_path = COALESCE(if(trim($process_parent_path|s$)="", "*", trim($process_parent_path|s$)), "*") 
+| eval input_hash_sha256 = COALESCE(if(trim($hash_sha256|s$)="", "*", trim($hash_sha256|s$)), "*") 
 
 | eval host_fqdn = input_host_fqdn 
 | eval user_name = input_user_name 
@@ -113,7 +113,7 @@
         </search>
         <option name="wrap">true</option>
         <option name="rowNumbers">false</option>
-        <option name="drilldown">cell</option>
+        <option name="drilldown">none</option>
         <option name="dataOverlayMode">none</option>
         <option name="count">100</option>
       </table>
