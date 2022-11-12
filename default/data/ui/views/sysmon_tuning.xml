@@ -1,4 +1,4 @@
-<form>
+<form version="1.1">
   <label>Sysmon Tuning</label>
   <search id="formSearch">
     <query>index=_internal type=Usage source="*license_usage.log*" $included_idx$ $remove_host$ h!=DATA h!=CHANGE h!="" s="*Sysmon/Operational"
