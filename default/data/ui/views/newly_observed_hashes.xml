@@ -13,7 +13,7 @@
     <panel>
       <chart>
         <search>
-          <query>index="threathunting_file_summary" 
+          <query>`threathunting_file_summary_index`
 | bin span=60m _time 
 |  stats count by _time</query>
           <earliest>$timeframe.earliest$</earliest>
